@@ -5,6 +5,9 @@ bin/*
 *.o
 *.so
 
+## External Library Files ##
+lib/*
+
 ## Package Files ##
 *.tar
 *.zip
