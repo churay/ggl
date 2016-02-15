@@ -23,13 +23,17 @@ class matrix {
 
     // TODO(JRC): Implement these functions.
 
+    /// Class Attributes ///
+
+    constexpr static unsigned Entries{ Rows * Cols };
+
     private:
 
     /// Class Setup ///
 
-    template <unsigned R, unsigned C> friend class Matrix;
+    template <unsigned R, unsigned C> friend class matrix;
 
-    static_assert( Rows * Cols > 0, "Matrices must have positive dimensions!" );
+    static_assert( Entries > 0, "'ggl::matrix' must have positive entries." );
 
     /// Helper Functions ///
 
@@ -37,7 +41,7 @@ class matrix {
 
     /// Class Fields ///
 
-    std::unique_ptr<float[]> m_entries{ new float[Rows * Cols] };
+    std::array<EntryType, Entries> m_entries;
 };
 
 }

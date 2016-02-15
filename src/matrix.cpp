@@ -2,7 +2,7 @@ namespace ggl {
 
 template <unsigned Rows, unsigned Cols, class EntryType>
 matrix<Rows, Cols, EntryType>::matrix() {
-    for( unsigned entidx = 0; entidx < Rows * Cols; ++entidx )
+    for( unsigned entidx = 0; entidx < Entries; ++entidx )
         m_entries[entidx] = EntryType();
 }
 
