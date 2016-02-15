@@ -2,7 +2,7 @@
 
 CXX = clang++
 CXXFLAGS = -std=c++11 -Wall -Werror -g -O0
-CXXINCLS = 
+CXXINCLS = -L$(SRC_DIR)
 CXXTESTINCLS = -I$(LIB_DIR)
 LDFLAGS = 
 
@@ -23,8 +23,8 @@ TEST_LIB = $(LIB_DIR)/catch.hpp
 
 all : $(PROJ_EXE)
 
-$(PROJ_EXE) : $(SRC_DIR)/main.cpp
-	$(CXX) $(LDFLAGS) $< -o $(PROJ_EXE)
+$(PROJ_EXE) : $(SRC_DIR)/main.cpp $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*.h)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< -o $(PROJ_EXE)
 
 %.test : $(TEST_DIR)/%.cpp $(TEST_LIB)
 	$(CXX) $(CXXFLAGS) $(CXXINCLS) $(CXXTESTINCLS) $< -o $(BIN_DIR)/$@
