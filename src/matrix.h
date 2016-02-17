@@ -31,7 +31,7 @@ class matrix {
 
     /// Class Setup ///
 
-    template <unsigned R, unsigned C> friend class matrix;
+    template <unsigned R, unsigned C, class ET> friend class matrix;
 
     static_assert( Entries > 0, "'ggl::matrix' must have positive entries." );
 
