@@ -4,36 +4,35 @@
 #include <array>
 #include <utility>
 
-// TODO(JRC): Figure out a way to alias the template parameters so that
-// they're descriptive when used inside the class definitions but short and
-// to the point when used outside (e.g. in the cpp file).
-
 namespace ggl {
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+template <class T, unsigned R, unsigned C>
 class matrix {
     public:
 
     /// Class Attributes ///
 
-    constexpr static unsigned tNumEnts{ tNumRows * tNumCols };
+    using EntryType = T;
+    constexpr static unsigned sNumRows{ R };
+    constexpr static unsigned sNumCols{ C };
+    constexpr static unsigned sNumEnts{ R * C };
 
     /// Constructors ///
 
     matrix();
-    matrix( std::array<tEntryType, tNumEnts> pEntries );
+    matrix( std::array<EntryType, sNumEnts> pEntries );
 
     // TODO(JRC): Create a constructor that intakes an initialization list
     // with the appropriate number of entries (i.e. tNumEnts).
 
     /// Operator Overloads ///
 
-    tEntryType& operator()( unsigned pRow, unsigned pCol );
-    const tEntryType& operator()( unsigned pRow, unsigned pCol ) const;
+    EntryType& operator()( unsigned pRow, unsigned pCol );
+    const EntryType& operator()( unsigned pRow, unsigned pCol ) const;
 
-    matrix<tEntryType, tNumRows, tNumCols> operator+( const matrix& pOther ) const;
-    matrix<tEntryType, tNumRows, tNumCols> operator-( const matrix& pOther ) const;
-    matrix<tEntryType, tNumRows, tNumCols> operator*( const tEntryType& pValue ) const;
+    matrix<T, R, C> operator+( const matrix& pOther ) const;
+    matrix<T, R, C> operator-( const matrix& pOther ) const;
+    matrix<T, R, C> operator*( const EntryType& pValue ) const;
 
     /// Class Functions ///
 
@@ -43,9 +42,9 @@ class matrix {
 
     /// Class Setup ///
 
-    static_assert( tNumEnts > 0, "'ggl::matrix' must have positive entries." );
+    static_assert( sNumEnts > 0, "'ggl::matrix' must have positive entries." );
 
-    template <class tET, unsigned tR, unsigned tC> friend class matrix;
+    template <class TT, unsigned RR, unsigned CC> friend class matrix;
 
     /// Helper Functions ///
 
@@ -53,14 +52,11 @@ class matrix {
 
     /// Class Fields ///
 
-    std::array<tEntryType, tNumEnts> mEntries;
+    std::array<EntryType, sNumEnts> mEntries;
 };
 
-// TODO(JRC): Create a template typename for matricies that include floating
-// point values called "matrixf" or equivalent.
-
-// TODO(JRC): Create a template typename for vectors of both orientations
-// (e.g. "rvectorf" and "cvectorf" or equivalent).
+template <unsigned R, unsigned C> using matrixf = matrix<float, R, C>;
+template <class T, unsigned R> using vectorf = matrix<T, R, 1>;
 
 }
 

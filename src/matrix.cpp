@@ -2,71 +2,63 @@
 
 namespace ggl {
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>::matrix() {
-    for( unsigned eIdx = 0; eIdx < tNumEnts; ++eIdx )
-        mEntries[eIdx] = tEntryType();
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C>::matrix() {
+    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
+        mEntries[eIdx] = EntryType();
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>::matrix(
-        std::array<tEntryType, tNumEnts> pEntries ) {
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C>::matrix( std::array<EntryType, sNumEnts> pEntries ) {
     mEntries = std::move( pEntries );
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-tEntryType& matrix<tEntryType, tNumRows, tNumCols>::operator()(
-        unsigned pRow, unsigned pCol ) {
-    return mEntries[pRow * tNumCols + pCol];
+template <class T, unsigned R, unsigned C>
+T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) {
+    return mEntries[pRow * sNumCols + pCol];
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-const tEntryType& matrix<tEntryType, tNumRows, tNumCols>::operator()(
-        unsigned pRow, unsigned pCol ) const {
-    return mEntries[pRow * tNumCols + pCol];
+template <class T, unsigned R, unsigned C>
+const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
+    return mEntries[pRow * sNumCols + pCol];
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>::operator+( const matrix& pOther ) const {
-    matrix<tEntryType, tNumRows, tNumCols> result;
-    for( unsigned eIdx = 0; eIdx < tNumEnts; ++eIdx )
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C> matrix<T, R, C>::operator+( const matrix& pOther ) const {
+    matrix<EntryType, sNumRows, sNumCols> result;
+    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
         result.mEntries[eIdx] = this->mEntries[eIdx] + pOther.mEntries[eIdx];
 
     return result;
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>::operator-( const matrix& pOther ) const {
-    matrix<tEntryType, tNumRows, tNumCols> result;
-    for( unsigned eIdx = 0; eIdx < tNumEnts; ++eIdx )
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C> matrix<T, R, C>::operator-( const matrix& pOther ) const {
+    matrix<EntryType, sNumRows, sNumCols> result;
+    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
         result.mEntries[eIdx] = this->mEntries[eIdx] - pOther.mEntries[eIdx];
 
     return result;
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>
-matrix<tEntryType, tNumRows, tNumCols>::operator*( const tEntryType& pValue ) const {
-    matrix<tEntryType, tNumRows, tNumCols> result;
-    for( unsigned eIdx = 0; eIdx < tNumEnts; ++eIdx )
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C> matrix<T, R, C>::operator*( const T& pValue ) const {
+    matrix<EntryType, sNumRows, sNumCols> result;
+    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
         result.mEntries[eIdx] = pValue * this->mEntries[eIdx];
 
     return result;
 }
 
 
-template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
-matrix<tEntryType, tNumRows, tNumCols> operator*(
-        const tEntryType& pValue,
-        const matrix<tEntryType, tNumRows, tNumCols>& pMatrix ) {
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C> operator*( const T& pValue, const matrix<T, R, C>& pMatrix ) {
     return pMatrix * pValue;
 }
 

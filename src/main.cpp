@@ -2,19 +2,19 @@
 #include "matrix.h"
 
 int main() {
-    ggl::matrix<float, 3, 3> mat1{{{
+    ggl::matrixf<3, 3> mat1{{{
         1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 1.0f
     }}};
 
-    ggl::matrix<float, 3, 3> mat2{{{
+    ggl::matrixf<3, 3> mat2{{{
         0.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f,
         1.0f, 1.0f, 0.0f
     }}};
 
-    ggl::matrix<float, 3, 3> mat3{{{
+    ggl::matrixf<3, 3> mat3{{{
         -1.0f, +0.0f, +0.0f,
         +0.0f, -1.0f, +0.0f,
         +0.0f, +0.0f, -1.0f
