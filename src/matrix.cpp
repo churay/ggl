@@ -40,4 +40,34 @@ matrix<tEntryType, tNumRows, tNumCols>::operator+( const matrix& pOther ) const 
     return result;
 }
 
+
+template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+matrix<tEntryType, tNumRows, tNumCols>
+matrix<tEntryType, tNumRows, tNumCols>::operator-( const matrix& pOther ) const {
+    matrix<tEntryType, tNumRows, tNumCols> result;
+    for( unsigned eIdx = 0; eIdx < tNumEnts; ++eIdx )
+        result.mEntries[eIdx] = this->mEntries[eIdx] - pOther.mEntries[eIdx];
+
+    return result;
+}
+
+
+template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+matrix<tEntryType, tNumRows, tNumCols>
+matrix<tEntryType, tNumRows, tNumCols>::operator*( const tEntryType& pValue ) const {
+    matrix<tEntryType, tNumRows, tNumCols> result;
+    for( unsigned eIdx = 0; eIdx < tNumEnts; ++eIdx )
+        result.mEntries[eIdx] = pValue * this->mEntries[eIdx];
+
+    return result;
+}
+
+
+template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+matrix<tEntryType, tNumRows, tNumCols> operator*(
+        const tEntryType& pValue,
+        const matrix<tEntryType, tNumRows, tNumCols>& pMatrix ) {
+    return pMatrix * pValue;
+}
+
 }

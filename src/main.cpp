@@ -20,7 +20,9 @@ int main() {
         +0.0f, +0.0f, -1.0f
     }}};
 
-    ggl::matrix<float, 3, 3> mat = mat1 + mat3;
+    // ggl::vectorf<3> vec1{ 1.0f, 1.0f, 1.0f };
+
+    ggl::matrix<float, 3, 3> mat = 2.0f * ( mat1 - mat3 ) * 4.0f;
     // ggl::matrix<float, 3, 3> mat = mat1 + mat2;
 
     std::cout << "Matrix Contents:" << std::endl;

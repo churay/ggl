@@ -28,6 +28,8 @@ class matrix {
     const tEntryType& operator()( unsigned pRow, unsigned pCol ) const;
 
     matrix<tEntryType, tNumRows, tNumCols> operator+( const matrix& pOther ) const;
+    matrix<tEntryType, tNumRows, tNumCols> operator-( const matrix& pOther ) const;
+    matrix<tEntryType, tNumRows, tNumCols> operator*( const tEntryType& pValue ) const;
 
     /// Class Functions ///
 
