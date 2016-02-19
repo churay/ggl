@@ -2,10 +2,26 @@
 #include "matrix.h"
 
 int main() {
-    ggl::matrix<float, 3, 3> mat;
+    ggl::matrix<float, 3, 3> mat1{{{
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f
+    }}};
 
-    for( unsigned diagIdx = 0; diagIdx < 3; ++diagIdx )
-        mat( diagIdx, diagIdx ) = 1.0f;
+    ggl::matrix<float, 3, 3> mat2{{{
+        0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f
+    }}};
+
+    ggl::matrix<float, 3, 3> mat3{{{
+        -1.0f, +0.0f, +0.0f,
+        +0.0f, -1.0f, +0.0f,
+        +0.0f, +0.0f, -1.0f
+    }}};
+
+    ggl::matrix<float, 3, 3> mat = mat1 + mat3;
+    // ggl::matrix<float, 3, 3> mat = mat1 + mat2;
 
     std::cout << "Matrix Contents:" << std::endl;
     for( unsigned rowIdx = 0; rowIdx < 3; ++rowIdx ) {

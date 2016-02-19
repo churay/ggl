@@ -2,7 +2,6 @@
 #define GGL_MATRIX_H
 
 #include <array>
-#include <memory>
 #include <utility>
 
 namespace ggl {
@@ -18,12 +17,17 @@ class matrix {
     /// Constructors ///
 
     matrix();
-    matrix( const std::array<tEntryType, tNumEnts>& pEntries );
+    matrix( std::array<tEntryType, tNumEnts> pEntries );
+
+    // TODO(JRC): Create a constructor that intakes an initialization list
+    // with the appropriate number of entries (i.e. tNumEnts).
 
     /// Operator Overloads ///
 
     tEntryType& operator()( unsigned pRow, unsigned pCol );
     const tEntryType& operator()( unsigned pRow, unsigned pCol ) const;
+
+    matrix<tEntryType, tNumRows, tNumCols> operator+( const matrix& pOther ) const;
 
     /// Class Functions ///
 
