@@ -1,21 +1,23 @@
 namespace ggl {
 
-template <unsigned Rows, unsigned Cols, class EntryType>
-matrix<Rows, Cols, EntryType>::matrix() {
-    for( unsigned entidx = 0; entidx < Entries; ++entidx )
-        m_entries[entidx] = EntryType();
+template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+matrix<tEntryType, tNumRows, tNumCols>::matrix() {
+    for( unsigned entidx = 0; entidx < tNumEnts; ++entidx )
+        mEntries[entidx] = tEntryType();
 }
 
 
-template <unsigned Rows, unsigned Cols, class EntryType>
-EntryType& matrix<Rows, Cols, EntryType>::operator()( unsigned _row, unsigned _col ) {
-    return m_entries[_row * Cols + _col];
+template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+tEntryType& matrix<tEntryType, tNumRows, tNumCols>::operator()(
+        unsigned pRow, unsigned pCol ) {
+    return mEntries[pRow * tNumCols + pCol];
 }
 
 
-template <unsigned Rows, unsigned Cols, class EntryType>
-const EntryType& matrix<Rows, Cols, EntryType>::operator()( unsigned _row, unsigned _col ) const {
-    return m_entries[_row * Cols + _col];
+template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
+const tEntryType& matrix<tEntryType, tNumRows, tNumCols>::operator()(
+        unsigned pRow, unsigned pCol ) const {
+    return mEntries[pRow * tNumCols + pCol];
 }
 
 }

@@ -2,7 +2,7 @@
 #include "matrix.h"
 
 int main() {
-    ggl::matrix<3, 3> mat;
+    ggl::matrix<float, 3, 3> mat;
 
     for( unsigned diagIdx = 0; diagIdx < 3; ++diagIdx )
         mat( diagIdx, diagIdx ) = 1.0f;
