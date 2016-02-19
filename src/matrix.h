@@ -4,6 +4,10 @@
 #include <array>
 #include <utility>
 
+// TODO(JRC): Figure out a way to alias the template parameters so that
+// they're descriptive when used inside the class definitions but short and
+// to the point when used outside (e.g. in the cpp file).
+
 namespace ggl {
 
 template <class tEntryType, unsigned tNumRows, unsigned tNumCols>
@@ -54,6 +58,9 @@ class matrix {
 
 // TODO(JRC): Create a template typename for matricies that include floating
 // point values called "matrixf" or equivalent.
+
+// TODO(JRC): Create a template typename for vectors of both orientations
+// (e.g. "rvectorf" and "cvectorf" or equivalent).
 
 }
 
