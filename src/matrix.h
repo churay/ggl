@@ -23,7 +23,7 @@ class matrix {
     matrix( std::array<EntryType, sNumEnts> pEntries );
 
     // TODO(JRC): Create a constructor that intakes an initialization list
-    // with the appropriate number of entries (i.e. tNumEnts).
+    // with the appropriate number of entries (i.e. sNumEnts).
 
     /// Operator Overloads ///
 
@@ -33,6 +33,10 @@ class matrix {
     matrix<T, R, C> operator+( const matrix& pOther ) const;
     matrix<T, R, C> operator-( const matrix& pOther ) const;
     matrix<T, R, C> operator*( const EntryType& pValue ) const;
+    template <unsigned C2>
+    matrix<T, R, C2> operator*( const matrix<T, C, C2>& pOther ) const;
+
+    matrix<T, C, R> transpose() const;
 
     /// Class Functions ///
 
