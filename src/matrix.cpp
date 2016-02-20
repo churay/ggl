@@ -1,3 +1,4 @@
+#include <cmath>
 #include <memory>
 
 namespace ggl {
@@ -70,6 +71,28 @@ matrix<T, R, C2> matrix<T, R, C>::operator*( const matrix<T, C, C2>& pOther ) co
         for( unsigned cIdx = 0; cIdx < result.sNumCols; ++cIdx )
             for( unsigned iIdx = 0; iIdx < this->sNumCols; ++iIdx )
                 result( rIdx, cIdx ) += (*this)( rIdx, iIdx ) * pOther( iIdx, cIdx );
+
+    return result;
+}
+
+
+template <class T, unsigned R, unsigned C>
+T matrix<T, R, C>::norm() const {
+    EntryType norm;
+    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
+        norm += this->mEntries[eIdx] * this->mEntries[eIdx];
+
+    return std::sqrt( norm );
+}
+
+
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C> matrix<T, R, C>::normal() const {
+    const EntryType norm = this->norm();
+
+    matrix<EntryType, sNumRows, sNumCols> result;
+    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
+        this->mEntries = this->mEntries / norm;
 
     return result;
 }

@@ -36,6 +36,8 @@ class matrix {
     template <unsigned C2>
     matrix<T, R, C2> operator*( const matrix<T, C, C2>& pOther ) const;
 
+    EntryType norm() const;
+    matrix<T, R, C> normal() const;
     matrix<T, C, R> transpose() const;
 
     /// Class Functions ///
