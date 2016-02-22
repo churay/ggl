@@ -1,6 +1,6 @@
 #include "src/matrix.h"
 
-SCENARIO( "ggl::matrix is correctly initialized", "[matrix]" ) {
+SCENARIO( "ggl::matrix is correctly constructor", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
         // TODO(JRC): For some reason, using "m.sNumRows" in an assertion
         // causes an undefined reference error.
@@ -38,3 +38,42 @@ SCENARIO( "ggl::matrix is correctly initialized", "[matrix]" ) {
         }
     }
 }
+
+SCENARIO( "ggl::matrix equality works", "[matrix]" ) {
+    GIVEN( "two matrices with the same dimensions" ) {
+        const ggl::matrix<int, 2, 2> m1{ 1, 1, 1, 1 };
+        const ggl::matrix<int, 2, 2> m2{ 1, 1, 1, 1 };
+
+        WHEN( "the same matrix is used in the comparison" ) {
+            THEN( "the equality operator returns true" ) {
+                REQUIRE( m1 == m1 );
+            }
+        }
+
+        WHEN( "matrices with the same entries are used in the comparison" ) {
+            const ggl::matrix<int, 2, 2> m2{ 1, 1, 1, 1 };
+            THEN( "the equality operator returns true" ) {
+                REQUIRE( m1 == m2 );
+            }
+        }
+
+        WHEN( "matrices with different entries are used in the comparison" ) {
+            const ggl::matrix<int, 2, 2> m2{ 1, 1, 1, 2 };
+            THEN( "the equality operator returns false" ) {
+                REQUIRE( m1 != m2 );
+            }
+        }
+    }
+}
+
+/*
+SCENARIO( "ggl::matrix addition works", "[matrix]" ) {
+    GIVEN( "two matrices with the same dimensions" ) {
+        const ggl::matrixf<2, 2> m1{ 1.0f, 2.0f, 3.0f, 4.0f };
+        const ggl::matrixf<2, 2> m2{ 4.0f, 3.0f, 2.0f, 1.0f };
+        WHEN( "the matrix entries are real numbers" ) {
+            a
+        }
+    }
+}
+*/

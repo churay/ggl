@@ -20,13 +20,15 @@ class matrix {
     /// Constructors ///
 
     matrix();
-    template <class... Ts>
-    explicit matrix( Ts&&... pEntries );
+    template <class... Ts> matrix( Ts&&... pEntries );
 
     /// Operator Overloads ///
 
     EntryType& operator()( unsigned pRow, unsigned pCol );
     const EntryType& operator()( unsigned pRow, unsigned pCol ) const;
+
+    bool operator==( const matrix& pOther ) const;
+    bool operator!=( const matrix& pOther ) const;
 
     matrix<T, R, C> operator+( const matrix& pOther ) const;
     matrix<T, R, C> operator-( const matrix& pOther ) const;
@@ -59,8 +61,10 @@ class matrix {
     std::array<EntryType, sNumEnts> mEntries;
 };
 
+template <class T, unsigned R> using vector = matrix<T, R, 1>;
+
 template <unsigned R, unsigned C> using matrixf = matrix<float, R, C>;
-template <class T, unsigned R> using vectorf = matrix<T, R, 1>;
+template <unsigned R> using vectorf = vector<float, R>;
 
 }
 

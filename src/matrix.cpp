@@ -1,5 +1,6 @@
 #include <cmath>
 #include <memory>
+#include <sstream>
 #include <utility>
 
 namespace ggl {
@@ -11,6 +12,8 @@ matrix<T, R, C>::matrix() {
 }
 
 
+// NOTE(JRC): Recipe for argument constructor from the following location:
+// http://stackoverflow.com/a/7725611
 template <class T, unsigned R, unsigned C> template <class... Ts>
 matrix<T, R, C>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pEntries)... }} {
     static_assert( sizeof...(Ts) == sNumEnts,
@@ -27,6 +30,18 @@ T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) {
 template <class T, unsigned R, unsigned C>
 const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
     return mEntries[pRow * sNumCols + pCol];
+}
+
+
+template <class T, unsigned R, unsigned C>
+bool matrix<T, R, C>::operator==( const matrix& pOther ) const {
+    return true;
+}
+
+
+template <class T, unsigned R, unsigned C>
+bool matrix<T, R, C>::operator!=( const matrix& pOther ) const {
+    return !( *this == pOther );
 }
 
 
@@ -110,4 +125,22 @@ matrix<T, C, R> matrix<T, R, C>::transpose() const {
     return result;
 }
 
+}
+
+// TODO(JRC): Consider moving this to an auxiliary matrix function file
+// (e.g. "matrix_aux.cpp").
+
+template <class T, unsigned R, unsigned C>
+std::ostream& operator<<( std::ostream& os, const ggl::matrix<T, R, C>& m ) {
+    os << "[ ";
+    for( unsigned rIdx = 0; rIdx < m.sNumRows; ++rIdx ) {
+        os << "| ";
+        for( unsigned cIdx = 0; cIdx < m.sNumCols; ++cIdx ) {
+            os << m( rIdx, cIdx ) << ( cIdx < m.sNumCols - 1 ? ", " : " " );
+        }
+        os << ( rIdx < m.sNumRows - 1 ? "|, " : "| " );
+    }
+    os << "]";
+
+    return os;
 }
