@@ -1,6 +1,6 @@
 #include "src/matrix.h"
 
-SCENARIO( "ggl::matrix is correctly constructor", "[matrix]" ) {
+SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
         // TODO(JRC): For some reason, using "m.sNumRows" in an assertion
         // causes an undefined reference error.
@@ -30,8 +30,10 @@ SCENARIO( "ggl::matrix is correctly constructor", "[matrix]" ) {
     GIVEN( "explicit entries" ) {
         WHEN( "there are an appropriate number of entries" ) {
             const ggl::matrixf<1, 3> m{ 1.0f, 2.0f, 3.0f };
-
-            THEN( "the entries are in the correct positions" ) {
+            const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
+            THEN( "the dimensions are correct" ) {
+                REQUIRE( r == 1 ); REQUIRE( c == 3 ); REQUIRE( e == 3 );
+            } THEN( "the entries are in the correct positions" ) {
                 for( unsigned cIdx = 0; cIdx < 3; ++cIdx )
                     REQUIRE( m(0, cIdx) == Approx(cIdx + 1.0f) );
             }
@@ -66,14 +68,21 @@ SCENARIO( "ggl::matrix equality works", "[matrix]" ) {
     }
 }
 
-/*
 SCENARIO( "ggl::matrix addition works", "[matrix]" ) {
+    using matrixs2x2 = ggl::matrix<std::string, 2, 2>;
+
     GIVEN( "two matrices with the same dimensions" ) {
-        const ggl::matrixf<2, 2> m1{ 1.0f, 2.0f, 3.0f, 4.0f };
-        const ggl::matrixf<2, 2> m2{ 4.0f, 3.0f, 2.0f, 1.0f };
-        WHEN( "the matrix entries are real numbers" ) {
-            a
+        const matrixs2x2 m1{ "a", "b", "c", "d" };
+        const matrixs2x2 m2{ "e", "f", "g", "h" };
+
+        WHEN( "the matrices are added" ) {
+            THEN( "the result matrix is the entry sum of the operands" ) {
+                const matrixs2x2 expected{ "aa", "bb", "cc", "dd" };
+                REQUIRE( (m1 + m1) == expected );
+            } THEN( "the result matrix is the ordered sum of the operands" ) {
+                const matrixs2x2 expected{ "ea", "fb", "gc", "hd" };
+                REQUIRE( (m2 + m1) == expected );
+            }
         }
     }
 }
-*/

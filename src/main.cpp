@@ -22,4 +22,7 @@ int main() {
 
     ggl::matrixf<3, 3> mat = 2.0f * ( mat1 - mat3 ) * 4.0f;
     std::cout << mat << std::endl;
+
+    ggl::vectorf<4> vec{ 1.0f, 0.0f, 0.0f, 1.0f };
+    std::cout << vec << std::endl;
 }
