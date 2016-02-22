@@ -26,4 +26,15 @@ SCENARIO( "ggl::matrix is correctly initialized", "[matrix]" ) {
             }
         }
     }
+
+    GIVEN( "explicit entries" ) {
+        WHEN( "there are an appropriate number of entries" ) {
+            const ggl::matrixf<1, 3> m{ 1.0f, 2.0f, 3.0f };
+
+            THEN( "the entries are in the correct positions" ) {
+                for( unsigned cIdx = 0; cIdx < 3; ++cIdx )
+                    REQUIRE( m(0, cIdx) == Approx(cIdx + 1.0f) );
+            }
+        }
+    }
 }

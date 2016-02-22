@@ -1,5 +1,6 @@
 #include <cmath>
 #include <memory>
+#include <utility>
 
 namespace ggl {
 
@@ -10,9 +11,10 @@ matrix<T, R, C>::matrix() {
 }
 
 
-template <class T, unsigned R, unsigned C>
-matrix<T, R, C>::matrix( std::array<EntryType, sNumEnts> pEntries ) {
-    mEntries = std::move( pEntries );
+template <class T, unsigned R, unsigned C> template <class... Ts>
+matrix<T, R, C>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pEntries)... }} {
+    static_assert( sizeof...(Ts) == sNumEnts,
+        "'ggl::matrix' value constructor must be given exactly R*C entries." );
 }
 
 

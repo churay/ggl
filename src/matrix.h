@@ -20,10 +20,8 @@ class matrix {
     /// Constructors ///
 
     matrix();
-    matrix( std::array<EntryType, sNumEnts> pEntries );
-
-    // TODO(JRC): Create a constructor that intakes an initialization list
-    // with the appropriate number of entries (i.e. sNumEnts).
+    template <class... Ts>
+    explicit matrix( Ts&&... pEntries );
 
     /// Operator Overloads ///
 
