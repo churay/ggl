@@ -35,6 +35,11 @@ const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
 
 template <class T, unsigned R, unsigned C>
 bool matrix<T, R, C>::operator==( const matrix& pOther ) const {
+    for( unsigned rIdx = 0; rIdx < sNumRows; ++rIdx )
+        for( unsigned cIdx = 0; cIdx < sNumCols; ++cIdx )
+            if( (*this)( rIdx, cIdx ) != pOther( rIdx, cIdx ) )
+                return false;
+
     return true;
 }
 
