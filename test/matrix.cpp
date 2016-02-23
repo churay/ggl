@@ -44,7 +44,6 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
 SCENARIO( "ggl::matrix equality works", "[matrix]" ) {
     GIVEN( "two matrices with the same dimensions" ) {
         const ggl::matrix<int, 2, 2> m1{ 1, 1, 1, 1 };
-        const ggl::matrix<int, 2, 2> m2{ 1, 1, 1, 1 };
 
         WHEN( "the same matrix is used in the comparison" ) {
             THEN( "the equality operator returns true" ) {

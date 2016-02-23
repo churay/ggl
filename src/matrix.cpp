@@ -8,7 +8,7 @@ namespace ggl {
 template <class T, unsigned R, unsigned C>
 matrix<T, R, C>::matrix() {
     for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        mEntries[eIdx] = EntryType();
+        (*this)( eIdx ) = EntryType();
 }
 
 
@@ -22,13 +22,13 @@ matrix<T, R, C>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pEntri
 
 
 template <class T, unsigned R, unsigned C>
-const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
-    return mEntries[pRow * sNumCols + pCol];
+T& matrix<T, R, C>::operator()( unsigned pEntry ) {
+    return mEntries[pEntry];
 }
 
 
 template <class T, unsigned R, unsigned C>
-T& matrix<T, R, C>::operator()( unsigned pEntry ) {
+const T& matrix<T, R, C>::operator()( unsigned pEntry ) const {
     return mEntries[pEntry];
 }
 
@@ -40,8 +40,8 @@ T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) {
 
 
 template <class T, unsigned R, unsigned C>
-const T& matrix<T, R, C>::operator()( unsigned pEntry ) const {
-    return mEntries[pEntry];
+const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
+    return mEntries[pRow * sNumCols + pCol];
 }
 
 
@@ -143,39 +143,6 @@ matrix<T, C, R> matrix<T, R, C>::transpose() const {
         for( unsigned cIdx = 0; cIdx < sNumCols; ++cIdx )
             result( cIdx, rIdx ) = (*this)( rIdx, cIdx );
 
-    return result;
-}
-
-
-// NOTE(JRC): The 'dot' and 'cross' operations are kept within the 'ggl::matrix'
-// class because subclassing would require casting down if matrix operations
-// produced a vector.
-template <class T, unsigned R, unsigned C>
-T matrix<T, R, C>::dot( const matrix& pOther ) const {
-    static_assert( sNumRows == 1 || sNumCols == 1,
-        "'ggl::matrix' dot operation is only valid on vectors." );
-
-    EntryType result;
-    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result += (*this)( eIdx ) * pOther( eIdx );
-
-    return result;
-}
-
-
-// TODO(JRC): Implement this operation using the matrix determinant operation.
-template <class T, unsigned R, unsigned C>
-matrix<T, R, C> matrix<T, R, C>::cross( const matrix& pOther ) const {
-    static_assert( (sNumRows == 1 || sNumCols == 1) && sNumEnts == 3,
-        "'ggl::matrix' cross operation is only valid on 3-vectors." );
-
-    matrix<T, R, C> result;
-    for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx ) {
-        unsigned eIdx1 = ( eIdx + 1 ) % sNumEnts;
-        unsigned eIdx2 = ( eIdx + 2 ) % sNumEnts;
-        result( eIdx ) = (*this)( eIdx1 ) * pOther( eIdx2 ) -
-            (*this)( eIdx2 ) * pOther( eIdx1 );
-    }
     return result;
 }
 

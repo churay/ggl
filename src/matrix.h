@@ -20,7 +20,8 @@ class matrix {
     /// Constructors ///
 
     matrix();
-    template <class... Ts> explicit matrix( Ts&&... pEntries );
+    template <class... Ts>
+    explicit matrix( Ts&&... pEntries );
 
     /// Operator Overloads ///
 
@@ -44,34 +45,21 @@ class matrix {
     matrix<T, R, C> normal() const;
     matrix<T, C, R> transpose() const;
 
-    EntryType dot( const matrix& pOther ) const;
-    matrix<T, R, C> cross( const matrix& pOther ) const;
-
     const EntryType* data() const;
-
-    // TODO(JRC): Implement these functions.
 
     private:
 
     /// Class Setup ///
 
-    static_assert( sNumEnts > 0, "'ggl::matrix' must have positive entries." );
-
     template <class TT, unsigned RR, unsigned CC> friend class matrix;
-
-    /// Helper Functions ///
-
-    // TODO(JRC): Implement these functions.
+    static_assert( sNumEnts > 0, "'ggl::matrix' must have positive entries." );
 
     /// Class Fields ///
 
     std::array<EntryType, sNumEnts> mEntries;
 };
 
-template <class T, unsigned R> using vector = matrix<T, R, 1>;
-
 template <unsigned R, unsigned C> using matrixf = matrix<float, R, C>;
-template <unsigned R> using vectorf = vector<float, R>;
 
 }
 
