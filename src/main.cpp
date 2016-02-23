@@ -1,5 +1,6 @@
 #include <iostream>
 #include "matrix.h"
+#include "xform.h"
 
 int main() {
     ggl::matrixf<3, 3> mat1{
@@ -30,4 +31,6 @@ int main() {
     std::cout << vec << std::endl;
 
     std::cout << mat << " * " << vec << " = " << mat * vec << std::endl;
+
+    std::cout << ggl::xform::test() << std::endl;
 }
