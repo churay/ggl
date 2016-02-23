@@ -8,7 +8,7 @@ namespace ggl {
 template <class T, unsigned R, unsigned C>
 matrix<T, R, C>::matrix() {
     for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        mEntries[eIdx] = EntryType();
+        (*this)( eIdx ) = EntryType();
 }
 
 
@@ -22,13 +22,13 @@ matrix<T, R, C>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pEntri
 
 
 template <class T, unsigned R, unsigned C>
-const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
-    return mEntries[pRow * sNumCols + pCol];
+T& matrix<T, R, C>::operator()( unsigned pEntry ) {
+    return mEntries[pEntry];
 }
 
 
 template <class T, unsigned R, unsigned C>
-T& matrix<T, R, C>::operator()( unsigned pEntry ) {
+const T& matrix<T, R, C>::operator()( unsigned pEntry ) const {
     return mEntries[pEntry];
 }
 
@@ -40,8 +40,8 @@ T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) {
 
 
 template <class T, unsigned R, unsigned C>
-const T& matrix<T, R, C>::operator()( unsigned pEntry ) const {
-    return mEntries[pEntry];
+const T& matrix<T, R, C>::operator()( unsigned pRow, unsigned pCol ) const {
+    return mEntries[pRow * sNumCols + pCol];
 }
 
 

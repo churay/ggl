@@ -49,19 +49,12 @@ class matrix {
 
     const EntryType* data() const;
 
-    // TODO(JRC): Implement these functions.
-
     private:
 
     /// Class Setup ///
 
-    static_assert( sNumEnts > 0, "'ggl::matrix' must have positive entries." );
-
     template <class TT, unsigned RR, unsigned CC> friend class matrix;
-
-    /// Helper Functions ///
-
-    // TODO(JRC): Implement these functions.
+    static_assert( sNumEnts > 0, "'ggl::matrix' must have positive entries." );
 
     /// Class Fields ///
 
