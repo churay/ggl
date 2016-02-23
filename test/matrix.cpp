@@ -10,7 +10,8 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 1 ); REQUIRE( c == 1 ); REQUIRE( e == 1 );
             } THEN( "the elements are all zero" ) {
-                REQUIRE( m(0, 0) == Approx(0.0f) );
+                for( unsigned eIdx = 0; eIdx < e; ++eIdx )
+                    REQUIRE( m(eIdx) == Approx(0.0f) );
             }
         }
 
@@ -20,9 +21,8 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 2 ); REQUIRE( c == 3 ); REQUIRE( e == 6 );
             } THEN( "the elements are all zero" ) {
-                for( unsigned rIdx = 0; rIdx < r; ++rIdx )
-                    for( unsigned cIdx = 0; cIdx < c; ++cIdx )
-                        REQUIRE( m(rIdx, cIdx) == Approx(0.0f) );
+                for( unsigned eIdx = 0; eIdx < e; ++eIdx )
+                    REQUIRE( m(eIdx) == Approx(0.0f) );
             }
         }
     }
@@ -34,8 +34,8 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 1 ); REQUIRE( c == 3 ); REQUIRE( e == 3 );
             } THEN( "the entries are in the correct positions" ) {
-                for( unsigned cIdx = 0; cIdx < 3; ++cIdx )
-                    REQUIRE( m(0, cIdx) == Approx(cIdx + 1.0f) );
+                for( unsigned eIdx = 0; eIdx < e; ++eIdx )
+                    REQUIRE( m(eIdx) == Approx(eIdx + 1.0f) );
             }
         }
     }
