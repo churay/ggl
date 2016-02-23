@@ -23,6 +23,11 @@ int main() {
     ggl::matrixf<3, 3> mat = 2.0f * ( mat1 - mat3 ) * 4.0f;
     std::cout << mat << std::endl;
 
-    ggl::vectorf<4> vec{ 1.0f, 0.0f, 0.0f, 1.0f };
+    ggl::vectorf<3> vec1{ 1.0f, 0.0f, 0.0f };
+    ggl::vectorf<3> vec2{ 0.0f, 1.0f, 0.0f };
+
+    ggl::vectorf<3> vec = vec1.cross( vec2 );
     std::cout << vec << std::endl;
+
+    std::cout << mat << " * " << vec << " = " << mat * vec << std::endl;
 }

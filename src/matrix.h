@@ -20,10 +20,12 @@ class matrix {
     /// Constructors ///
 
     matrix();
-    template <class... Ts> matrix( Ts&&... pEntries );
+    template <class... Ts> explicit matrix( Ts&&... pEntries );
 
     /// Operator Overloads ///
 
+    EntryType& operator()( unsigned pEntry );
+    const EntryType& operator()( unsigned pEntry ) const;
     EntryType& operator()( unsigned pRow, unsigned pCol );
     const EntryType& operator()( unsigned pRow, unsigned pCol ) const;
 
@@ -36,11 +38,16 @@ class matrix {
     template <unsigned C2>
     matrix<T, R, C2> operator*( const matrix<T, C, C2>& pOther ) const;
 
+    /// Class Functions ///
+
     EntryType norm() const;
     matrix<T, R, C> normal() const;
     matrix<T, C, R> transpose() const;
 
-    /// Class Functions ///
+    EntryType dot( const matrix& pOther ) const;
+    matrix<T, R, C> cross( const matrix& pOther ) const;
+
+    const EntryType* data() const;
 
     // TODO(JRC): Implement these functions.
 
