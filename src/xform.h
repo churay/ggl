@@ -10,6 +10,9 @@ namespace ggl {
 namespace xform {
     template <class... Ts>
     auto scale( Ts&&... pValues );
+
+    template <class... Ts>
+    auto translate( Ts&&... pValues );
 }
 
 }
