@@ -1,10 +1,10 @@
 ### Compilation/Linking Tools and Flags ###
 
-CXX = clang++
-CXXFLAGS = -std=c++11 -Wall -Werror -g -O0
+CXX = g++
+CXXFLAGS = -std=c++1y -Wall -Werror -g -O0
 CXXINCLS = -I$(SRC_DIR)
 TESTINCLS = -I$(PROJ_DIR) -I$(LIB_DIR)
-LDFLAGS = 
+LDFLAGS =
 
 ### Project Files and Directories ###
 

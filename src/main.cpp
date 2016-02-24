@@ -32,5 +32,5 @@ int main() {
 
     std::cout << mat << " * " << vec << " = " << mat * vec << std::endl;
 
-    std::cout << ggl::xform::test() << std::endl;
+    std::cout << ggl::xform::scale( 1.0f, 1.0f ) << std::endl;
 }

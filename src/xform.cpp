@@ -1,21 +1,17 @@
 #include <cmath>
-#include <memory>
-#include <sstream>
+#include <tuple>
 #include <utility>
+#include "matrix.h"
 
 namespace ggl {
 
-int xform::test() {
-    return 42;
-}
-
-/*
 template <class... Ts>
-matrix<Ts, sizeof...(Ts), sizeof...(Ts)> xform::scale( Ts&&... pValues ) {
-    return matrix<>();
-}
-*/
+auto xform::scale( Ts&&... pValues ) {
+    using T = typename std::tuple_element<0, std::tuple<Ts...>>::type;
+    constexpr unsigned D = sizeof...( Ts );
 
-// ggl::xform::scale( 1.0f, 2.0f );
+    ggl::matrix<T, D, D> result;
+    return result;
+}
 
 }
