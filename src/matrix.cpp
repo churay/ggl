@@ -115,22 +115,22 @@ matrix<T, R, C2> matrix<T, R, C>::operator*( const matrix<T, C, C2>& pOther ) co
 
 
 template <class T, unsigned R, unsigned C>
-T matrix<T, R, C>::norm() const {
-    EntryType norm;
+T matrix<T, R, C>::normal() const {
+    EntryType normal;
     for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        norm += (*this)( eIdx ) * (*this)( eIdx );
+        normal += (*this)( eIdx ) * (*this)( eIdx );
 
-    return std::sqrt( norm );
+    return std::sqrt( normal );
 }
 
 
 template <class T, unsigned R, unsigned C>
-matrix<T, R, C> matrix<T, R, C>::normal() const {
-    const EntryType norm = this->norm();
+matrix<T, R, C> matrix<T, R, C>::normalize() const {
+    const EntryType normal = this->normal();
 
     matrix<EntryType, sNumRows, sNumCols> result;
     for( unsigned eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result( eIdx ) = (*this)( eIdx ) / norm;
+        result( eIdx ) = (*this)( eIdx ) / normal;
 
     return result;
 }
@@ -143,6 +143,26 @@ matrix<T, C, R> matrix<T, R, C>::transpose() const {
         for( unsigned cIdx = 0; cIdx < sNumCols; ++cIdx )
             result( cIdx, rIdx ) = (*this)( rIdx, cIdx );
 
+    return result;
+}
+
+
+template <class T, unsigned R, unsigned C>
+T matrix<T, R, C>::determinant() const {
+    static_assert( sNumRows == sNumCols,
+        "'ggl::matrix' determinant operation is only valid on square matrices." );
+
+    EntryType result;
+    return result;
+}
+
+
+template <class T, unsigned R, unsigned C>
+matrix<T, R, C> matrix<T, R, C>::inverse() const {
+    static_assert( sNumRows == sNumCols,
+        "'ggl::matrix' inverse operation is only valid on square matrices." );
+
+    matrix<T, R, C> result;
     return result;
 }
 

@@ -69,18 +69,16 @@ SCENARIO( "ggl::matrix equality works", "[matrix]" ) {
 }
 
 SCENARIO( "ggl::matrix addition works", "[matrix]" ) {
-    using matrixs2x2 = ggl::matrix<std::string, 2, 2>;
-
     GIVEN( "two matrices with the same dimensions" ) {
-        const matrixs2x2 m1{ "a", "b", "c", "d" };
-        const matrixs2x2 m2{ "e", "f", "g", "h" };
+        const ggl::matrix<int, 2, 2> m1{ 1, 2, 3, 4 };
+        const ggl::matrix<int, 2, 2> m2{ 5, 6, 7, 8 };
 
         WHEN( "the matrices are added" ) {
             THEN( "the result matrix is the entry sum of the operands" ) {
-                const matrixs2x2 expected{ "aa", "bb", "cc", "dd" };
+                const ggl::matrix<int, 2, 2> expected{ 2, 4, 6, 8 };
                 REQUIRE( (m1 + m1) == expected );
             } THEN( "the result matrix is the ordered sum of the operands" ) {
-                const matrixs2x2 expected{ "ea", "fb", "gc", "hd" };
+                const ggl::matrix<int, 2, 2> expected{ 6, 8, 10, 12 };
                 REQUIRE( (m2 + m1) == expected );
             }
         }

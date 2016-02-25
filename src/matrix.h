@@ -3,6 +3,7 @@
 
 #include <array>
 #include <utility>
+#include <type_traits>
 
 namespace ggl {
 
@@ -40,9 +41,12 @@ class matrix {
 
     /// Class Functions ///
 
-    EntryType norm() const;
-    matrix<T, R, C> normal() const;
+    EntryType normal() const;
+    matrix<T, R, C> normalize() const;
     matrix<T, C, R> transpose() const;
+
+    EntryType determinant() const;
+    matrix<T, R, C> inverse() const;
 
     EntryType dot( const matrix& pOther ) const;
     matrix<T, R, C> cross( const matrix& pOther ) const;
@@ -54,7 +58,11 @@ class matrix {
     /// Class Setup ///
 
     template <class TT, unsigned RR, unsigned CC> friend class matrix;
-    static_assert( sNumEnts > 0, "'ggl::matrix' must have positive entries." );
+
+    static_assert( sNumEnts > 0,
+        "'ggl::matrix' must have a positive number of entries." );
+    static_assert( std::is_arithmetic<EntryType>::value,
+        "'ggl::matrix' must have an arithmetic entry type." );
 
     /// Class Fields ///
 
