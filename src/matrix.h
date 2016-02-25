@@ -1,6 +1,10 @@
 #ifndef GGL_MATRIX_H
 #define GGL_MATRIX_H
 
+// NOTE(JRC): LibStdC++ defines a "minor" macro, which needs to be unbound in
+// order to define a "minor" function.
+#undef minor
+
 #include <array>
 #include <utility>
 #include <type_traits>
@@ -63,6 +67,10 @@ class matrix {
         "'ggl::matrix' must have a positive number of entries." );
     static_assert( std::is_arithmetic<EntryType>::value,
         "'ggl::matrix' must have an arithmetic entry type." );
+
+    /// Helper Functions ///
+
+    matrix<T, R-1, C-1> minor( unsigned pRow, unsigned pCol ) const;
 
     /// Class Fields ///
 
