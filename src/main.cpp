@@ -41,12 +41,16 @@ int main() {
     std::cout << ggl::util::factorial( 3 ) << std::endl;
     std::cout << ggl::util::factorial( 5 ) << std::endl;
 
+    const auto& permutations = ggl::util::permutations<3>();
     std::cout << "Permutations: [ ";
-    for( const auto& permutation : ggl::util::permutations<4>() ) {
+    for( const auto& permutation : permutations ) {
         std::cout << "[ ";
         for( const auto& permutationValue : permutation )
             std::cout << permutationValue << ", ";
         std::cout << "], ";
     }
     std::cout << "]" << std::endl;
+
+    std::cout << "Inversions in Permutation #1: " <<
+        ggl::util::inversions( permutations[0] ) << std::endl;
 }

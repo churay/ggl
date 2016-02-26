@@ -10,13 +10,13 @@ constexpr unsigned util::factorial( const unsigned n ) {
 
 template <unsigned N>
 auto util::permutations() {
-    std::array<std::array<unsigned, N>, factorial(N)> perms{};
+    std::array<std::array<unsigned, N>, factorial(N)> result{};
 
     const auto prevPermutations = permutations<N-1>();
     for( unsigned permIdx = 0; permIdx < factorial(N-1); ++permIdx ) {
         const auto& prevPermutation = prevPermutations[permIdx];
         for( unsigned insIdx = 0; insIdx < N; ++insIdx ) {
-            auto& currPermutation = perms[N * permIdx + insIdx];
+            auto& currPermutation = result[N * permIdx + insIdx];
             for( unsigned iterIdx = 0; iterIdx < N; ++iterIdx ) {
                 auto& currValue = currPermutation[iterIdx];
                 if( iterIdx < insIdx ) { currValue = prevPermutation[iterIdx]; }
@@ -26,11 +26,16 @@ auto util::permutations() {
         }
     }
 
-    return perms;
+    return result;
 }
 template <>
 auto util::permutations<1>() {
     return std::array<std::array<unsigned, 1>, factorial(1)>{{{{ 1 }}}};
+}
+
+template <class T, size_t N>
+unsigned util::inversions( const std::array<T, N>& array ) {
+    return 0;
 }
 
 }

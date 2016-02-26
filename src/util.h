@@ -11,6 +11,9 @@ namespace util {
 
     template <unsigned N> auto permutations();
     template <> auto permutations<1>();
+
+    template <class T, size_t N>
+    unsigned inversions( const std::array<T, N>& array );
 }
 
 }
