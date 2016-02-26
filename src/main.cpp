@@ -1,4 +1,5 @@
 #include <iostream>
+#include "util.h"
 #include "matrix.h"
 #include "xform.h"
 
@@ -36,4 +37,16 @@ int main() {
     std::cout << ggl::xform::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
 
     // std::cout << mat1.determinant() << std::endl;
+
+    std::cout << ggl::util::factorial( 3 ) << std::endl;
+    std::cout << ggl::util::factorial( 5 ) << std::endl;
+
+    std::cout << "Permutations: [ ";
+    for( const auto& permutation : ggl::util::permutations<4>() ) {
+        std::cout << "[ ";
+        for( const auto& permutationValue : permutation )
+            std::cout << permutationValue << ", ";
+        std::cout << "], ";
+    }
+    std::cout << "]" << std::endl;
 }

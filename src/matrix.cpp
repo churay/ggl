@@ -152,15 +152,7 @@ T matrix<T, R, C>::determinant() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
-    // TODO(JRC): Create a specialized version of this function that makes it
-    // possible to define the behavior for 1x1 matrices at compile-time.
     EntryType result;
-    if( R == 1 )
-        result = (*this)( 0, 0 );
-    else
-        for( unsigned cIdx = 0; cIdx < sNumCols; ++cIdx )
-            result += (*this)( 0, cIdx ) + this->minor( 0, cIdx ).determinant();
-
     return result;
 }
 
@@ -214,17 +206,6 @@ matrix<T, R, C> matrix<T, R, C>::cross( const matrix& pOther ) const {
 template <class T, unsigned R, unsigned C>
 const T* matrix<T, R, C>::data() const {
     return mEntries.data();
-}
-
-
-template <class T, unsigned R, unsigned C>
-matrix<T, R-1, C-1> matrix<T, R, C>::minor( unsigned pRow, unsigned pCol ) const {
-    matrix<EntryType, sNumRows-1, sNumCols-1> result;
-    for( unsigned rIdx = 0; rIdx < sNumRows - 1; ++rIdx )
-        for( unsigned cIdx = 0; cIdx < sNumCols - 1; ++cIdx )
-            result( rIdx, cIdx ) = (*this)( rIdx + (rIdx >= pRow), cIdx + (cIdx >= pCol) );
-
-    return result;
 }
 
 }

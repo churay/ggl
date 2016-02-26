@@ -68,10 +68,6 @@ class matrix {
     static_assert( std::is_arithmetic<EntryType>::value,
         "'ggl::matrix' must have an arithmetic entry type." );
 
-    /// Helper Functions ///
-
-    matrix<T, R-1, C-1> minor( unsigned pRow, unsigned pCol ) const;
-
     /// Class Fields ///
 
     std::array<EntryType, sNumEnts> mEntries;
