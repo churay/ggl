@@ -36,7 +36,8 @@ int main() {
     std::cout << ggl::xform::scale( 1.0f, 2.0f ) << std::endl;
     std::cout << ggl::xform::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
 
-    // std::cout << mat1.determinant() << std::endl;
+    std::cout << mat1.determinant() << std::endl;
+    std::cout << mat2.determinant() << std::endl;
 
     std::cout << ggl::util::factorial( 3 ) << std::endl;
     std::cout << ggl::util::factorial( 5 ) << std::endl;
@@ -51,6 +52,6 @@ int main() {
     }
     std::cout << "]" << std::endl;
 
-    std::cout << "Inversions in Permutation #6: " <<
-        ggl::util::inversions( permutations[5] ) << std::endl;
+    std::cout << "Inversions in Permutation #1: " <<
+        ggl::util::inversions( permutations[0] ) << std::endl;
 }

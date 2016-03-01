@@ -9,7 +9,7 @@ constexpr unsigned util::factorial( const unsigned n ) {
 
 
 std::vector<std::vector<unsigned>> util::permutations( const unsigned n ) {
-    std::vector<std::vector<unsigned>> permutes( factorial(n), std::vector<unsigned>(n, 1) );
+    std::vector<std::vector<unsigned>> permutes( factorial(n), std::vector<unsigned>(n, 0) );
     if( n <= 1 ) return permutes;
 
     const std::vector<std::vector<unsigned>> prevPermutes = permutations( n-1 );
@@ -21,7 +21,7 @@ std::vector<std::vector<unsigned>> util::permutations( const unsigned n ) {
                 auto& currValue = currPermute[iterIdx];
                 if( iterIdx < insIdx ) { currValue = prevPermute[iterIdx]; }
                 else if( iterIdx > insIdx ) { currValue = prevPermute[iterIdx-1]; }
-                else { currValue = n; }
+                else { currValue = n-1; }
             }
         }
     }

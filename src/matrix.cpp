@@ -3,6 +3,8 @@
 #include <sstream>
 #include <utility>
 
+#include "util.h"
+
 namespace ggl {
 
 template <class T, size_t R, size_t C>
@@ -153,6 +155,14 @@ T matrix<T, R, C>::determinant() const {
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
     EntryType result;
+    for( const auto& ePermute : ggl::util::permutations(sNumRows) ) {
+        EntryType eResult = ( ggl::util::inversions(ePermute) % 2 == 0 ) ? 1 : -1;
+        for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
+            eResult *= (*this)( ePermute[dIdx], dIdx );
+
+        result += eResult;
+    }
+
     return result;
 }
 
