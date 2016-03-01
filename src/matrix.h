@@ -11,16 +11,16 @@
 
 namespace ggl {
 
-template <class T, unsigned R, unsigned C>
+template <class T, size_t R, size_t C>
 class matrix {
     public:
 
     /// Class Attributes ///
 
     using EntryType = T;
-    constexpr static unsigned sNumRows{ R };
-    constexpr static unsigned sNumCols{ C };
-    constexpr static unsigned sNumEnts{ R * C };
+    constexpr static size_t sNumRows{ R };
+    constexpr static size_t sNumCols{ C };
+    constexpr static size_t sNumEnts{ R * C };
 
     /// Constructors ///
 
@@ -29,10 +29,10 @@ class matrix {
 
     /// Operator Overloads ///
 
-    EntryType& operator()( unsigned pEntry );
-    const EntryType& operator()( unsigned pEntry ) const;
-    EntryType& operator()( unsigned pRow, unsigned pCol );
-    const EntryType& operator()( unsigned pRow, unsigned pCol ) const;
+    EntryType& operator()( size_t pEntry );
+    const EntryType& operator()( size_t pEntry ) const;
+    EntryType& operator()( size_t pRow, size_t pCol );
+    const EntryType& operator()( size_t pRow, size_t pCol ) const;
 
     bool operator==( const matrix& pOther ) const;
     bool operator!=( const matrix& pOther ) const;
@@ -40,7 +40,7 @@ class matrix {
     matrix<T, R, C> operator+( const matrix& pOther ) const;
     matrix<T, R, C> operator-( const matrix& pOther ) const;
     matrix<T, R, C> operator*( const EntryType& pValue ) const;
-    template <unsigned C2>
+    template <size_t C2>
     matrix<T, R, C2> operator*( const matrix<T, C, C2>& pOther ) const;
 
     /// Class Functions ///
@@ -61,7 +61,7 @@ class matrix {
 
     /// Class Setup ///
 
-    template <class TT, unsigned RR, unsigned CC> friend class matrix;
+    template <class TT, size_t RR, size_t CC> friend class matrix;
 
     static_assert( sNumEnts > 0,
         "'ggl::matrix' must have a positive number of entries." );
@@ -73,10 +73,10 @@ class matrix {
     std::array<EntryType, sNumEnts> mEntries;
 };
 
-template <class T, unsigned R> using vector = matrix<T, R, 1>;
+template <class T, size_t R> using vector = matrix<T, R, 1>;
 
-template <unsigned R, unsigned C> using matrixf = matrix<float, R, C>;
-template <unsigned R> using vectorf = vector<float, R>;
+template <size_t R, size_t C> using matrixf = matrix<float, R, C>;
+template <size_t R> using vectorf = vector<float, R>;
 
 }
 

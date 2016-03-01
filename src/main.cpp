@@ -51,6 +51,6 @@ int main() {
     }
     std::cout << "]" << std::endl;
 
-    std::cout << "Inversions in Permutation #1: " <<
-        ggl::util::inversions( permutations[0] ) << std::endl;
+    std::cout << "Inversions in Permutation #3: " <<
+        ggl::util::inversions( permutations[2] ) << std::endl;
 }

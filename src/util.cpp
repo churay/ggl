@@ -8,7 +8,7 @@ constexpr unsigned util::factorial( const unsigned n ) {
 }
 
 
-template <unsigned N>
+template <size_t N>
 auto util::permutations() {
     std::array<std::array<unsigned, N>, factorial(N)> result{};
 

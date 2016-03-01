@@ -9,7 +9,7 @@ namespace ggl {
 namespace util {
     constexpr unsigned factorial( const unsigned n );
 
-    template <unsigned N> auto permutations();
+    template <size_t N> auto permutations();
     template <> auto permutations<1>();
 
     template <class T, size_t N>
