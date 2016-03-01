@@ -38,6 +38,7 @@ int main() {
 
     std::cout << mat1.determinant() << std::endl;
     std::cout << mat2.determinant() << std::endl;
+    std::cout << mat3.determinant() << std::endl;
 
     std::cout << ggl::util::factorial( 3 ) << std::endl;
     std::cout << ggl::util::factorial( 5 ) << std::endl;
