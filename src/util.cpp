@@ -1,5 +1,4 @@
-#include <array>
-#include <utility>
+#include <vector>
 
 namespace ggl {
 
@@ -8,33 +7,33 @@ constexpr unsigned util::factorial( const unsigned n ) {
 }
 
 
-template <size_t N>
-auto util::permutations() {
-    std::array<std::array<unsigned, N>, factorial(N)> result{};
+std::vector<std::vector<unsigned>> util::permutations( const unsigned n ) {
+    std::vector<std::vector<unsigned>> permutes( factorial(n), std::vector<unsigned>(n) );
 
-    const auto prevPermutations = permutations<N-1>();
-    for( unsigned permIdx = 0; permIdx < factorial(N-1); ++permIdx ) {
-        const auto& prevPermutation = prevPermutations[permIdx];
-        for( unsigned insIdx = 0; insIdx < N; ++insIdx ) {
-            auto& currPermutation = result[N * permIdx + insIdx];
-            for( unsigned iterIdx = 0; iterIdx < N; ++iterIdx ) {
-                auto& currValue = currPermutation[iterIdx];
-                if( iterIdx < insIdx ) { currValue = prevPermutation[iterIdx]; }
-                else if( iterIdx > insIdx ) { currValue = prevPermutation[iterIdx-1]; }
-                else { currValue = N; }
+    if( n <= 1 ) {
+        permutes[0][0] = 1;
+        return permutes;
+    }
+
+    const std::vector<std::vector<unsigned>> prevPermutes = permutations( n-1 );
+    for( size_t permIdx = 0; permIdx < factorial(n-1); ++permIdx ) {
+        const auto& prevPermute = prevPermutes[permIdx];
+        for( size_t insIdx = 0; insIdx < n; ++insIdx ) {
+            auto& currPermute = permutes[n * permIdx + insIdx];
+            for( size_t iterIdx = 0; iterIdx < n; ++iterIdx ) {
+                auto& currValue = currPermute[iterIdx];
+                if( iterIdx < insIdx ) { currValue = prevPermute[iterIdx]; }
+                else if( iterIdx > insIdx ) { currValue = prevPermute[iterIdx-1]; }
+                else { currValue = n; }
             }
         }
     }
 
-    return result;
-}
-template <>
-auto util::permutations<1>() {
-    return std::array<std::array<unsigned, 1>, factorial(1)>{{{{ 1 }}}};
+    return permutes;
 }
 
-template <class T, size_t N>
-unsigned util::inversions( const std::array<T, N>& array ) {
+
+unsigned util::inversions( const std::vector<unsigned>& permutation ) {
     return 0;
 }
 

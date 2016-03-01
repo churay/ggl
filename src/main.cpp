@@ -41,7 +41,7 @@ int main() {
     std::cout << ggl::util::factorial( 3 ) << std::endl;
     std::cout << ggl::util::factorial( 5 ) << std::endl;
 
-    const auto& permutations = ggl::util::permutations<3>();
+    const auto& permutations = ggl::util::permutations( 3 );
     std::cout << "Permutations: [ ";
     for( const auto& permutation : permutations ) {
         std::cout << "[ ";
