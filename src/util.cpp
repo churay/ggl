@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <vector>
 
 namespace ggl {
@@ -8,12 +9,8 @@ constexpr unsigned util::factorial( const unsigned n ) {
 
 
 std::vector<std::vector<unsigned>> util::permutations( const unsigned n ) {
-    std::vector<std::vector<unsigned>> permutes( factorial(n), std::vector<unsigned>(n) );
-
-    if( n <= 1 ) {
-        permutes[0][0] = 1;
-        return permutes;
-    }
+    std::vector<std::vector<unsigned>> permutes( factorial(n), std::vector<unsigned>(n, 1) );
+    if( n <= 1 ) return permutes;
 
     const std::vector<std::vector<unsigned>> prevPermutes = permutations( n-1 );
     for( size_t permIdx = 0; permIdx < factorial(n-1); ++permIdx ) {
@@ -33,8 +30,43 @@ std::vector<std::vector<unsigned>> util::permutations( const unsigned n ) {
 }
 
 
-unsigned util::inversions( const std::vector<unsigned>& permutation ) {
-    return 0;
+namespace {
+unsigned _merge( std::vector<unsigned>& permute,
+        const std::vector<unsigned>& left, const std::vector<unsigned>& right ) {
+    unsigned numInvs = 0;
+
+    auto leftIter = left.begin(), rightIter = right.begin();
+    auto permuteIter = permute.begin();
+    while( leftIter != left.end() && rightIter != right.end() ) {
+        if( *leftIter <= *rightIter ) {
+            *(permuteIter++) = *(leftIter++);
+        } else {
+            *(permuteIter++) = *(rightIter++);
+            numInvs += left.end() - leftIter;
+        }
+    }
+
+    std::copy( leftIter, left.end(), permuteIter );
+    std::copy( rightIter, right.end(), permuteIter );
+
+    return numInvs;
+}
+unsigned _inversions( std::vector<unsigned>& permute ) {
+    if( permute.size() <= 1 ) {
+        return 0;
+    } else {
+        auto permuteMidIter = permute.begin() + ((permute.end() - permute.begin()) / 2);
+        std::vector<unsigned> permuteLeft{ permute.begin(), permuteMidIter };
+        std::vector<unsigned> permuteRight{ permuteMidIter, permute.end() };
+
+        return _inversions( permuteLeft ) + _inversions( permuteRight ) +
+            _merge( permute, permuteLeft, permuteRight );
+    }
+}
+}
+unsigned util::inversions( const std::vector<unsigned>& permute ) {
+    std::vector<unsigned> permuteCopy( permute );
+    return _inversions( permuteCopy );
 }
 
 }

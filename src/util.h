@@ -9,7 +9,7 @@ namespace util {
     constexpr unsigned factorial( const unsigned n );
 
     std::vector<std::vector<unsigned>> permutations( const unsigned n );
-    unsigned inversions( const std::vector<unsigned>& permutation );
+    unsigned inversions( const std::vector<unsigned>& permute );
 }
 
 }
