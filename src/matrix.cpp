@@ -204,7 +204,7 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
         result._scaleRows( rIdx, rScale );
     }
 
-    return elim;
+    return result;
 }
 
 
