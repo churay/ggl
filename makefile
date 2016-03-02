@@ -24,26 +24,31 @@ SUITE_SRC_FILE = $(ETC_DIR)/suite.cpp
 
 ### Generated Files or Directories ###
 
-PROJ_EXE = ggl
-TEST_EXE = ggl.test
+PROJ_NAME = ggl
+PROJ_EXE = $(BIN_DIR)/$(PROJ_NAME)
+
+TEST_NAME = ggl.test
+TEST_EXE = $(BIN_DIR)/$(TEST_NAME)
 TEST_LIB = $(LIB_DIR)/catch.hpp
 
 ### Project Build Rules and Procedures ###
 
-.PHONY : $(PROJ_EXE) %.test clean
+.PHONY : clean
 
 all : $(PROJ_EXE)
 
+$(PROJ_NAME) : $(PROJ_EXE)
 $(PROJ_EXE) : $(SRC_DIR)/main.cpp $(SRC_FILES) $(HDR_FILES)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< -o $(BIN_DIR)/$@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< -o $@
 
+$(TEST_NAME) : $(TEST_EXE)
 $(TEST_EXE) : $(TEST_FILES) $(SRC_FILES) $(HDR_FILES) $(TEST_LIB)
 	$(GENSUITE) -o $(SUITE_SRC_FILE) $(foreach tf,$<,$(basename $(notdir $(tf))))
-	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(SUITE_SRC_FILE) -o $(BIN_DIR)/$@
+	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(SUITE_SRC_FILE) -o $@
 
-%.test : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(TEST_LIB)
+$(BIN_DIR)/%.test : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(TEST_LIB)
 	$(GENSUITE) -o $(SUITE_SRC_FILE) $(basename $(notdir $<))
-	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(SUITE_SRC_FILE) -o $(BIN_DIR)/$@
+	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(SUITE_SRC_FILE) -o $@
 
 $(BIN_DIR)/%.o : $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h
 	$(CXX) $(CXXFLAGS) $(CXXINCLS) $< -o $(BIN_DIR)/$@
