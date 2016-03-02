@@ -1,5 +1,5 @@
+#include <algorithm>
 #include <cmath>
-#include <memory>
 #include <sstream>
 #include <utility>
 
@@ -10,7 +10,7 @@ namespace ggl {
 template <class T, size_t R, size_t C>
 matrix<T, R, C>::matrix() {
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        (*this)( eIdx ) = EntryType();
+        (*this)( eIdx ) = EntryType( 0 );
 }
 
 
@@ -154,7 +154,7 @@ T matrix<T, R, C>::determinant() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
-    EntryType result = EntryType();
+    EntryType result = EntryType( 0 );
     for( const auto& ePermute : ggl::util::permutations(sNumRows) ) {
         EntryType eResult = ( ggl::util::inversions(ePermute) % 2 == 0 ) ? 1 : -1;
         for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
@@ -171,17 +171,43 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' inverse operation is only valid on square matrices." );
 
-    // TODO(JRC): Implement a check that asserts that the matrix determinant
-    // is non-zero.
+    matrix<EntryType, sNumRows, sNumCols> elim( *this );
+    matrix<EntryType, sNumRows, sNumCols> result;
+    for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
+        result( dIdx, dIdx ) = EntryType( 1 );
 
-    matrix<T, R, C> result;
-    return result;
+    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
+        size_t pivotIdx = rIdx;
+        for( size_t krIdx = rIdx + 1; krIdx < sNumRows; ++krIdx )
+            if( std::abs(elim(pivotIdx, rIdx)) < std::abs(elim(krIdx, rIdx)) )
+                pivotIdx = krIdx;
+        elim._swapRows( pivotIdx, rIdx );
+        result._swapRows( pivotIdx, rIdx );
+
+        // TODO(JRC): Implement this functionality once comparison is supported.
+        /*
+        if( elim(rIdx, rIdx) == 0 )
+            throw std::runtime_error( "Matrix is singular and doesn't have an inverse!" );
+        */
+
+        for( size_t krIdx = 0; krIdx < sNumRows; ++krIdx ) {
+            if( krIdx != rIdx ) {
+                EntryType krScale = -1 * elim( krIdx, rIdx ) / elim( rIdx, rIdx );
+                elim._addRows( rIdx, krIdx, krScale );
+                result._addRows( rIdx, krIdx, krScale );
+                elim( krIdx, rIdx ) = 0;
+            }
+        }
+
+        EntryType rScale = 1 / elim( rIdx, rIdx );
+        elim._scaleRows( rIdx, rScale );
+        result._scaleRows( rIdx, rScale );
+    }
+
+    return elim;
 }
 
 
-// NOTE(JRC): The 'dot' and 'cross' operations are kept within the 'ggl::matrix'
-// class because subclassing would require casting down if matrix operations
-// produced a vector.
 template <class T, size_t R, size_t C>
 T matrix<T, R, C>::dot( const matrix& pOther ) const {
     static_assert( sNumRows == 1 || sNumCols == 1,
@@ -195,7 +221,6 @@ T matrix<T, R, C>::dot( const matrix& pOther ) const {
 }
 
 
-// TODO(JRC): Implement this operation using the matrix determinant operation.
 template <class T, size_t R, size_t C>
 matrix<T, R, C> matrix<T, R, C>::cross( const matrix& pOther ) const {
     static_assert( (sNumRows == 1 || sNumCols == 1) && sNumEnts == 3,
@@ -217,10 +242,40 @@ const T* matrix<T, R, C>::data() const {
     return mEntries.data();
 }
 
+
+template <class T, size_t R, size_t C>
+void matrix<T, R, C>::_swapRows( size_t pSrcRow, size_t pDstRow ) {
+    std::array<EntryType, sNumCols> temp;
+
+    const auto srcRowStart = mEntries.begin() + sNumCols * pSrcRow;
+    const auto dstRowStart = mEntries.begin() + sNumCols * pDstRow;
+
+    if( pSrcRow != pDstRow ) {
+        std::copy( srcRowStart, srcRowStart + sNumCols, temp.begin() );
+        std::copy( dstRowStart, dstRowStart + sNumCols, srcRowStart );
+        std::copy( temp.begin(), temp.end(), dstRowStart );
+    }
 }
 
-// TODO(JRC): Consider moving this to an auxiliary matrix function file
-// (e.g. "matrix_aux.cpp").
+
+template <class T, size_t R, size_t C>
+void matrix<T, R, C>::_scaleRows( size_t pSrcRow, const T& pScale ) {
+    auto srcRowIter = mEntries.begin() + sNumCols * pSrcRow;
+    for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx, ++srcRowIter )
+        (*srcRowIter) *= pScale;
+}
+
+
+template <class T, size_t R, size_t C>
+void matrix<T, R, C>::_addRows( size_t pSrcRow, size_t pDstRow, const T& pScale ) {
+    auto srcRowIter = mEntries.begin() + sNumCols * pSrcRow;
+    auto dstRowIter = mEntries.begin() + sNumCols * pDstRow;
+
+    for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx, ++srcRowIter, ++dstRowIter )
+        (*dstRowIter) += pScale * (*srcRowIter);
+}
+
+}
 
 template <class T, size_t R, size_t C>
 std::ostream& operator<<( std::ostream& os, const ggl::matrix<T, R, C>& m ) {

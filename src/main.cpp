@@ -55,4 +55,7 @@ int main() {
 
     std::cout << "Inversions in Permutation #1: " <<
         ggl::util::inversions( permutations[0] ) << std::endl;
+
+    std::cout << mat2.inverse() << std::endl;
+    std::cout << mat2 * mat2.inverse() << std::endl;
 }
