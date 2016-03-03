@@ -14,12 +14,19 @@ matrix<T, R, C>::matrix() {
 }
 
 
+// TODO(JRC): Optimize this function by using template specialization.
 // NOTE(JRC): Recipe for argument constructor from the following location:
 // http://stackoverflow.com/a/7725611
 template <class T, size_t R, size_t C> template <class... Ts>
 matrix<T, R, C>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pEntries)... }} {
-    static_assert( sizeof...(Ts) == sNumEnts,
-        "'ggl::matrix' value constructor must be given exactly R*C entries." );
+    static_assert( sizeof...(Ts) == sNumEnts || sizeof...(Ts) == 1,
+        "'ggl::matrix' value constructor must be given exactly R*C|1 entries" );
+
+    if( sizeof...(Ts) == 1 )
+        for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
+            for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
+                (*this)( rIdx, cIdx ) = ( rIdx == cIdx ) ?
+                    (*this)( 0, 0 ) : EntryType( 0 );
 }
 
 
@@ -201,10 +208,7 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' inverse operation is only valid on square matrices." );
 
-    matrix<EntryType, sNumRows, sNumCols> identity;
-    for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
-        identity( dIdx, dIdx ) = EntryType( 1 );
-
+    matrix<EntryType, sNumRows, sNumCols> identity{ EntryType(1) };
     matrix<EntryType, sNumRows, sNumCols+sNumCols> elim = *this | identity;
     for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
         size_t pivotIdx = rIdx;
