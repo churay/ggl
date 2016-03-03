@@ -25,8 +25,8 @@ class matrix {
 
     /// Operator Overloads ///
 
-    EntryType& operator()( size_t pEntry );
-    const EntryType& operator()( size_t pEntry ) const;
+    EntryType& operator[]( size_t pEntry );
+    const EntryType& operator[]( size_t pEntry ) const;
     EntryType& operator()( size_t pRow, size_t pCol );
     const EntryType& operator()( size_t pRow, size_t pCol ) const;
 
@@ -38,6 +38,8 @@ class matrix {
     matrix<T, R, C> operator*( const EntryType& pValue ) const;
     template <size_t C2>
     matrix<T, R, C2> operator*( const matrix<T, C, C2>& pOther ) const;
+    template <size_t C2>
+    matrix<T, R, C+C2> operator|( const matrix<T, R, C2>& pOther ) const;
 
     /// Class Functions ///
 

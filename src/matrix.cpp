@@ -10,7 +10,7 @@ namespace ggl {
 template <class T, size_t R, size_t C>
 matrix<T, R, C>::matrix() {
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        (*this)( eIdx ) = EntryType( 0 );
+        (*this)[eIdx] = EntryType( 0 );
 }
 
 
@@ -24,13 +24,13 @@ matrix<T, R, C>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pEntri
 
 
 template <class T, size_t R, size_t C>
-T& matrix<T, R, C>::operator()( size_t pEntry ) {
+T& matrix<T, R, C>::operator[]( size_t pEntry ) {
     return mEntries[pEntry];
 }
 
 
 template <class T, size_t R, size_t C>
-const T& matrix<T, R, C>::operator()( size_t pEntry ) const {
+const T& matrix<T, R, C>::operator[]( size_t pEntry ) const {
     return mEntries[pEntry];
 }
 
@@ -49,10 +49,9 @@ const T& matrix<T, R, C>::operator()( size_t pRow, size_t pCol ) const {
 
 template <class T, size_t R, size_t C>
 bool matrix<T, R, C>::operator==( const matrix& pOther ) const {
-    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
-        for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-            if( (*this)( rIdx, cIdx ) != pOther( rIdx, cIdx ) )
-                return false;
+    for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
+        if( (*this)[eIdx] != pOther[eIdx] )
+            return false;
 
     return true;
 }
@@ -68,7 +67,7 @@ template <class T, size_t R, size_t C>
 matrix<T, R, C> matrix<T, R, C>::operator+( const matrix& pOther ) const {
     matrix<EntryType, sNumRows, sNumCols> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result( eIdx ) = (*this)( eIdx ) + pOther( eIdx );
+        result[eIdx] = (*this)[eIdx] + pOther[eIdx];
 
     return result;
 }
@@ -78,7 +77,7 @@ template <class T, size_t R, size_t C>
 matrix<T, R, C> matrix<T, R, C>::operator-( const matrix& pOther ) const {
     matrix<EntryType, sNumRows, sNumCols> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result( eIdx ) = (*this)( eIdx ) - pOther( eIdx );
+        result[eIdx] = (*this)[eIdx] - pOther[eIdx];
 
     return result;
 }
@@ -88,7 +87,7 @@ template <class T, size_t R, size_t C>
 matrix<T, R, C> matrix<T, R, C>::operator*( const T& pValue ) const {
     matrix<EntryType, sNumRows, sNumCols> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result( eIdx ) = (*this)( eIdx ) * pValue;
+        result[eIdx] = (*this)[eIdx] * pValue;
 
     return result;
 }
@@ -98,7 +97,7 @@ template <class T, size_t R, size_t C>
 matrix<T, R, C> operator*( const T& pValue, const matrix<T, R, C>& pMatrix ) {
     matrix<T, R, C> result;
     for( size_t eIdx = 0; eIdx < result.sNumEnts; ++eIdx )
-        result( eIdx ) = pValue * pMatrix( eIdx );
+        result[eIdx] = pValue * pMatrix[eIdx];
 
     return result;
 }
@@ -116,11 +115,27 @@ matrix<T, R, C2> matrix<T, R, C>::operator*( const matrix<T, C, C2>& pOther ) co
 }
 
 
+template <class T, size_t R, size_t C> template <size_t C2>
+matrix<T, R, C+C2> matrix<T, R, C>::operator|( const matrix<T, R, C2>& pOther ) const {
+    matrix<EntryType, R, C+C2> result;
+
+    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
+        for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
+            result( rIdx, cIdx ) = (*this)( rIdx, cIdx );
+
+    for( size_t rIdx = 0; rIdx < pOther.sNumRows; ++rIdx )
+        for( size_t cIdx = 0; cIdx < pOther.sNumCols; ++cIdx )
+            result( rIdx, cIdx + sNumCols ) = pOther( rIdx, cIdx );
+
+    return result;
+}
+
+
 template <class T, size_t R, size_t C>
 T matrix<T, R, C>::normal() const {
     EntryType normal;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        normal += (*this)( eIdx ) * (*this)( eIdx );
+        normal += (*this)[eIdx] * (*this)[eIdx];
 
     return std::sqrt( normal );
 }
@@ -132,7 +147,7 @@ matrix<T, R, C> matrix<T, R, C>::normalize() const {
 
     matrix<EntryType, sNumRows, sNumCols> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result( eIdx ) = (*this)( eIdx ) / normal;
+        result[eIdx] = (*this)[eIdx] / normal;
 
     return result;
 }
@@ -171,18 +186,17 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' inverse operation is only valid on square matrices." );
 
-    matrix<EntryType, sNumRows, sNumCols> elim( *this );
-    matrix<EntryType, sNumRows, sNumCols> result;
+    matrix<EntryType, sNumRows, sNumCols> identity;
     for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
-        result( dIdx, dIdx ) = EntryType( 1 );
+        identity( dIdx, dIdx ) = EntryType( 1 );
 
+    matrix<EntryType, sNumRows, sNumCols+sNumCols> elim = *this | identity;
     for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
         size_t pivotIdx = rIdx;
         for( size_t krIdx = rIdx + 1; krIdx < sNumRows; ++krIdx )
             if( std::abs(elim(pivotIdx, rIdx)) < std::abs(elim(krIdx, rIdx)) )
                 pivotIdx = krIdx;
         elim._swapRows( pivotIdx, rIdx );
-        result._swapRows( pivotIdx, rIdx );
 
         // TODO(JRC): Implement this functionality once comparison is supported.
         /*
@@ -194,15 +208,18 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
             if( krIdx != rIdx ) {
                 EntryType krScale = -1 * elim( krIdx, rIdx ) / elim( rIdx, rIdx );
                 elim._addRows( rIdx, krIdx, krScale );
-                result._addRows( rIdx, krIdx, krScale );
                 elim( krIdx, rIdx ) = EntryType( 0 );
             }
         }
 
         EntryType rScale = 1 / elim( rIdx, rIdx );
         elim._scaleRows( rIdx, rScale );
-        result._scaleRows( rIdx, rScale );
     }
+
+    matrix<EntryType, sNumRows, sNumCols> result;
+    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
+        for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
+            result( rIdx, cIdx ) = elim( rIdx, cIdx + sNumCols );
 
     return result;
 }
@@ -215,7 +232,7 @@ T matrix<T, R, C>::dot( const matrix& pOther ) const {
 
     EntryType result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result += (*this)( eIdx ) * pOther( eIdx );
+        result += (*this)[eIdx] * pOther[eIdx];
 
     return result;
 }
@@ -230,8 +247,7 @@ matrix<T, R, C> matrix<T, R, C>::cross( const matrix& pOther ) const {
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx ) {
         size_t eIdx1 = ( eIdx + 1 ) % sNumEnts;
         size_t eIdx2 = ( eIdx + 2 ) % sNumEnts;
-        result( eIdx ) = (*this)( eIdx1 ) * pOther( eIdx2 ) -
-            (*this)( eIdx2 ) * pOther( eIdx1 );
+        result[eIdx] = (*this)[eIdx1] * pOther[eIdx2] - (*this)[eIdx2] * pOther[eIdx1];
     }
     return result;
 }
