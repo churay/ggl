@@ -28,7 +28,19 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     }
 
     GIVEN( "explicit entries" ) {
-        WHEN( "there are an appropriate number of entries" ) {
+        WHEN( "a single entry is given" ) {
+            const ggl::matrixf<3, 3> m{ 1.0f };
+            const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
+            THEN( "the dimensions are correct" ) {
+                REQUIRE( r == 3 ); REQUIRE( c == 3 ); REQUIRE( e == 9 );
+            } THEN( "the matrix diagonal is initialized with the explicit value" ) {
+                for( unsigned rIdx = 0; rIdx < r; ++rIdx )
+                    for( unsigned cIdx = 0; cIdx < c; ++cIdx )
+                        REQUIRE( m(rIdx, cIdx) == Approx(rIdx == cIdx) );
+            }
+        }
+
+        WHEN( "the exact number of entries are given" ) {
             const ggl::matrixf<1, 3> m{ 1.0f, 2.0f, 3.0f };
             const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
             THEN( "the dimensions are correct" ) {
