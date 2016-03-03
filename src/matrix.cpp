@@ -132,6 +132,21 @@ matrix<T, R, C+C2> matrix<T, R, C>::operator|( const matrix<T, R, C2>& pOther ) 
 
 
 template <class T, size_t R, size_t C>
+template <size_t SR0, size_t SC0, size_t SR, size_t SC>
+matrix<T, SR, SC> matrix<T, R, C>::submatrix() const {
+    static_assert( SR0 + SR <= sNumRows && SC0 + SC <= sNumCols,
+        "'ggl::matrix' submatrix operation has invalid parameters." );
+
+    matrix<EntryType, SR, SC> result;
+    for( size_t rIdx = 0; rIdx < SR; ++rIdx )
+        for( size_t cIdx = 0; cIdx < SC; ++cIdx )
+            result( rIdx, cIdx ) = (*this)( rIdx + SR0, cIdx + SC0 );
+
+    return result;
+}
+
+
+template <class T, size_t R, size_t C>
 T matrix<T, R, C>::normal() const {
     EntryType normal;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
@@ -216,12 +231,7 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
         elim._scaleRows( rIdx, rScale );
     }
 
-    matrix<EntryType, sNumRows, sNumCols> result;
-    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
-        for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-            result( rIdx, cIdx ) = elim( rIdx, cIdx + sNumCols );
-
-    return result;
+    return elim.submatrix<0, sNumCols, sNumRows, sNumCols>();
 }
 
 

@@ -43,6 +43,9 @@ class matrix {
 
     /// Class Functions ///
 
+    template <size_t SR0, size_t SC0, size_t SR, size_t SC>
+    matrix<T, SR, SC> submatrix() const;
+
     EntryType normal() const;
     matrix<T, R, C> normalize() const;
     matrix<T, C, R> transpose() const;
