@@ -84,3 +84,147 @@ SCENARIO( "ggl::matrix addition works", "[matrix]" ) {
         }
     }
 }
+
+SCENARIO( "ggl::matrix subtraction works", "[matrix]" ) {
+    GIVEN( "two matrices with the same dimensions" ) {
+        const ggl::matrix<int, 2, 2> m1{ 1, 2, 3, 4 };
+        const ggl::matrix<int, 2, 2> m2{ 8, 7, 6, 5 };
+
+        WHEN( "the matrices are added" ) {
+            THEN( "the result matrix is the entry subtraction of the operands" ) {
+                const ggl::matrix<int, 2, 2> expected{ 0, 0, 0, 0 };
+                REQUIRE( (m1 - m1) == expected );
+            } THEN( "the result matrix is the right-hand matrix subtracted from the left-hand matrix " ) {
+                const ggl::matrix<int, 2, 2> expected1{ 7, 5, 3, 1 };
+                REQUIRE( (m2 - m1) == expected1 );
+
+                const ggl::matrix<int, 2, 2> expected2{ -7, -5, -3, -1 };
+                REQUIRE( (m1 - m2) == expected2 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix matrix multiplication works", "[matrix]" ) {
+    GIVEN( "two matrices with the same dimensions" ) {
+        const ggl::matrix<int, 2, 2> m1{ 1, 2, 3, 4 };
+
+        WHEN( "one of the matrices is the identity matrix" ) {
+            const ggl::matrix<int, 2, 2> mi{ 1, 0, 0, 1 };
+            THEN( "the result matrix is the same as the non-identity matrix" ) {
+                REQUIRE( (mi * m1) == m1 );
+                REQUIRE( (m1 * mi) == m1 );
+            }
+        }
+
+        WHEN( "both of the matrices are non-trivial" ) {
+            THEN( "the result matrix is the product of the operands" ) {
+                const ggl::matrix<int, 2, 2> expected{ 7, 10, 15, 22 };
+                REQUIRE( (m1 * m1) == expected );
+            } THEN( "the result matrix is the ordered product of the operands" ) {
+                const ggl::matrix<int, 2, 2> o1{ 0, 1, 0, 0 };
+                const ggl::matrix<int, 2, 2> o2{ 1, 0, 0, 0 };
+
+                const ggl::matrix<int, 2, 2> expected1{ 0, 0, 0, 0 };
+                REQUIRE( (o1 * o2) == expected1 );
+
+                const ggl::matrix<int, 2, 2> expected2{ 0, 1, 0, 0 };
+                REQUIRE( (o2 * o1) == expected2 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix scalar multiplication works", "[matrix]" ) {
+    GIVEN( "a matrix and a scalar value" ) {
+        const ggl::matrix<int, 2, 2> m{ 1, 2, 3, 4 };
+        const int s = 100;
+
+        WHEN( "the matrix is multiplied by the scalar on the left-hand side" ) {
+            THEN( "the result matrix is the input entry-scaled by the scalar" ) {
+                const ggl::matrix<int, 2, 2> expected{ 100, 200, 300, 400 };
+                REQUIRE( (s * m) == expected );
+            }
+        }
+
+        WHEN( "the matrix is multiplied by the scalar on the right-hand side" ) {
+            THEN( "the result matrix is the input entry-scaled by the scalar" ) {
+                const ggl::matrix<int, 2, 2> expected{ 100, 200, 300, 400 };
+                REQUIRE( (m * s) == expected );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix normalize operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix transpose operation works", "[matrix]" ) {
+    GIVEN( "a non-square m by n matrix" ) {
+        const ggl::matrix<int, 2, 3> m{ 1, 2, 3, 4, 5, 6 };
+
+        WHEN( "the matrix transpose operation is invoked" ) {
+            THEN( "the result matrix is an n by m matrix with the input rows as columns" ) {
+                const ggl::matrix<int, 3, 2> e{ 1, 4, 2, 5, 3, 6 };
+                REQUIRE( m.transpose() == e );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix determinant operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix inverse operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}

@@ -195,7 +195,7 @@ matrix<T, R, C> matrix<T, R, C>::inverse() const {
                 EntryType krScale = -1 * elim( krIdx, rIdx ) / elim( rIdx, rIdx );
                 elim._addRows( rIdx, krIdx, krScale );
                 result._addRows( rIdx, krIdx, krScale );
-                elim( krIdx, rIdx ) = 0;
+                elim( krIdx, rIdx ) = EntryType( 0 );
             }
         }
 
