@@ -202,10 +202,48 @@ SCENARIO( "ggl::matrix transpose operation works", "[matrix]" ) {
 }
 
 SCENARIO( "ggl::matrix determinant operation works", "[matrix]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+    GIVEN( "a square matrix" ) {
+        WHEN( "the matrix is the identity matrix" ) {
+            THEN( "the determinant result is 1" ) {
+                ggl::matrix<int, 2, 2> m2x2{ 1 };
+                REQUIRE( m2x2.determinant() == Approx(1.0f) );
+
+                ggl::matrix<int, 4, 4> m4x4{ 1 };
+                REQUIRE( m4x4.determinant() == Approx(1.0f) );
+            }
+        }
+
+        WHEN( "the matrix is a non-singular matrix that isn't the identity" ) {
+            THEN( "the determinant is the signed area of the rectangle defined by the matrix columns" ) {
+                ggl::matrix<float, 2, 2> m2x2{
+                    3.0f, 8.0f,
+                    4.0f, 6.0f
+                };
+                REQUIRE( m2x2.determinant() == Approx(-14.0f) );
+
+                ggl::matrix<float, 3, 3> m3x3{
+                    4.0f, -1.0f, 1.0f,
+                    4.0f, 5.0f, 3.0f,
+                    -2.0f, 0.0f, 0.0f
+                };
+                REQUIRE( m3x3.determinant() == Approx(16.0f) );
+            }
+        }
+
+        WHEN( "the matrix is a singular matrix that isn't the identity" ) {
+            THEN( "the determinant result is 0" ) {
+                ggl::matrix<float, 2, 2> m2x2{
+                    0.0f, 1.0f,
+                    0.0f, 0.0f
+                };
+                REQUIRE( m2x2.determinant() == Approx(0.0f) );
+
+                ggl::matrix<float, 3, 3> m3x3{
+                    0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f
+                };
+                REQUIRE( m3x3.determinant() == Approx(0.0f) );
             }
         }
     }
