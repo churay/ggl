@@ -5,7 +5,7 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
         // TODO(JRC): For some reason, using "m.sNumRows" in an assertion
         // causes an undefined reference error.
         WHEN( "the dimensions are trivial" ) {
-            const ggl::matrixf<1, 1> m;
+            const ggl::matrix<float, 1, 1> m;
             const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 1 ); REQUIRE( c == 1 ); REQUIRE( e == 1 );
@@ -16,7 +16,7 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
         }
 
         WHEN( "the dimensions are nontrivial" ) {
-            const ggl::matrixf<2, 3> m;
+            const ggl::matrix<float, 2, 3> m;
             const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 2 ); REQUIRE( c == 3 ); REQUIRE( e == 6 );
@@ -29,7 +29,7 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
 
     GIVEN( "explicit entries" ) {
         WHEN( "a single entry is given" ) {
-            const ggl::matrixf<3, 3> m{ 1.0f };
+            const ggl::matrix<float, 3, 3> m{ 1.0f };
             const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 3 ); REQUIRE( c == 3 ); REQUIRE( e == 9 );
@@ -41,7 +41,7 @@ SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
         }
 
         WHEN( "the exact number of entries are given" ) {
-            const ggl::matrixf<1, 3> m{ 1.0f, 2.0f, 3.0f };
+            const ggl::matrix<float, 1, 3> m{ 1.0f, 2.0f, 3.0f };
             const unsigned r = m.sNumRows, c = m.sNumCols, e = m.sNumEnts;
             THEN( "the dimensions are correct" ) {
                 REQUIRE( r == 1 ); REQUIRE( c == 3 ); REQUIRE( e == 3 );
@@ -212,10 +212,34 @@ SCENARIO( "ggl::matrix determinant operation works", "[matrix]" ) {
 }
 
 SCENARIO( "ggl::matrix inverse operation works", "[matrix]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+    GIVEN( "a square matrix" ) {
+        WHEN( "the matrix is the identity matrix" ) {
+            THEN( "the inverse of the matrix is also the identity matrix" ) {
+                ggl::matrix<int, 2, 2> m2x2{ 1 };
+                REQUIRE( m2x2.inverse() == m2x2 );
+
+                ggl::matrix<int, 4, 4> m4x4{ 1 };
+                REQUIRE( m4x4.inverse() == m4x4 );
+            }
+        }
+
+        WHEN( "the matrix is not the identity matrix" ) {
+            THEN( "the inverse is correct" ) {
+                ggl::matrix<float, 2, 2> m{ 2.0f, 0.0f, 0.0f, 4.0f };
+                ggl::matrix<float, 2, 2> expected{ 0.5f, 0.0f, 0.0f, 0.25f };
+
+                REQUIRE( m.inverse() == expected );
+            } THEN( "the product of the matrix and its inverse is the identity matrix" ) {
+                ggl::matrix<float, 2, 2> m{ 1.0f, 2.0f, 3.0f, 4.0f };
+
+                ggl::matrix<float, 2, 2> e1 = m * m.inverse();
+                ggl::matrix<float, 2, 2> e2 = m * m.inverse();
+                for( unsigned rIdx = 0; rIdx < e1.sNumRows; ++rIdx ) {
+                    for( unsigned cIdx = 0; cIdx < e1.sNumCols; ++cIdx ) {
+                        REQUIRE( e1(rIdx, cIdx) == Approx(rIdx == cIdx) );
+                        REQUIRE( e2(rIdx, cIdx) == Approx(rIdx == cIdx) );
+                    }
+                }
             }
         }
     }
