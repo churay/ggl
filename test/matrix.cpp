@@ -206,10 +206,10 @@ SCENARIO( "ggl::matrix determinant operation works", "[matrix]" ) {
         WHEN( "the matrix is the identity matrix" ) {
             THEN( "the determinant result is 1" ) {
                 ggl::matrixi<2, 2> m2x2{ 1 };
-                REQUIRE( m2x2.determinant() == Approx(1.0f) );
+                REQUIRE( m2x2.determinant() == 1 );
 
                 ggl::matrixi<4, 4> m4x4{ 1 };
-                REQUIRE( m4x4.determinant() == Approx(1.0f) );
+                REQUIRE( m4x4.determinant() == 1 );
             }
         }
 
@@ -269,15 +269,10 @@ SCENARIO( "ggl::matrix inverse operation works", "[matrix]" ) {
                 REQUIRE( m.inverse() == expected );
             } THEN( "the product of the matrix and its inverse is the identity matrix" ) {
                 ggl::matrixf<2, 2> m{ 1.0f, 2.0f, 3.0f, 4.0f };
+                ggl::matrixf<2, 2> identity{ 1.0f };
 
-                ggl::matrixf<2, 2> e1 = m * m.inverse();
-                ggl::matrixf<2, 2> e2 = m * m.inverse();
-                for( unsigned rIdx = 0; rIdx < e1.sNumRows; ++rIdx ) {
-                    for( unsigned cIdx = 0; cIdx < e1.sNumCols; ++cIdx ) {
-                        REQUIRE( e1(rIdx, cIdx) == Approx(rIdx == cIdx) );
-                        REQUIRE( e2(rIdx, cIdx) == Approx(rIdx == cIdx) );
-                    }
-                }
+                REQUIRE( m * m.inverse() == identity );
+                REQUIRE( m.inverse() * m == identity );
             }
         }
     }

@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "tutil.h"
+
 namespace ggl {
 
 template <class T, size_t R, size_t C, class LT=std::less<T>>
@@ -87,13 +89,13 @@ class matrix {
     std::array<EntryType, sNumEnts> mEntries;
 };
 
-template <class T, size_t R> using vector = matrix<T, R, 1>;
+template <class T, size_t R, class LT=std::less<T>> using vector = matrix<T, R, 1, LT>;
 
 template <size_t R, size_t C> using matrixi = matrix<int, R, C>;
-template <size_t R> using vectori = vector<float, R>;
+template <size_t R> using vectori = vector<int, R>;
 
-template <size_t R, size_t C> using matrixf = matrix<float, R, C>;
-template <size_t R> using vectorf = vector<float, R>;
+template <size_t R, size_t C> using matrixf = matrix<float, R, C, ggl::fless<float>>;
+template <size_t R> using vectorf = vector<float, R, ggl::fless<float>>;
 
 }
 
