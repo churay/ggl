@@ -169,10 +169,23 @@ SCENARIO( "ggl::matrix scalar multiplication works", "[matrix]" ) {
 }
 
 SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+    GIVEN( "a matrix with non-trivial number of entries" ) {
+        WHEN( "the matrix is a vector" ) {
+            THEN( "the normal is the euclidean length of the vector" ) {
+                const ggl::vectori<2> v1{ 3, 4 };
+                REQUIRE( v1.normal() == 5 );
+
+                const ggl::vectori<2> v2{ 28, 45 };
+                REQUIRE( v2.normal() == 53 );
+            }
+        }
+        WHEN( "the matrix isn't a vector" ) {
+            THEN( "the normal is the square root of the product of the entry squares" ) {
+                const ggl::matrixf<2, 2> m1{ 1.0f, 1.0f, 1.0f, 1.0f };
+                REQUIRE( m1.normal() == Approx(2.0f) );
+
+                const ggl::matrixf<2, 2> m2{ 2.0f, 2.0f, 2.0f, 2.0f };
+                REQUIRE( m2.normal() == Approx(4.0f) );
             }
         }
     }

@@ -163,7 +163,7 @@ matrix<T, SR, SC, LT> matrix<T, R, C, LT>::submatrix() const {
 
 template <class T, size_t R, size_t C, class LT>
 T matrix<T, R, C, LT>::normal() const {
-    EntryType normal;
+    EntryType normal = sZeroValue;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
         normal += (*this)[eIdx] * (*this)[eIdx];
 
