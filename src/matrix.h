@@ -2,21 +2,26 @@
 #define GGL_MATRIX_H
 
 #include <array>
-#include <utility>
+#include <functional>
 #include <type_traits>
+#include <utility>
 
 namespace ggl {
 
-template <class T, size_t R, size_t C>
+template <class T, size_t R, size_t C, class LT=std::less<T>>
 class matrix {
     public:
 
     /// Class Attributes ///
 
     using EntryType = T;
+    using Compare = LT;
     constexpr static size_t sNumRows{ R };
     constexpr static size_t sNumCols{ C };
     constexpr static size_t sNumEnts{ R * C };
+
+    constexpr static EntryType sZeroValue{ 0 };
+    constexpr static LT sLessThan{};
 
     /// Constructors ///
 
@@ -33,28 +38,28 @@ class matrix {
     bool operator==( const matrix& pOther ) const;
     bool operator!=( const matrix& pOther ) const;
 
-    matrix<T, R, C> operator+( const matrix& pOther ) const;
-    matrix<T, R, C> operator-( const matrix& pOther ) const;
-    matrix<T, R, C> operator*( const EntryType& pValue ) const;
+    matrix<T, R, C, LT> operator+( const matrix& pOther ) const;
+    matrix<T, R, C, LT> operator-( const matrix& pOther ) const;
+    matrix<T, R, C, LT> operator*( const EntryType& pValue ) const;
     template <size_t C2>
-    matrix<T, R, C2> operator*( const matrix<T, C, C2>& pOther ) const;
+    matrix<T, R, C2, LT> operator*( const matrix<T, C, C2, LT>& pOther ) const;
     template <size_t C2>
-    matrix<T, R, C+C2> operator|( const matrix<T, R, C2>& pOther ) const;
+    matrix<T, R, C+C2, LT> operator|( const matrix<T, R, C2, LT>& pOther ) const;
 
     /// Class Functions ///
 
     template <size_t SR0, size_t SC0, size_t SR, size_t SC>
-    matrix<T, SR, SC> submatrix() const;
+    matrix<T, SR, SC, LT> submatrix() const;
 
     EntryType normal() const;
-    matrix<T, R, C> normalize() const;
-    matrix<T, C, R> transpose() const;
+    matrix<T, R, C, LT> normalize() const;
+    matrix<T, C, R, LT> transpose() const;
 
     EntryType determinant() const;
-    matrix<T, R, C> inverse() const;
+    matrix<T, R, C, LT> inverse() const;
 
     EntryType dot( const matrix& pOther ) const;
-    matrix<T, R, C> cross( const matrix& pOther ) const;
+    matrix<T, R, C, LT> cross( const matrix& pOther ) const;
 
     const EntryType* data() const;
 
@@ -62,7 +67,7 @@ class matrix {
 
     /// Class Setup ///
 
-    template <class TT, size_t RR, size_t CC> friend class matrix;
+    template <class TT, size_t RR, size_t CC, class LTLT> friend class matrix;
 
     static_assert( sNumEnts > 0,
         "'ggl::matrix' must have a positive number of entries." );
@@ -70,6 +75,8 @@ class matrix {
         "'ggl::matrix' must have an arithmetic entry type." );
 
     /// Private Functions ///
+
+    bool _areEqual( const EntryType& pValue1, const EntryType& pValue2 ) const;
 
     void _swapRows( size_t pSrcRow, size_t pDstRow );
     void _scaleRows( size_t pSrcRow, const EntryType& pScale );
@@ -81,6 +88,9 @@ class matrix {
 };
 
 template <class T, size_t R> using vector = matrix<T, R, 1>;
+
+template <size_t R, size_t C> using matrixi = matrix<int, R, C>;
+template <size_t R> using vectori = vector<float, R>;
 
 template <size_t R, size_t C> using matrixf = matrix<float, R, C>;
 template <size_t R> using vectorf = vector<float, R>;
