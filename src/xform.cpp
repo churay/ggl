@@ -36,7 +36,7 @@ auto xform::translate( Ts&&... pValues ) {
 
 
 template <class T>
-auto xform::rotate( const T& pRadians ) {
+auto xform::rotate2d( const T& pRadians ) {
     static const T sZeroValue{ 0 }, sOneValue{ 1 };
 
     ggl::matrix<T, 3, 3> result{ 
@@ -49,9 +49,32 @@ auto xform::rotate( const T& pRadians ) {
 }
 
 
-template <class T>
-auto xform::rotate( const T& pRadians, const vector<T, 3>& pAxis ) {
-    ggl::matrix<T, 4, 4> result{ T(1) };
+template <class T, class LT>
+auto xform::rotate3d( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
+    static const T sZeroValue{ 0 }, sOneValue{ 1 };
+
+    const T cosValue = std::cos( pRadians );
+    const T cosValueInv = sOneValue - cosValue;
+    const T sinValue = std::sin( pRadians );
+
+    // TODO(JRC): Make this more concise using the representation found here:
+    // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+    ggl::matrix<T, 4, 4, LT> result{
+        cosValue + cosValueInv*pAxis[0]*pAxis[0],
+        cosValueInv*pAxis[0]*pAxis[1] - sinValue*pAxis[2],
+        cosValueInv*pAxis[0]*pAxis[2] + sinValue*pAxis[1],
+        sZeroValue,
+        cosValueInv*pAxis[0]*pAxis[1] + sinValue*pAxis[2],
+        cosValue + cosValueInv*pAxis[1]*pAxis[1],
+        cosValueInv*pAxis[1]*pAxis[2] - sinValue*pAxis[0],
+        sZeroValue,
+        cosValueInv*pAxis[0]*pAxis[2] - sinValue*pAxis[1],
+        cosValueInv*pAxis[1]*pAxis[2] + sinValue*pAxis[0],
+        cosValue + cosValueInv*pAxis[2]*pAxis[2],
+        sZeroValue,
+        sZeroValue, sZeroValue, sZeroValue, sOneValue
+    };
+
     return result;
 }
 
