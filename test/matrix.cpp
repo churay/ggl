@@ -168,6 +168,24 @@ SCENARIO( "ggl::matrix scalar multiplication works", "[matrix]" ) {
     }
 }
 
+SCENARIO( "ggl::matrix augment operation works", "[matrix]" ) {
+    GIVEN( "two matrices with the same number of rows" ) {
+        const ggl::matrixi<2, 1> m1{ 1, 2 };
+        const ggl::matrixi<2, 3> m2{ 3, 4, 5, 6, 7, 8 };
+
+        WHEN( "a matrix augmentation is performed" ) {
+            THEN( "the result is a matrix containing the values [ LHS | RHS ]" ) {
+                const ggl::matrixi<2, 4> e1{ 1, 3, 4, 5, 2, 6, 7, 8 };
+                REQUIRE( (m1 | m2) == e1 );
+
+                const ggl::matrixi<2, 4> e2{ 3, 4, 5, 1, 6, 7, 8, 2 };
+                REQUIRE( (m2 | m1) == e2 );
+            }
+        }
+    }
+}
+
+
 SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
     GIVEN( "a matrix with non-trivial number of entries" ) {
         WHEN( "the matrix is a vector" ) {
