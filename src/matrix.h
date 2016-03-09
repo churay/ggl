@@ -18,12 +18,12 @@ class matrix {
 
     using EntryType = T;
     using Compare = LT;
-    constexpr static size_t sNumRows{ R };
-    constexpr static size_t sNumCols{ C };
-    constexpr static size_t sNumEnts{ R * C };
+    static constexpr size_t sNumRows{ R };
+    static constexpr size_t sNumCols{ C };
+    static constexpr size_t sNumEnts{ R * C };
 
-    constexpr static EntryType sZeroValue{ 0 };
-    constexpr static LT sLessThan{};
+    static constexpr EntryType sZeroValue{ 0 };
+    static constexpr LT sLessThan{};
 
     /// Constructors ///
 
@@ -96,8 +96,8 @@ template <class T, size_t R, class LT=std::less<T>> using vector = matrix<T, R, 
 template <size_t R, size_t C> using matrixi = matrix<int, R, C>;
 template <size_t R> using vectori = vector<int, R>;
 
-template <size_t R, size_t C> using matrixf = matrix<float, R, C, ggl::fless<float>>;
-template <size_t R> using vectorf = vector<float, R, ggl::fless<float>>;
+template <size_t R, size_t C> using matrixf = matrix<float, R, C, ggl::util::fless<float>>;
+template <size_t R> using vectorf = vector<float, R, ggl::util::fless<float>>;
 
 }
 

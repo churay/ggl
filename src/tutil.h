@@ -3,10 +3,12 @@
 
 namespace ggl {
 
-template <class T>
-struct fless {
-    bool operator()( const T& pValue1, const T& pValue2 ) const;
-};
+namespace util {
+    template <class T>
+    struct fless {
+        bool operator()( const T& pValue1, const T& pValue2 ) const;
+    };
+}
 
 }
 

@@ -13,6 +13,12 @@ namespace xform {
 
     template <class... Ts>
     auto translate( Ts&&... pValues );
+
+    template <class T>
+    auto rotate( const T& pRadians );
+
+    template <class T>
+    auto rotate( const T& pRadians, const vector<T, 3>& pAxis );
 }
 
 }
