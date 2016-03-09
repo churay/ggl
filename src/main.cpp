@@ -24,10 +24,10 @@ int main() {
     ggl::vectorf<3> vec1{ 1.0f, 0.0f, 0.0f };
     ggl::vectorf<3> vec2{ 0.0f, 1.0f, 0.0f };
 
-    ggl::vectorf<3> vec = vec1.cross( vec2 );
-    std::cout << vec << std::endl;
+    ggl::vectorf<3> vec3 = vec1.cross( vec2 );
+    std::cout << vec3 << std::endl;
 
-    std::cout << mat << " * " << vec << " = " << mat * vec << std::endl;
+    std::cout << mat << " * " << vec3 << " = " << mat * vec3 << std::endl;
 
     std::cout << ggl::xform::scale( 1.0f, 2.0f ) << std::endl;
     std::cout << ggl::xform::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
@@ -40,4 +40,9 @@ int main() {
 
     std::cout << mat2.inverse() << std::endl;
     std::cout << mat2 * mat2.inverse() << std::endl;
+
+    std::cout << vec1.angleTo( vec2 ) << std::endl;
+    std::cout << vec2.angleTo( vec1 ) << std::endl;
+    std::cout << vec3.angleTo( vec1 ) << std::endl;
+    std::cout << vec1.projectOnto( vec2 ) << std::endl;
 }

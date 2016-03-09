@@ -199,7 +199,7 @@ T matrix<T, R, C, LT>::determinant() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
-    EntryType result = EntryType( 0 );
+    EntryType result = sZeroValue;
     for( const auto& ePermute : ggl::util::permutations(sNumRows) ) {
         EntryType eResult = ( ggl::util::inversions(ePermute) % 2 == 0 ) ? 1 : -1;
         for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
@@ -249,7 +249,7 @@ T matrix<T, R, C, LT>::dot( const matrix& pOther ) const {
     static_assert( sNumRows == 1 || sNumCols == 1,
         "'ggl::matrix' dot operation is only valid on vectors." );
 
-    EntryType result;
+    EntryType result = sZeroValue;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
         result += (*this)[eIdx] * pOther[eIdx];
 
@@ -269,6 +269,26 @@ matrix<T, R, C, LT> matrix<T, R, C, LT>::cross( const matrix& pOther ) const {
         result[eIdx] = (*this)[eIdx1] * pOther[eIdx2] - (*this)[eIdx2] * pOther[eIdx1];
     }
     return result;
+}
+
+
+template <class T, size_t R, size_t C, class LT>
+T matrix<T, R, C, LT>::angleTo( const matrix& pOther ) const {
+    static_assert( sNumRows == 1 || sNumCols == 1,
+        "'ggl::matrix' angleTo operation is only valid on vectors." );
+
+    // NOTE(JRC): a . b == |a||b|cos(t) => t == acos( (a . b) / (|a||b|) )
+    return std::acos( (*this).dot(pOther) / ((*this).normal() * pOther.normal()) );
+}
+
+
+template <class T, size_t R, size_t C, class LT>
+matrix<T, R, C, LT> matrix<T, R, C, LT>::projectOnto( const matrix& pOther ) const {
+    static_assert( sNumRows == 1 || sNumCols == 1,
+        "'ggl::matrix' projectOnto operation is only valid on vectors." );
+
+    // NOTE(JRC): proj_d(s) == ( (s . d) / (d . d) ) * d
+    return ( (*this).dot(pOther) / pOther.dot(pOther) ) * pOther;
 }
 
 

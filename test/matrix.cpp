@@ -185,6 +185,15 @@ SCENARIO( "ggl::matrix augment operation works", "[matrix]" ) {
     }
 }
 
+SCENARIO( "ggl::matrix submatrix operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
 
 SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
     GIVEN( "a matrix with non-trivial number of entries" ) {
@@ -320,6 +329,26 @@ SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
 }
 
 SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix angleTo operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix projectOnto operation works", "[matrix]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {

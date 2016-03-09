@@ -62,6 +62,8 @@ class matrix {
 
     EntryType dot( const matrix& pOther ) const;
     matrix<T, R, C, LT> cross( const matrix& pOther ) const;
+    EntryType angleTo( const matrix& pOther ) const;
+    matrix<T, R, C, LT> projectOnto( const matrix& pOther ) const;
 
     const EntryType* data() const;
 
