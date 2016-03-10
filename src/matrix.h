@@ -52,6 +52,8 @@ class matrix {
 
     template <size_t SR0, size_t SC0, size_t SR, size_t SC>
     matrix<T, SR, SC, LT> submatrix() const;
+    template <size_t SR0, size_t SC0, size_t SR, size_t SC>
+    void embed( const matrix<T, SR, SC, LT>& pMatrix );
 
     EntryType normal() const;
     matrix<T, R, C, LT> normalize() const;

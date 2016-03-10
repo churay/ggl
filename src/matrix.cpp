@@ -133,14 +133,8 @@ matrix<T, R, C2, LT> matrix<T, R, C, LT>::operator*( const matrix<T, C, C2, LT>&
 template <class T, size_t R, size_t C, class LT> template <size_t C2>
 matrix<T, R, C+C2, LT> matrix<T, R, C, LT>::operator|( const matrix<T, R, C2, LT>& pOther ) const {
     matrix<EntryType, R, C+C2, Compare> result;
-
-    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
-        for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-            result( rIdx, cIdx ) = (*this)( rIdx, cIdx );
-
-    for( size_t rIdx = 0; rIdx < pOther.sNumRows; ++rIdx )
-        for( size_t cIdx = 0; cIdx < pOther.sNumCols; ++cIdx )
-            result( rIdx, cIdx + sNumCols ) = pOther( rIdx, cIdx );
+    result.template embed<0, 0>( *this );
+    result.template embed<0, C>( pOther );
 
     return result;
 }
@@ -158,6 +152,18 @@ matrix<T, SR, SC, LT> matrix<T, R, C, LT>::submatrix() const {
             result( rIdx, cIdx ) = (*this)( rIdx + SR0, cIdx + SC0 );
 
     return result;
+}
+
+
+template <class T, size_t R, size_t C, class LT>
+template <size_t SR0, size_t SC0, size_t SR, size_t SC>
+void matrix<T, R, C, LT>::embed( const matrix<T, SR, SC, LT>& pMatrix ) {
+    static_assert( SR0 + SR <= sNumRows && SC0 + SC <= sNumCols,
+        "'ggl::matrix' embed operation has invalid parameters." );
+
+    for( size_t rIdx = 0; rIdx < SR; ++rIdx )
+        for( size_t cIdx = 0; cIdx < SC; ++cIdx )
+            (*this)( rIdx + SR0, cIdx + SC0 ) = pMatrix( rIdx, cIdx );
 }
 
 
@@ -240,7 +246,7 @@ matrix<T, R, C, LT> matrix<T, R, C, LT>::inverse() const {
         elim._scaleRows( rIdx, rScale );
     }
 
-    return elim.submatrix<0, sNumCols, sNumRows, sNumCols>();
+    return elim.template submatrix<0, sNumCols, sNumRows, sNumCols>();
 }
 
 

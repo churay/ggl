@@ -53,6 +53,8 @@ template <class T, class LT>
 auto xform::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
     static const T sZeroValue{ 0 }, sOneValue{ 1 };
 
+    // NOTE(JRC): This succinct 3D rotation formula was taken from here:
+    // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
     auto cosMatrix = std::cos( pRadians ) * ggl::matrix<T, 3, 3, LT>( sOneValue );
     auto sinMatrix = std::sin( pRadians ) * ggl::matrix<T, 3, 3, LT>{
         sZeroValue, -pAxis[2], +pAxis[1],
@@ -62,11 +64,7 @@ auto xform::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
     auto icosMatrix = ( sOneValue - std::cos(pRadians) ) * pAxis.tensor( pAxis );
 
     ggl::matrix<T, 4, 4, LT> result{ sOneValue };
-    for( unsigned rIdx = 0; rIdx < 3; ++rIdx )
-        for( unsigned cIdx = 0; cIdx < 3; ++cIdx )
-            result(rIdx, cIdx) = cosMatrix(rIdx, cIdx) +
-                sinMatrix(rIdx, cIdx) + icosMatrix(rIdx, cIdx);
-
+    result.template embed<0, 0>( cosMatrix + sinMatrix + icosMatrix );
     return result;
 }
 
