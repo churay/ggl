@@ -33,8 +33,7 @@ matrix<T, R, C, LT>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pE
     if( sizeof...(Ts) == 1 )
         for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
             for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-                (*this)( rIdx, cIdx ) = ( rIdx == cIdx ) ?
-                    (*this)( 0, 0 ) : EntryType( 0 );
+                (*this)(rIdx, cIdx) = ( rIdx == cIdx ) ? (*this)(0, 0) : sZeroValue;
 }
 
 
@@ -124,7 +123,7 @@ matrix<T, R, C2, LT> matrix<T, R, C, LT>::operator*( const matrix<T, C, C2, LT>&
     for( size_t rIdx = 0; rIdx < result.sNumRows; ++rIdx )
         for( size_t cIdx = 0; cIdx < result.sNumCols; ++cIdx )
             for( size_t iIdx = 0; iIdx < this->sNumCols; ++iIdx )
-                result( rIdx, cIdx ) += (*this)( rIdx, iIdx ) * pOther( iIdx, cIdx );
+                result(rIdx, cIdx) += (*this)(rIdx, iIdx) * pOther(iIdx, cIdx);
 
     return result;
 }
@@ -149,7 +148,7 @@ matrix<T, SR, SC, LT> matrix<T, R, C, LT>::submatrix() const {
     matrix<EntryType, SR, SC, Compare> result;
     for( size_t rIdx = 0; rIdx < SR; ++rIdx )
         for( size_t cIdx = 0; cIdx < SC; ++cIdx )
-            result( rIdx, cIdx ) = (*this)( rIdx + SR0, cIdx + SC0 );
+            result(rIdx, cIdx) = (*this)(rIdx + SR0, cIdx + SC0);
 
     return result;
 }
@@ -163,7 +162,7 @@ void matrix<T, R, C, LT>::embed( const matrix<T, SR, SC, LT>& pMatrix ) {
 
     for( size_t rIdx = 0; rIdx < SR; ++rIdx )
         for( size_t cIdx = 0; cIdx < SC; ++cIdx )
-            (*this)( rIdx + SR0, cIdx + SC0 ) = pMatrix( rIdx, cIdx );
+            (*this)(rIdx + SR0, cIdx + SC0) = pMatrix(rIdx, cIdx);
 }
 
 
@@ -194,7 +193,7 @@ matrix<T, C, R, LT> matrix<T, R, C, LT>::transpose() const {
     matrix<EntryType, sNumCols, sNumRows, Compare> result;
     for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
         for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-            result( cIdx, rIdx ) = (*this)( rIdx, cIdx );
+            result(cIdx, rIdx) = (*this)(rIdx, cIdx);
 
     return result;
 }
@@ -209,7 +208,7 @@ T matrix<T, R, C, LT>::determinant() const {
     for( const auto& ePermute : ggl::util::permutations(sNumRows) ) {
         EntryType eResult = ( ggl::util::inversions(ePermute) % 2 == 0 ) ? 1 : -1;
         for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
-            eResult *= (*this)( ePermute[dIdx], dIdx );
+            eResult *= (*this)(ePermute[dIdx], dIdx);
         result += eResult;
     }
 
@@ -236,13 +235,13 @@ matrix<T, R, C, LT> matrix<T, R, C, LT>::inverse() const {
 
         for( size_t krIdx = 0; krIdx < sNumRows; ++krIdx ) {
             if( krIdx != rIdx ) {
-                EntryType krScale = -1 * elim( krIdx, rIdx ) / elim( rIdx, rIdx );
+                EntryType krScale = -1 * elim(krIdx, rIdx) / elim(rIdx, rIdx);
                 elim._addRows( rIdx, krIdx, krScale );
-                elim( krIdx, rIdx ) = sZeroValue;
+                elim(krIdx, rIdx) = sZeroValue;
             }
         }
 
-        EntryType rScale = 1 / elim( rIdx, rIdx );
+        EntryType rScale = 1 / elim(rIdx, rIdx);
         elim._scaleRows( rIdx, rScale );
     }
 
@@ -359,7 +358,7 @@ std::ostream& operator<<( std::ostream& os, const ggl::matrix<T, R, C, LT>& m ) 
     for( size_t rIdx = 0; rIdx < m.sNumRows; ++rIdx ) {
         os << "| ";
         for( size_t cIdx = 0; cIdx < m.sNumCols; ++cIdx ) {
-            os << m( rIdx, cIdx ) << ( cIdx < m.sNumCols - 1 ? ", " : " " );
+            os << m(rIdx, cIdx) << ( cIdx < m.sNumCols - 1 ? ", " : " " );
         }
         os << ( rIdx < m.sNumRows - 1 ? "|, " : "| " );
     }

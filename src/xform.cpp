@@ -15,7 +15,7 @@ auto xform::scale( Ts&&... pValues ) {
 
     ggl::matrix<T, D+1, D+1> result{ T(1) };
     for( unsigned eIdx = 0; eIdx < D; ++eIdx )
-        result( eIdx, eIdx ) = pValueArray[eIdx];
+        result(eIdx, eIdx) = pValueArray[eIdx];
 
     return result;
 }
@@ -29,7 +29,7 @@ auto xform::translate( Ts&&... pValues ) {
 
     ggl::matrix<T, D+1, D+1> result{ T(1) };
     for( unsigned eIdx = 0; eIdx < D; ++eIdx )
-        result( eIdx, D ) = pValueArray[eIdx];
+        result(eIdx, D) = pValueArray[eIdx];
 
     return result;
 }

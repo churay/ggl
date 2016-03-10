@@ -129,7 +129,7 @@ SCENARIO( "ggl::matrix matrix multiplication works", "[matrix]" ) {
             }
         }
 
-        WHEN( "both of the matrices are non-trivial" ) {
+        WHEN( "both of the matrices are nontrivial" ) {
             THEN( "the result matrix is the product of the operands" ) {
                 const ggl::matrixi<2, 2> expected{ 7, 10, 15, 22 };
                 REQUIRE( (m1 * m1) == expected );
@@ -186,17 +186,68 @@ SCENARIO( "ggl::matrix augment operation works", "[matrix]" ) {
 }
 
 SCENARIO( "ggl::matrix submatrix operation works", "[matrix]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+    GIVEN( "a matrix with nontrivial dimensions" ) {
+        WHEN( "a trivial submatrix is queried" ) {
+            const ggl::matrixi<2, 2> m{ 1, 2, 3, 4 };
+            THEN( "the result is the entry of the source matrix at the submatrix coordinates" ) {
+                REQUIRE( (m.template submatrix<0, 0, 1, 1>())(0, 0) == m(0, 0) );
+                REQUIRE( (m.template submatrix<0, 1, 1, 1>())(0, 0) == m(0, 1) );
+                REQUIRE( (m.template submatrix<1, 0, 1, 1>())(0, 0) == m(1, 0) );
+                REQUIRE( (m.template submatrix<1, 1, 1, 1>())(0, 0) == m(1, 1) );
+            }
+        }
+
+        WHEN( "a nontrivial submatrix is queried" ) {
+            const ggl::matrixi<3, 3> m{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            THEN( "the result is the submatrix at the given subset of the source matrix" ) {
+                const ggl::matrixi<2, 2> r1 = m.template submatrix<0, 0, 2, 2>();
+                const ggl::matrixi<2, 2> expected1{ 1, 2, 4, 5 };
+                REQUIRE( r1 == expected1 );
+
+                const ggl::matrixi<2, 3> r2 = m.template submatrix<1, 0, 2, 3>();
+                const ggl::matrixi<2, 3> expected2{ 4, 5, 6, 7, 8, 9 };
+                REQUIRE( r2 == expected2 );
+
+                const ggl::matrixi<1, 2> r3 = m.template submatrix<2, 1, 1, 2>();
+                const ggl::matrixi<1, 2> expected3{ 8, 9 };
+                REQUIRE( r3 == expected3 );
+            }
+        }
+    }
+}
+
+SCENARIO( "ggl::matrix embed operation works", "[matrix]" ) {
+    GIVEN( "a matrix with nontrivial dimensions" ) {
+        WHEN( "a trivial submatrix is embedded" ) {
+            ggl::matrixi<2, 2> m{ 1, 2, 3, 4 };
+            THEN( "the target matrix has the source entry at the embedding coordinates" ) {
+                m.template embed<0, 0>( ggl::matrixi<1, 1>(5) );
+                m.template embed<1, 1>( ggl::matrixi<1, 1>(10) );
+
+                const ggl::matrixi<2, 2> expected{ 5, 2, 3, 10 };
+                REQUIRE( m == expected );
+            }
+        }
+
+        WHEN( "a nontrivial submatrix is embedded" ) {
+            ggl::matrixi<3, 3> m{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            THEN( "the target matrix has the subset values replaced by those in the source" ) {
+                m.template embed<1, 1>( ggl::matrixi<2, 1>(20, 30) );
+
+                const ggl::matrixi<3, 3> expected1{ 1, 2, 3, 4, 20, 6, 7, 30, 9 };
+                REQUIRE( m == expected1 );
+
+                m.template embed<2, 0>( ggl::matrixi<1, 3>(100, 200, 300) );
+
+                const ggl::matrixi<3, 3> expected2{ 1, 2, 3, 4, 20, 6, 100, 200, 300 };
+                REQUIRE( m == expected2 );
             }
         }
     }
 }
 
 SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
-    GIVEN( "a matrix with non-trivial number of entries" ) {
+    GIVEN( "a matrix with nontrivial dimensions" ) {
         WHEN( "the matrix is a vector" ) {
             THEN( "the normal is the euclidean length of the vector" ) {
                 const ggl::vectori<2> v1{ 3, 4 };
@@ -328,7 +379,7 @@ SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix tensor operation works", "[matrix]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -338,7 +389,7 @@ SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix tensor operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
