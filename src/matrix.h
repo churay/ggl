@@ -61,6 +61,8 @@ class matrix {
     matrix<T, R, C, LT> inverse() const;
 
     EntryType dot( const matrix& pOther ) const;
+    template <size_t R2>
+    matrix<T, R, R2, LT> tensor( const matrix<T, R2, C, LT>& pOther ) const;
     matrix<T, R, C, LT> cross( const matrix& pOther ) const;
     EntryType angleTo( const matrix& pOther ) const;
     matrix<T, R, C, LT> projectOnto( const matrix& pOther ) const;

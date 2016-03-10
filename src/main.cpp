@@ -27,12 +27,14 @@ int main() {
     ggl::vectorf<3> vec3 = vec1.cross( vec2 );
     std::cout << vec3 << std::endl;
 
+    std::cout << vec1.tensor( vec2 ) << std::endl;
+
     std::cout << mat << " * " << vec3 << " = " << mat * vec3 << std::endl;
 
     std::cout << ggl::xform::scale( 1.0f, 2.0f ) << std::endl;
     std::cout << ggl::xform::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
-    std::cout << ggl::xform::rotate2d( M_PIF / 2.0f ) << std::endl;
-    std::cout << ggl::xform::rotate3d( M_PIF / 2.0f, vec3 ) << std::endl;
+    std::cout << ggl::xform::rotate( M_PIF / 2.0f ) << std::endl;
+    std::cout << ggl::xform::rotate( M_PIF / 2.0f, vec3 ) << std::endl;
 
     std::cout << mat1.determinant() << std::endl;
     std::cout << mat2.determinant() << std::endl;

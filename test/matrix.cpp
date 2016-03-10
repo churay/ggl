@@ -338,6 +338,16 @@ SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
     }
 }
 
+SCENARIO( "ggl::matrix tensor operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
 SCENARIO( "ggl::matrix angleTo operation works", "[matrix]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {

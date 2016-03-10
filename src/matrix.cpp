@@ -257,6 +257,15 @@ T matrix<T, R, C, LT>::dot( const matrix& pOther ) const {
 }
 
 
+template <class T, size_t R, size_t C, class LT> template <size_t R2>
+matrix<T, R, R2, LT> matrix<T, R, C, LT>::tensor( const matrix<T, R2, C, LT>& pOther ) const {
+    static_assert( sNumCols == 1,
+        "'ggl::matrix' tensor operation is only valid on column vectors." );
+
+    return (*this) * pOther.transpose();
+}
+
+
 template <class T, size_t R, size_t C, class LT>
 matrix<T, R, C, LT> matrix<T, R, C, LT>::cross( const matrix& pOther ) const {
     static_assert( (sNumRows == 1 || sNumCols == 1) && sNumEnts == 3,
