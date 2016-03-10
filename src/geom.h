@@ -1,5 +1,5 @@
-#ifndef GGL_XFORM_H
-#define GGL_XFORM_H
+#ifndef GGL_GEOM_H
+#define GGL_GEOM_H
 
 #include <tuple>
 #include <utility>
@@ -7,7 +7,10 @@
 
 namespace ggl {
 
-namespace xform {
+namespace geom {
+    template <class T, class LT>
+    auto basis( const vector<T, 3, LT>& pZVector );
+
     template <class... Ts>
     auto scale( Ts&&... pValues );
 
@@ -23,6 +26,6 @@ namespace xform {
 
 }
 
-#include "xform.cpp"
+#include "geom.cpp"
 
 #endif

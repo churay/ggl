@@ -1,3 +1,4 @@
+#include <array>
 #include <cmath>
 #include <tuple>
 #include <utility>
@@ -5,10 +6,31 @@
 
 namespace ggl {
 
+// TODO(JRC): Clean up this function so that the intent of the branches is clearer.
+template <class T, class LT>
+auto geom::basis( const vector<T, 3, LT>& pZVector ) {
+    static const T sZeroValue{ 0 };
+
+    std::array<vector<T, 3, LT>, 3> result;
+
+    result[2] = pZVector.normalize();
+    if( result[2][0] < result[2][1] && result[2][0] < result[2][2] ) {
+        result[0] = vector<T, 3, LT>( sZeroValue, result[2][2], -result[2][1] ).normalize();
+    } else if( result[2][1] < result[2][2] ) {
+        result[0] = vector<T, 3, LT>( result[2][2], sZeroValue, -result[2][0] ).normalize();
+    } else {
+        result[0] = vector<T, 3, LT>( result[2][1], -result[2][0], sZeroValue ).normalize();
+    }
+    result[1] = result[0].cross( result[2] );
+
+    return result;
+}
+
+
 // TODO(JRC): Improve the implementation of the following two functions so
 // that there isn't as much duplication.
 template <class... Ts>
-auto xform::scale( Ts&&... pValues ) {
+auto geom::scale( Ts&&... pValues ) {
     using T = typename std::tuple_element<0, std::tuple<Ts...>>::type;
     constexpr unsigned D = sizeof...( Ts );
     const std::array<T, D> pValueArray{{ std::forward<Ts>(pValues)... }};
@@ -22,7 +44,7 @@ auto xform::scale( Ts&&... pValues ) {
 
 
 template <class... Ts>
-auto xform::translate( Ts&&... pValues ) {
+auto geom::translate( Ts&&... pValues ) {
     using T = typename std::tuple_element<0, std::tuple<Ts...>>::type;
     constexpr unsigned D = sizeof...( Ts );
     const std::array<T, D> pValueArray{{ std::forward<Ts>(pValues)... }};
@@ -36,7 +58,7 @@ auto xform::translate( Ts&&... pValues ) {
 
 
 template <class T>
-auto xform::rotate( const T& pRadians ) {
+auto geom::rotate( const T& pRadians ) {
     static const T sZeroValue{ 0 }, sOneValue{ 1 };
 
     ggl::matrix<T, 3, 3> result{ 
@@ -50,7 +72,7 @@ auto xform::rotate( const T& pRadians ) {
 
 
 template <class T, class LT>
-auto xform::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
+auto geom::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
     static const T sZeroValue{ 0 }, sOneValue{ 1 };
 
     // NOTE(JRC): This succinct 3D rotation formula was taken from here:

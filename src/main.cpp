@@ -1,7 +1,9 @@
+#include <array>
 #include <iostream>
-#include "util.h"
+
 #include "matrix.h"
-#include "xform.h"
+#include "geom.h"
+#include "util.h"
 
 int main() {
     ggl::matrixf<3, 3> mat1{ 1.0f };
@@ -31,10 +33,15 @@ int main() {
 
     std::cout << mat << " * " << vec3 << " = " << mat * vec3 << std::endl;
 
-    std::cout << ggl::xform::scale( 1.0f, 2.0f ) << std::endl;
-    std::cout << ggl::xform::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
-    std::cout << ggl::xform::rotate( M_PIF / 2.0f ) << std::endl;
-    std::cout << ggl::xform::rotate( M_PIF / 2.0f, vec3 ) << std::endl;
+    std::array<ggl::vectorf<3>, 3> basisVecs = ggl::geom::basis( vec3 );
+    std::cout << "Basis Vectors:" << std::endl;
+    for( const auto& basisVec : basisVecs )
+        std::cout << "  " << basisVec << std::endl;
+
+    std::cout << ggl::geom::scale( 1.0f, 2.0f ) << std::endl;
+    std::cout << ggl::geom::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
+    std::cout << ggl::geom::rotate( M_PIF / 2.0f ) << std::endl;
+    std::cout << ggl::geom::rotate( M_PIF / 2.0f, vec3 ) << std::endl;
 
     std::cout << mat1.determinant() << std::endl;
     std::cout << mat2.determinant() << std::endl;
