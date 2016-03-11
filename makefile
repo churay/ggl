@@ -23,8 +23,9 @@ SRC_HPP_FILES = $(wildcard $(SRC_DIR)/*.hpp)
 SRC_CONFIG_FILES = $(SRC_DIR)/consts.hpp
 
 SRC_FILES = $(SRC_CPP_FILES) $(SRC_H_FILES) $(SRC_HPP_FILES) $(SRC_CONFIG_FILES)
-OBJ_FILES = $(patsubst $(SRC_DIR)/%.h,$(BIN_DIR)/%.o,$(SRC_H_FILES))
-TEST_FILES = $(wildcard $(TEST_DIR)/*.cpp)
+SRC_OBJ_FILES = $(patsubst $(SRC_DIR)/%.h,$(BIN_DIR)/%.o,$(SRC_H_FILES))
+TEST_FILES = $(filter-out $(TEST_DIR)/main.cpp,$(wildcard $(TEST_DIR)/*.cpp))
+TEST_OBJ_FILES = $(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%.to,$(TEST_FILES))
 
 GENSUITE = $(ETC_DIR)/gensuite.py
 SUITE_SRC_FILE = $(ETC_DIR)/suite.cpp
@@ -45,17 +46,15 @@ TEST_LIB = $(LIB_DIR)/catch.hpp
 all : $(PROJ_EXE)
 
 $(PROJ_NAME) : $(PROJ_EXE)
-$(PROJ_EXE) : $(SRC_DIR)/main.cpp $(SRC_FILES) $(OBJ_FILES)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ_FILES) $< -o $@
+$(PROJ_EXE) : $(SRC_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRC_OBJ_FILES) $< -o $@
 
 $(TEST_NAME) : $(TEST_EXE)
-$(TEST_EXE) : $(TEST_FILES) $(SRC_FILES) $(OBJ_FILES) $(TEST_LIB)
-	$(GENSUITE) -o $(SUITE_SRC_FILE) $(foreach tf,$<,$(basename $(notdir $(tf))))
-	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(OBJ_FILES) $(SUITE_SRC_FILE) -o $@
+$(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $(TEST_LIB)
+	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
 
-$(BIN_DIR)/%.test : $(TEST_FILES) $(SRC_FILES) $(OBJ_FILES) $(TEST_LIB)
-	$(GENSUITE) -o $(SUITE_SRC_FILE) $(basename $(notdir $<))
-	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(OBJ_FILES) $(SUITE_SRC_FILE) -o $@
+$(BIN_DIR)/%.to : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/%.h*) $(SRC_CONFIG_FILES) $(TEST_LIB)
+	$(CXX) $(CXXFLAGS) $(TESTINCLS) $< -c -o $@
 
 $(BIN_DIR)/%.o : $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(SRC_CONFIG_FILES)
 	$(CXX) $(CXXFLAGS) $(CXXINCLS) $< -c -o $@

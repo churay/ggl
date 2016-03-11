@@ -1,3 +1,4 @@
+#include "catch.hpp"
 #include "src/matrix.hpp"
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
