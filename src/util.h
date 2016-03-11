@@ -1,7 +1,6 @@
 #ifndef GGL_UTIL_H
 #define GGL_UTIL_H
 
-#include <cmath>
 #include <vector>
 
 namespace ggl {
@@ -14,7 +13,5 @@ namespace util {
 }
 
 }
-
-#include "util.cpp"
 
 #endif

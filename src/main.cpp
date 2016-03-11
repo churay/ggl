@@ -1,8 +1,8 @@
 #include <array>
 #include <iostream>
 
-#include "matrix.h"
-#include "geom.h"
+#include "matrix.hpp"
+#include "geom.hpp"
 #include "consts.hpp"
 
 int main() {

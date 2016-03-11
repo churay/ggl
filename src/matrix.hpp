@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "tutil.h"
+#include "tutil.hpp"
 #include "consts.hpp"
 
 namespace ggl {

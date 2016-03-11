@@ -2,7 +2,8 @@
 #include <cmath>
 #include <tuple>
 #include <utility>
-#include "matrix.h"
+
+#include "matrix.hpp"
 
 namespace ggl {
 

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <vector>
 
+#include "util.h"
+
 namespace ggl {
 
 constexpr unsigned util::factorial( const unsigned n ) {

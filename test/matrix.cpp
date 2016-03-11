@@ -1,4 +1,4 @@
-#include "src/matrix.h"
+#include "src/matrix.hpp"
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
