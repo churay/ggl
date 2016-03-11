@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "tutil.h"
+#include "consts.hpp"
 
 namespace ggl {
 
@@ -100,8 +101,8 @@ template <class T, size_t R, class LT=std::less<T>> using vector = matrix<T, R, 
 template <size_t R, size_t C> using matrixi = matrix<int, R, C>;
 template <size_t R> using vectori = vector<int, R>;
 
-template <size_t R, size_t C> using matrixf = matrix<float, R, C, ggl::util::fless<float>>;
-template <size_t R> using vectorf = vector<float, R, ggl::util::fless<float>>;
+template <size_t R, size_t C> using matrixf = matrix<ggl::real, R, C, ggl::util::fless<ggl::real>>;
+template <size_t R> using vectorf = vector<ggl::real, R, ggl::util::fless<ggl::real>>;
 
 }
 

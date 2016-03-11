@@ -122,7 +122,7 @@ matrix<T, R, C2, LT> matrix<T, R, C, LT>::operator*( const matrix<T, C, C2, LT>&
     matrix<EntryType, R, C2, Compare> result;
     for( size_t rIdx = 0; rIdx < result.sNumRows; ++rIdx )
         for( size_t cIdx = 0; cIdx < result.sNumCols; ++cIdx )
-            for( size_t iIdx = 0; iIdx < this->sNumCols; ++iIdx )
+            for( size_t iIdx = 0; iIdx < (*this).sNumCols; ++iIdx )
                 result(rIdx, cIdx) += (*this)(rIdx, iIdx) * pOther(iIdx, cIdx);
 
     return result;
@@ -178,7 +178,7 @@ T matrix<T, R, C, LT>::normal() const {
 
 template <class T, size_t R, size_t C, class LT>
 matrix<T, R, C, LT> matrix<T, R, C, LT>::normalize() const {
-    const EntryType normal = this->normal();
+    const EntryType normal = (*this).normal();
 
     matrix<EntryType, sNumRows, sNumCols, Compare> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )

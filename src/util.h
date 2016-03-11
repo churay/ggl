@@ -4,10 +4,6 @@
 #include <cmath>
 #include <vector>
 
-#ifndef M_PIF
-#define M_PIF (static_cast<float>(M_PI))
-#endif
-
 namespace ggl {
 
 namespace util {

@@ -3,7 +3,7 @@
 
 #include "matrix.h"
 #include "geom.h"
-#include "util.h"
+#include "consts.hpp"
 
 int main() {
     ggl::matrixf<3, 3> mat1{ 1.0f };
@@ -40,8 +40,8 @@ int main() {
 
     std::cout << ggl::geom::scale( 1.0f, 2.0f ) << std::endl;
     std::cout << ggl::geom::translate( 1.0f, 2.0f, 3.0f ) << std::endl;
-    std::cout << ggl::geom::rotate( M_PIF / 2.0f ) << std::endl;
-    std::cout << ggl::geom::rotate( M_PIF / 2.0f, vec3 ) << std::endl;
+    std::cout << ggl::geom::rotate( M_PI_R / 2.0f ) << std::endl;
+    std::cout << ggl::geom::rotate( M_PI_R / 2.0f, vec3 ) << std::endl;
 
     std::cout << mat1.determinant() << std::endl;
     std::cout << mat2.determinant() << std::endl;
