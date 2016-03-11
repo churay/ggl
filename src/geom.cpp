@@ -6,22 +6,18 @@
 
 namespace ggl {
 
-// TODO(JRC): Clean up this function so that the intent of the branches is clearer.
 template <class T, class LT>
-auto geom::basis( const vector<T, 3, LT>& pZVector ) {
-    static const T sZeroValue{ 0 };
+auto geom::basis( const vector<T, 3, LT>& pWVector ) {
+    static const T sZeroValue{ 0 }, sOneValue{ 1 };
+    static const vector<T, 3, LT>& sXVector{ sOneValue, sZeroValue, sZeroValue };
+    static const vector<T, 3, LT>& sYVector{ sZeroValue, sOneValue, sZeroValue };
+
+    const vector<T, 3, LT> vVector = ( pWVector != sYVector ) ? sYVector : sXVector;
 
     std::array<vector<T, 3, LT>, 3> result;
-
-    result[2] = pZVector.normalize();
-    if( result[2][0] < result[2][1] && result[2][0] < result[2][2] ) {
-        result[0] = vector<T, 3, LT>( sZeroValue, result[2][2], -result[2][1] ).normalize();
-    } else if( result[2][1] < result[2][2] ) {
-        result[0] = vector<T, 3, LT>( result[2][2], sZeroValue, -result[2][0] ).normalize();
-    } else {
-        result[0] = vector<T, 3, LT>( result[2][1], -result[2][0], sZeroValue ).normalize();
-    }
-    result[1] = result[0].cross( result[2] );
+    result[2] = pWVector.normalize();
+    result[0] = vVector.cross( pWVector ).normalize();
+    result[1] = result[2].cross( result[0] ).normalize();
 
     return result;
 }

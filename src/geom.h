@@ -9,7 +9,7 @@ namespace ggl {
 
 namespace geom {
     template <class T, class LT>
-    auto basis( const vector<T, 3, LT>& pZVector );
+    auto basis( const vector<T, 3, LT>& pWVector );
 
     template <class... Ts>
     auto scale( Ts&&... pValues );
