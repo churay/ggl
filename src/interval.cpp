@@ -21,7 +21,7 @@ ggl::real interval::clamp( const ggl::real& pValue ) const {
 }
 
 
-ggl::real interval::interpolate( const ggl::real& pValue ) const {
+ggl::real interval::lerp( const ggl::real& pValue ) const {
     return (*this).clamp( mMin + pValue * (mMax - mMin) );
 }
 
@@ -49,14 +49,13 @@ bool interval::overlaps( const interval& pOther ) const {
 }
 
 
-bool interval::empty() const {
-    return mMin == mMax;
-}
-
-
-std::pair<ggl::real, ggl::real> interval::getBounds() const {
+std::pair<ggl::real, ggl::real> interval::bounds() const {
     return std::make_pair( mMin, mMax );
 }
 
+
+bool interval::empty() const {
+    return mMin == mMax;
+}
 
 }

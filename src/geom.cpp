@@ -87,4 +87,16 @@ auto geom::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
     return result;
 }
 
+
+template <class T, class LT>
+auto geom::rotate( const std::array<vector<T, 3, LT>, 3>& pAxes ) {
+    ggl::matrix<T, 4, 4, LT> result{ static_cast<T>(1) };
+
+    result.template embed<0, 0>( pAxes[0] );
+    result.template embed<0, 1>( pAxes[1] );
+    result.template embed<0, 2>( pAxes[2] );
+
+    return result.transpose();
+}
+
 }

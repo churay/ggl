@@ -18,14 +18,14 @@ class interval {
     /// Class Functions ///
 
     ggl::real clamp( const ggl::real& pValue ) const;
-    ggl::real interpolate( const ggl::real& pValue ) const;
-    interval intersect( const interval& pOther ) const;
+    ggl::real lerp( const ggl::real& pValue ) const;
 
+    interval intersect( const interval& pOther ) const;
     bool contains( const ggl::real& pValue ) const;
     bool overlaps( const interval& pOther ) const;
-    bool empty() const;
 
-    std::pair<ggl::real, ggl::real> getBounds() const;
+    std::pair<ggl::real, ggl::real> bounds() const;
+    bool empty() const;
 
     private:
 
