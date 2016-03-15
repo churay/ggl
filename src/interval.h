@@ -1,6 +1,8 @@
 #ifndef GGL_INTERVAL_H
 #define GGL_INTERVAL_H
 
+#include <utility>
+
 #include "consts.hpp"
 
 namespace ggl {
@@ -15,14 +17,15 @@ class interval {
 
     /// Class Functions ///
 
-    ggl::real clamp( const ggl::real& pValue );
-    ggl::real interpolate( const ggl::real& pValue );
-    interval intersect( const interval& pOther );
+    ggl::real clamp( const ggl::real& pValue ) const;
+    ggl::real interpolate( const ggl::real& pValue ) const;
+    interval intersect( const interval& pOther ) const;
 
-    bool contains( const ggl::real& pValue );
-    bool overlaps( const interval& pOther );
+    bool contains( const ggl::real& pValue ) const;
+    bool overlaps( const interval& pOther ) const;
+    bool empty() const;
 
-    bool empty();
+    std::pair<ggl::real, ggl::real> getBounds() const;
 
     private:
 
