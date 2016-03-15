@@ -20,9 +20,9 @@ class interval {
     ggl::real clamp( const ggl::real& pValue ) const;
     ggl::real lerp( const ggl::real& pValue ) const;
 
-    interval intersect( const interval& pOther ) const;
     bool contains( const ggl::real& pValue ) const;
     bool overlaps( const interval& pOther ) const;
+    interval intersect( const interval& pOther ) const;
 
     std::pair<ggl::real, ggl::real> bounds() const;
     bool empty() const;

@@ -26,18 +26,6 @@ ggl::real interval::lerp( const ggl::real& pValue ) const {
 }
 
 
-interval interval::intersect( const interval& pOther ) const {
-    if( !(*this).contains(pOther.mMin) && !(*this).contains(pOther.mMax) ) {
-        return interval();
-    } else {
-        return interval(
-            std::max( mMin, pOther.mMin ),
-            std::min( mMax, pOther.mMax )
-        );
-    }
-}
-
-
 bool interval::contains( const ggl::real& pValue ) const {
     return pValue >= mMin && pValue <= mMax;
 }
@@ -46,6 +34,16 @@ bool interval::contains( const ggl::real& pValue ) const {
 bool interval::overlaps( const interval& pOther ) const {
     interval overlapInterval = (*this).intersect( pOther );
     return !overlapInterval.empty();
+}
+
+
+interval interval::intersect( const interval& pOther ) const {
+    if( !(*this).contains(pOther.mMin) && !(*this).contains(pOther.mMax) &&
+            !pOther.contains(mMin) && !pOther.contains(mMax) ) {
+        return interval();
+    } else {
+        return interval( std::max(mMin, pOther.mMin), std::min(mMax, pOther.mMax) );
+    }
 }
 
 
