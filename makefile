@@ -1,10 +1,12 @@
 ### Compilation/Linking Tools and Flags ###
 
 CXX = g++
-CXXFLAGS = -std=c++1y -Wall -Werror -g -O0
-CXXINCLS = -I$(SRC_DIR)
-TESTINCLS = -I$(PROJ_DIR) -I$(LIB_DIR)
-LDFLAGS =
+CXX_FLAGS = -std=c++1y -Wall -Werror -g -O0
+CXX_INCLS = -I$(SRC_DIR)
+CXX_TINCLS = -I$(PROJ_DIR) -I$(LIB_DIR)
+
+CXX_LIB_FLAGS = `pkg-config --cflags glfw3`
+CXX_LIB_INCLS = `pkg-config --static --libs glfw3`
 
 ### Project Directories ###
 
@@ -47,17 +49,17 @@ all : $(PROJ_EXE)
 
 $(PROJ_NAME) : $(PROJ_EXE)
 $(PROJ_EXE) : $(SRC_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRC_OBJ_FILES) $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
 
 $(TEST_NAME) : $(TEST_EXE)
 $(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $(TEST_LIB)
-	$(CXX) $(CXXFLAGS) $(TESTINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
 
 $(BIN_DIR)/%.to : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/%.h*) $(SRC_CONFIG_FILES) $(TEST_LIB)
-	$(CXX) $(CXXFLAGS) $(TESTINCLS) $< -c -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $< -c -o $@
 
 $(BIN_DIR)/%.o : $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(SRC_CONFIG_FILES)
-	$(CXX) $(CXXFLAGS) $(CXXINCLS) $< -c -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_INCLS) $< -c -o $@
 
 $(TEST_LIB) :
 	mkdir -p $(LIB_DIR)
