@@ -6,6 +6,7 @@
 
 #include "matrix.hpp"
 #include "geom.hpp"
+#include "xform.hpp"
 #include "consts.hpp"
 
 void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod ) {
