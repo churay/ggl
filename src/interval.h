@@ -27,6 +27,9 @@ class interval {
     std::pair<ggl::real, ggl::real> bounds() const;
     bool empty() const;
 
+    const ggl::real& min() const;
+    const ggl::real& max() const;
+
     private:
 
     /// Class Fields ///

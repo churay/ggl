@@ -11,7 +11,7 @@ interval::interval() {
 
 
 interval::interval( const ggl::real& pMin, const ggl::real& pMax ) {
-    mMin = pMin;
+    mMin = std::min( pMin, pMax );
     mMax = std::max( pMin, pMax );
 }
 
@@ -54,6 +54,16 @@ std::pair<ggl::real, ggl::real> interval::bounds() const {
 
 bool interval::empty() const {
     return mMin == mMax;
+}
+
+
+const ggl::real& interval::min() const {
+    return mMin;
+}
+
+
+const ggl::real& interval::max() const {
+    return mMax;
 }
 
 }

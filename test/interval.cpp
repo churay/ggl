@@ -14,16 +14,16 @@ SCENARIO( "ggl::interval is correctly constructed", "[interval]" ) {
     GIVEN( "an explicit minimum and maximum" ) {
         const ggl::real min = 313.9999f, max = 314.0f;
         WHEN( "the given maximum is lower than the minimum" ) {
-            const ggl::interval empty( max, min );
-            THEN( "the result interval is an empty interval centered at minimum" ) {
-                REQUIRE( empty.bounds() == std::make_pair(max, max) );
+            const ggl::interval test( max, min );
+            THEN( "the result interval is rearranged to be from minimum to maximum" ) {
+                REQUIRE( test.bounds() == std::make_pair(min, max) );
             }
         }
 
         WHEN( "the given maximum is higher than the minimum" ) {
-            const ggl::interval nonempty( min, max );
+            const ggl::interval test( min, max );
             THEN( "the result interval is bounded from minimum to maximum" ) {
-                REQUIRE( nonempty.bounds() == std::make_pair(min, max) );
+                REQUIRE( test.bounds() == std::make_pair(min, max) );
             }
         }
     }

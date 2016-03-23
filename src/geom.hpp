@@ -22,6 +22,16 @@ namespace geom {
         ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mOrigin; ggl::real mRadius;
     };
+
+    struct box {
+        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::vectorf<3> mMin, mMax;
+    };
+
+    struct triangle {
+        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::vectorf<3> mV1, mV2, mV3;
+    };
 }
 
 }
