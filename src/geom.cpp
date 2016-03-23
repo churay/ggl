@@ -13,35 +13,46 @@ geom::ray<D>::ray( const ggl::vectorf<D>& pOrigin, const ggl::vectorf<D>& pVecto
     mVector = pVector;
 }
 
+
 template <size_t D>
 ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
     return mOrigin + pParam * mVector;
 }
 
-/// Definitions for `ggl::geom::plane` ///
+/// Definitions for `ggl::geom::surface<T>` ///
 
-geom::plane::plane( const ggl::vectorf<3>& pOrigin, const ggl::vectorf<3>& pNormal ) {
-    mOrigin = pOrigin;
-    mNormal = pNormal;
+template <class T>
+geom::surface<T>::surface( const T& pEvalFxn ) {
+    mEvalFxn = pEvalFxn;
 }
 
-ggl::real geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
-    return mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
+
+template <class T>
+ggl::real geom::surface<T>::intersect( const ggl::geom::ray<3>& pRay ) const {
+    return mEvalFxn( pRay );
 }
 
-/// Definitions for `ggl::geom::sphere` ///
+/// Definitions for `ggl::geom::surface<T>` Functions ///
 
-geom::plane::sphere( const ggl::vectorf<3>& pOrigin, const ggl::real& pRadius ) {
-    mOrigin = pOrigin;
-    mRadius = pRadius;
+auto geom::plane( const ggl::vectorf<3>& pOrigin, const ggl::vectorf<3>& pNormal ) {
+    auto planeFxn = [=] ( const ggl::geom::ray<3>& pRay ) {
+        return pNormal.dot( pOrigin - pRay.mOrigin ) / pNormal.dot( pRay.mVector );
+    };
+
+    return surface<decltype(planeFxn)>( planeFxn );
 }
 
-ggl::real geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
-    const ggl::real quadA = pRay.mVector.dot( pRay.mVector );
-    const ggl::real quadB = pRay.mVector.dot( pRay.mOrigin - mOrigin );
-    const ggl::real quadC = std::pow((pRay.mOrigin - mOrigin).normal(), 2) - std::pow( mRadius, 2 );
 
-    return ( -quadB + std::sqrt(std::pow(quadB, 2) - 4 * quadA * quadC) ) / ( 2 * quadC );
+auto geom::sphere( const ggl::vectorf<3>& pOrigin, const ggl::real& pRadius ) {
+    auto sphereFxn = [=] ( const ggl::geom::ray<3>& pRay ) {
+        const ggl::real quadA = pRay.mVector.dot( pRay.mVector );
+        const ggl::real quadB = pRay.mVector.dot( pRay.mOrigin - pOrigin );
+        const ggl::real quadC = std::pow((pRay.mOrigin - pOrigin).normal(), 2) - std::pow( pRadius, 2 );
+
+        return ( -quadB + std::sqrt(std::pow(quadB, 2) - 4 * quadA * quadC) ) / ( 2 * quadC );
+    };
+
+    return surface<decltype(sphereFxn)>( sphereFxn );
 }
 
 }

@@ -15,19 +15,19 @@ namespace geom {
         ggl::vectorf<D> mOrigin, mVector;
     };
 
-    struct plane {
-        plane( const ggl::vectorf<3>& pOrigin, const ggl::vectorf<3>& pNormal );
+    template <class T>
+    struct surface {
+        surface( const T& pEvalFxn );
         ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
 
-        ggl::vectorf<3> mOrigin, mNormal;
+        T mEvalFxn;
     };
 
-    struct sphere {
-        sphere( const ggl::vectorf<3>& pOrigin, const ggl::real& pRadius );
-        ggl::real intersect( const ggl::geom::ray<3>& pRay );
-
-        ggl::vectorf<3> mOrigin, mRadius;
-    };
+    auto plane( const ggl::vectorf<3>& pOrigin, const ggl::vectorf<3>& pNormal );
+    auto sphere( const ggl::vectorf<3>& pOrigin, const ggl::real& pRadius );
+    // TODO(JRC): Implement the following functions:
+    // surface box( const ggl::vectorf<3>& pMin, const ggl::vectorf<3>& pMax );
+    // surface triangle( const std::array<ggl::vectorf<3>, 3>& pVertices );
 }
 
 }
