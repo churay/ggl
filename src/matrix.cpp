@@ -222,13 +222,17 @@ T matrix<T, R, C, LT>::determinant() const {
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
     matrix<EntryType, sNumRows, sNumCols, Compare> rre{ *this };
-    EntryType rreDelta = rre._reduceRows();
+    EntryType rreDelta = sOneValue;
+    rre._reduceRows( rreDelta );
 
-    EntryType result = sOneValue / rreDelta;
-    for( size_t dIdx = 0; dIdx < std::min(sNumRows, sNumCols); ++dIdx )
-        result *= rre(dIdx, dIdx);
-
-    return std::isnan( rreDelta ) ? sZeroValue : result;
+    if( _areEqual(rreDelta, sZeroValue) ) {
+        return sZeroValue;
+    } else {
+        EntryType result = sOneValue / rreDelta;
+        for( size_t dIdx = 0; dIdx < std::min(sNumRows, sNumCols); ++dIdx )
+            result *= rre(dIdx, dIdx);
+        return result;
+    }
 }
 
 
@@ -315,8 +319,15 @@ bool matrix<T, R, C, LT>::_areEqual( const T& pValue1, const T& pValue2 ) const 
 
 
 template <class T, size_t R, size_t C, class LT>
-T matrix<T, R, C, LT>::_reduceRows() {
-    EntryType matrixDelta = sOneValue;
+void matrix<T, R, C, LT>::_reduceRows() {
+    EntryType unusedValue = sOneValue;
+    (*this)._reduceRows( unusedValue );
+}
+
+
+template <class T, size_t R, size_t C, class LT>
+void matrix<T, R, C, LT>::_reduceRows( T& oMatrixDelta ) {
+    oMatrixDelta = sOneValue;
 
     for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
         size_t pivotIdx = rIdx;
@@ -327,7 +338,8 @@ T matrix<T, R, C, LT>::_reduceRows() {
 
         if( _areEqual((*this)(rIdx, rIdx), sZeroValue) ) {
             *this = matrix<T, R, C, LT>();
-            return std::numeric_limits<T>::quiet_NaN();
+            oMatrixDelta = sZeroValue;
+            return;
         }
 
         for( size_t krIdx = 0; krIdx < sNumRows; ++krIdx ) {
@@ -341,10 +353,8 @@ T matrix<T, R, C, LT>::_reduceRows() {
         EntryType rScale = 1 / (*this)(rIdx, rIdx);
         (*this)._scaleRow( rIdx, rScale );
 
-        matrixDelta *= rScale * ( (pivotIdx == rIdx) ? 1 : -1 );
+        oMatrixDelta *= rScale * ( (pivotIdx == rIdx) ? 1 : -1 );
     }
-
-    return matrixDelta;
 }
 
 

@@ -270,7 +270,7 @@ SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix normalize operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix normalize operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -293,7 +293,7 @@ SCENARIO( "ggl::matrix transpose operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix rreform operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix rreform operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -380,7 +380,7 @@ SCENARIO( "ggl::matrix inverse operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix dot operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -390,7 +390,7 @@ SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix tensor operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix tensor operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -400,7 +400,7 @@ SCENARIO( "ggl::matrix tensor operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix cross operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -410,7 +410,7 @@ SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix angleTo operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix angleTo operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {
@@ -420,7 +420,7 @@ SCENARIO( "ggl::matrix angleTo operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix projectOnto operation works", "[matrix]" ) {
+SCENARIO( "ggl::matrix projectOnto operation works", "[matrix][stub]" ) {
     GIVEN( "" ) {
         WHEN( "" ) {
             THEN( "" ) {

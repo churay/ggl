@@ -25,7 +25,7 @@ class matrix {
 
     static constexpr EntryType sZeroValue{ 0 };
     static constexpr EntryType sOneValue{ 1 };
-    static constexpr LT sLessThan{};
+    static constexpr Compare sLessThan{};
 
     /// Constructors ///
 
@@ -89,7 +89,8 @@ class matrix {
 
     bool _areEqual( const EntryType& pValue1, const EntryType& pValue2 ) const;
 
-    T _reduceRows();
+    void _reduceRows();
+    void _reduceRows( T& oMatrixDelta );
     void _swapRows( size_t pSrcRow, size_t pDstRow );
     void _scaleRow( size_t pSrcRow, const EntryType& pScale );
     void _addRows( size_t pSrcRow, size_t pDstRow, const EntryType& pScale );
