@@ -13,6 +13,12 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 }
 
 
+template <class T>
+ggl::real geom::surface<T>::intersect( const ggl::geom::ray<3>& pRay ) const {
+    return mSurface.intersect( pRay );
+}
+
+
 ggl::real geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
     return mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
 }
@@ -42,7 +48,20 @@ ggl::real geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
 
 
 ggl::real geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
-    return 0.0f;
+    ggl::matrixf<3, 4> rayIntxEqs;
+    for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx ) {
+        rayIntxEqs(axisIdx, 0) = mV0[axisIdx] - mV1[axisIdx];
+        rayIntxEqs(axisIdx, 1) = mV0[axisIdx] - mV2[axisIdx];
+        rayIntxEqs(axisIdx, 2) = pRay.mVector[axisIdx];
+        rayIntxEqs(axisIdx, 3) = mV0[axisIdx] - pRay.mOrigin[axisIdx];
+    }
+
+    ggl::matrixf<3, 4> rayIntxSolns = rayIntxEqs.rreform();
+    const ggl::real& triIntxWV1 = rayIntxSolns(0, 3);
+    const ggl::real& triIntxWV2 = rayIntxSolns(1, 3);
+    const ggl::real& triIntxRayT = rayIntxSolns(2, 3);
+
+    return ( triIntxWV1 + triIntxWV2 < ggl::gOne ) ? triIntxRayT : ggl::gZero;
 }
 
 }

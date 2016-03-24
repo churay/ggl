@@ -13,6 +13,12 @@ namespace geom {
         ggl::vectorf<D> mOrigin, mVector;
     };
 
+    template <class T>
+    struct surface {
+        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        T mSurface;
+    };
+
     struct plane {
         ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mOrigin, mNormal;
@@ -30,7 +36,7 @@ namespace geom {
 
     struct triangle {
         ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
-        ggl::vectorf<3> mV1, mV2, mV3;
+        ggl::vectorf<3> mV0, mV1, mV2;
     };
 }
 

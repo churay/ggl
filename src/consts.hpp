@@ -9,6 +9,9 @@ namespace ggl {
 
     using real = float;
 
+    constexpr real gZero{ static_cast<ggl::real>(0) };
+    constexpr real gOne{ static_cast<ggl::real>(1) };
+
 }
 
 #endif
