@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <sstream>
 #include <utility>
 
@@ -10,7 +11,15 @@ namespace ggl {
 // NOTE(JRC): This is weird, but necessary according to this Stack Overflow response:
 // http://stackoverflow.com/q/8016780/837221
 template <class T, size_t R, size_t C, class LT>
+constexpr size_t matrix<T, R, C, LT>::sNumRows;
+template <class T, size_t R, size_t C, class LT>
+constexpr size_t matrix<T, R, C, LT>::sNumCols;
+template <class T, size_t R, size_t C, class LT>
+constexpr size_t matrix<T, R, C, LT>::sNumEnts;
+template <class T, size_t R, size_t C, class LT>
 constexpr T matrix<T, R, C, LT>::sZeroValue;
+template <class T, size_t R, size_t C, class LT>
+constexpr T matrix<T, R, C, LT>::sOneValue;
 template <class T, size_t R, size_t C, class LT>
 constexpr LT matrix<T, R, C, LT>::sLessThan;
 
@@ -200,19 +209,26 @@ matrix<T, C, R, LT> matrix<T, R, C, LT>::transpose() const {
 
 
 template <class T, size_t R, size_t C, class LT>
+matrix<T, R, C, LT> matrix<T, R, C, LT>::rreform() const {
+    matrix<EntryType, sNumRows, sNumCols, Compare> result{ *this };
+    result._reduceRows();
+    return result;
+}
+
+
+template <class T, size_t R, size_t C, class LT>
 T matrix<T, R, C, LT>::determinant() const {
     static_assert( sNumRows == sNumCols,
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
-    EntryType result = sZeroValue;
-    for( const auto& ePermute : ggl::util::permutations(sNumRows) ) {
-        EntryType eResult = ( ggl::util::inversions(ePermute) % 2 == 0 ) ? 1 : -1;
-        for( size_t dIdx = 0; dIdx < sNumRows; ++dIdx )
-            eResult *= (*this)(ePermute[dIdx], dIdx);
-        result += eResult;
-    }
+    matrix<EntryType, sNumRows, sNumCols, Compare> rre{ *this };
+    EntryType rreDelta = rre._reduceRows();
 
-    return result;
+    EntryType result = sOneValue / rreDelta;
+    for( size_t dIdx = 0; dIdx < std::min(sNumRows, sNumCols); ++dIdx )
+        result *= rre(dIdx, dIdx);
+
+    return std::isnan( rreDelta ) ? sZeroValue : result;
 }
 
 
@@ -222,30 +238,10 @@ matrix<T, R, C, LT> matrix<T, R, C, LT>::inverse() const {
         "'ggl::matrix' inverse operation is only valid on square matrices." );
 
     matrix<EntryType, sNumRows, sNumCols, Compare> identity{ EntryType(1) };
-    matrix<EntryType, sNumRows, sNumCols+sNumCols, Compare> elim = *this | identity;
-    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
-        size_t pivotIdx = rIdx;
-        for( size_t krIdx = rIdx + 1; krIdx < sNumRows; ++krIdx )
-            if( std::abs(elim(pivotIdx, rIdx)) < std::abs(elim(krIdx, rIdx)) )
-                pivotIdx = krIdx;
-        elim._swapRows( pivotIdx, rIdx );
+    matrix<EntryType, sNumRows, sNumCols+sNumCols, Compare> elim{ *this | identity };
+    matrix<EntryType, sNumRows, sNumCols+sNumCols, Compare> rreElim{ elim.rreform() };
 
-        if( _areEqual(elim(rIdx, rIdx), sZeroValue) )
-            return matrix<EntryType, sNumRows, sNumCols, Compare>();
-
-        for( size_t krIdx = 0; krIdx < sNumRows; ++krIdx ) {
-            if( krIdx != rIdx ) {
-                EntryType krScale = -1 * elim(krIdx, rIdx) / elim(rIdx, rIdx);
-                elim._addRows( rIdx, krIdx, krScale );
-                elim(krIdx, rIdx) = sZeroValue;
-            }
-        }
-
-        EntryType rScale = 1 / elim(rIdx, rIdx);
-        elim._scaleRows( rIdx, rScale );
-    }
-
-    return elim.template submatrix<0, sNumCols, sNumRows, sNumCols>();
+    return rreElim.template submatrix<0, sNumCols, sNumRows, sNumCols>();
 }
 
 
@@ -319,6 +315,40 @@ bool matrix<T, R, C, LT>::_areEqual( const T& pValue1, const T& pValue2 ) const 
 
 
 template <class T, size_t R, size_t C, class LT>
+T matrix<T, R, C, LT>::_reduceRows() {
+    EntryType matrixDelta = sOneValue;
+
+    for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
+        size_t pivotIdx = rIdx;
+        for( size_t krIdx = rIdx + 1; krIdx < sNumRows; ++krIdx )
+            if( std::abs((*this)(pivotIdx, rIdx)) < std::abs((*this)(krIdx, rIdx)) )
+                pivotIdx = krIdx;
+        (*this)._swapRows( pivotIdx, rIdx );
+
+        if( _areEqual((*this)(rIdx, rIdx), sZeroValue) ) {
+            *this = matrix<T, R, C, LT>();
+            return std::numeric_limits<T>::quiet_NaN();
+        }
+
+        for( size_t krIdx = 0; krIdx < sNumRows; ++krIdx ) {
+            if( krIdx != rIdx ) {
+                EntryType krScale = -1 * (*this)(krIdx, rIdx) / (*this)(rIdx, rIdx);
+                (*this)._addRows( rIdx, krIdx, krScale );
+                (*this)(krIdx, rIdx) = sZeroValue;
+            }
+        }
+
+        EntryType rScale = 1 / (*this)(rIdx, rIdx);
+        (*this)._scaleRow( rIdx, rScale );
+
+        matrixDelta *= rScale * ( (pivotIdx == rIdx) ? 1 : -1 );
+    }
+
+    return matrixDelta;
+}
+
+
+template <class T, size_t R, size_t C, class LT>
 void matrix<T, R, C, LT>::_swapRows( size_t pSrcRow, size_t pDstRow ) {
     std::array<EntryType, sNumCols> temp;
 
@@ -334,7 +364,7 @@ void matrix<T, R, C, LT>::_swapRows( size_t pSrcRow, size_t pDstRow ) {
 
 
 template <class T, size_t R, size_t C, class LT>
-void matrix<T, R, C, LT>::_scaleRows( size_t pSrcRow, const T& pScale ) {
+void matrix<T, R, C, LT>::_scaleRow( size_t pSrcRow, const T& pScale ) {
     auto srcRowIter = mEntries.begin() + sNumCols * pSrcRow;
     for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx, ++srcRowIter )
         (*srcRowIter) *= pScale;

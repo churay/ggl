@@ -293,6 +293,16 @@ SCENARIO( "ggl::matrix transpose operation works", "[matrix]" ) {
     }
 }
 
+SCENARIO( "ggl::matrix rreform operation works", "[matrix]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
 SCENARIO( "ggl::matrix determinant operation works", "[matrix]" ) {
     GIVEN( "a square matrix" ) {
         WHEN( "the matrix is the identity matrix" ) {

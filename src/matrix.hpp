@@ -24,6 +24,7 @@ class matrix {
     static constexpr size_t sNumEnts{ R * C };
 
     static constexpr EntryType sZeroValue{ 0 };
+    static constexpr EntryType sOneValue{ 1 };
     static constexpr LT sLessThan{};
 
     /// Constructors ///
@@ -60,6 +61,7 @@ class matrix {
     matrix<T, R, C, LT> normalize() const;
     matrix<T, C, R, LT> transpose() const;
 
+    matrix<T, R, C, LT> rreform() const;
     EntryType determinant() const;
     matrix<T, R, C, LT> inverse() const;
 
@@ -87,8 +89,9 @@ class matrix {
 
     bool _areEqual( const EntryType& pValue1, const EntryType& pValue2 ) const;
 
+    T _reduceRows();
     void _swapRows( size_t pSrcRow, size_t pDstRow );
-    void _scaleRows( size_t pSrcRow, const EntryType& pScale );
+    void _scaleRow( size_t pSrcRow, const EntryType& pScale );
     void _addRows( size_t pSrcRow, size_t pDstRow, const EntryType& pScale );
 
     /// Class Fields ///
