@@ -61,7 +61,7 @@ ggl::real geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
     const ggl::real& triIntxWV2 = rayIntxSolns(1, 3);
     const ggl::real& triIntxRayT = rayIntxSolns(2, 3);
 
-    return ( triIntxWV1 + triIntxWV2 < ggl::gOne ) ? triIntxRayT : ggl::gZero;
+    return ( triIntxWV1 + triIntxWV2 < ggl::gOnef ) ? triIntxRayT : ggl::gZerof;
 }
 
 }

@@ -4,14 +4,14 @@
 #include <utility>
 
 #include "matrix.hpp"
+#include "consts.hpp"
 
 namespace ggl {
 
 template <class T, class LT>
 auto xform::basis( const vector<T, 3, LT>& pWVector ) {
-    static const T sZeroValue{ 0 }, sOneValue{ 1 };
-    static const vector<T, 3, LT>& sXVector{ sOneValue, sZeroValue, sZeroValue };
-    static const vector<T, 3, LT>& sYVector{ sZeroValue, sOneValue, sZeroValue };
+    static const vector<T, 3, LT>& sXVector{ ggl::gOne<T>, ggl::gZero<T>, ggl::gZero<T> };
+    static const vector<T, 3, LT>& sYVector{ ggl::gZero<T>, ggl::gOne<T>, ggl::gZero<T> };
 
     const vector<T, 3, LT> vVector = ( pWVector != sYVector ) ? sYVector : sXVector;
 
@@ -56,12 +56,10 @@ auto xform::translate( Ts&&... pValues ) {
 
 template <class T>
 auto xform::rotate( const T& pRadians ) {
-    static const T sZeroValue{ 0 }, sOneValue{ 1 };
-
     ggl::matrix<T, 3, 3> result{ 
-        +std::cos( pRadians ), -std::sin( pRadians ), sZeroValue,
-        +std::sin( pRadians ), +std::cos( pRadians ), sZeroValue,
-        sZeroValue, sZeroValue, sOneValue
+        +std::cos( pRadians ), -std::sin( pRadians ), ggl::gZero<T>,
+        +std::sin( pRadians ), +std::cos( pRadians ), ggl::gZero<T>,
+        ggl::gZero<T>, ggl::gZero<T>, ggl::gOne<T>
     };
 
     return result;
@@ -70,19 +68,17 @@ auto xform::rotate( const T& pRadians ) {
 
 template <class T, class LT>
 auto xform::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
-    static const T sZeroValue{ 0 }, sOneValue{ 1 };
-
     // NOTE(JRC): This succinct 3D rotation formula was taken from here:
     // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
-    auto cosMatrix = std::cos( pRadians ) * ggl::matrix<T, 3, 3, LT>( sOneValue );
+    auto cosMatrix = std::cos( pRadians ) * ggl::matrix<T, 3, 3, LT>( ggl::gOne<T> );
     auto sinMatrix = std::sin( pRadians ) * ggl::matrix<T, 3, 3, LT>{
-        sZeroValue, -pAxis[2], +pAxis[1],
-        +pAxis[2], sZeroValue, -pAxis[0],
-        -pAxis[1], +pAxis[0], sZeroValue
+        ggl::gZero<T>, -pAxis[2], +pAxis[1],
+        +pAxis[2], ggl::gZero<T>, -pAxis[0],
+        -pAxis[1], +pAxis[0], ggl::gZero<T>
     };
-    auto icosMatrix = ( sOneValue - std::cos(pRadians) ) * pAxis.tensor( pAxis );
+    auto icosMatrix = ( ggl::gOne<T> - std::cos(pRadians) ) * pAxis.tensor( pAxis );
 
-    ggl::matrix<T, 4, 4, LT> result{ sOneValue };
+    ggl::matrix<T, 4, 4, LT> result{ ggl::gOne<T> };
     result.template embed<0, 0>( cosMatrix + sinMatrix + icosMatrix );
     return result;
 }
