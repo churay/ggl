@@ -26,7 +26,7 @@ constexpr LT matrix<T, R, C, LT>::sLessThan;
 template <class T, size_t R, size_t C, class LT>
 matrix<T, R, C, LT>::matrix() {
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        (*this)[eIdx] = EntryType( 0 );
+        (*this)[eIdx] = sZeroValue;
 }
 
 

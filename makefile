@@ -2,6 +2,8 @@
 
 CXX = clang++
 CXX_FLAGS = -std=c++1y -stdlib=libc++ -Wall -Werror -g -O0
+# CXX = g++
+# CXX_FLAGS = -std=c++1y -Wall -Werror -g -O0
 CXX_INCLS = -I$(SRC_DIR)
 CXX_TINCLS = -I$(PROJ_DIR) -I$(LIB_DIR)
 
