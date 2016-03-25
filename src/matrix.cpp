@@ -16,17 +16,13 @@ constexpr size_t matrix<T, R, C, LT>::sNumCols;
 template <class T, size_t R, size_t C, class LT>
 constexpr size_t matrix<T, R, C, LT>::sNumEnts;
 template <class T, size_t R, size_t C, class LT>
-constexpr T matrix<T, R, C, LT>::sZeroValue;
-template <class T, size_t R, size_t C, class LT>
-constexpr T matrix<T, R, C, LT>::sOneValue;
-template <class T, size_t R, size_t C, class LT>
 constexpr LT matrix<T, R, C, LT>::sLessThan;
 
 
 template <class T, size_t R, size_t C, class LT>
 matrix<T, R, C, LT>::matrix() {
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        (*this)[eIdx] = sZeroValue;
+        (*this)[eIdx] = ggl::zero<T>();
 }
 
 
@@ -41,7 +37,7 @@ matrix<T, R, C, LT>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pE
     if( sizeof...(Ts) == 1 )
         for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
             for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-                (*this)(rIdx, cIdx) = ( rIdx == cIdx ) ? (*this)(0, 0) : sZeroValue;
+                (*this)(rIdx, cIdx) = ( rIdx == cIdx ) ? (*this)(0, 0) : ggl::zero<T>();
 }
 
 
@@ -176,7 +172,7 @@ void matrix<T, R, C, LT>::embed( const matrix<T, SR, SC, LT>& pMatrix ) {
 
 template <class T, size_t R, size_t C, class LT>
 T matrix<T, R, C, LT>::normal() const {
-    EntryType normal = sZeroValue;
+    EntryType normal = ggl::zero<T>();
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
         normal += (*this)[eIdx] * (*this)[eIdx];
 
@@ -221,13 +217,13 @@ T matrix<T, R, C, LT>::determinant() const {
         "'ggl::matrix' determinant operation is only valid on square matrices." );
 
     matrix<EntryType, sNumRows, sNumCols, Compare> rre{ *this };
-    EntryType rreDelta = sOneValue;
+    EntryType rreDelta = ggl::one<T>();
     rre._reduceRows( rreDelta );
 
-    if( _areEqual(rreDelta, sZeroValue) ) {
-        return sZeroValue;
+    if( _areEqual(rreDelta, ggl::zero<T>()) ) {
+        return ggl::zero<T>();
     } else {
-        EntryType result = sOneValue / rreDelta;
+        EntryType result = ggl::one<T>() / rreDelta;
         for( size_t dIdx = 0; dIdx < std::min(sNumRows, sNumCols); ++dIdx )
             result *= rre(dIdx, dIdx);
         return result;
@@ -253,7 +249,7 @@ T matrix<T, R, C, LT>::dot( const matrix& pOther ) const {
     static_assert( sNumRows == 1 || sNumCols == 1,
         "'ggl::matrix' dot operation is only valid on vectors." );
 
-    EntryType result = sZeroValue;
+    EntryType result = ggl::zero<T>();
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
         result += (*this)[eIdx] * pOther[eIdx];
 
@@ -319,14 +315,14 @@ bool matrix<T, R, C, LT>::_areEqual( const T& pValue1, const T& pValue2 ) const 
 
 template <class T, size_t R, size_t C, class LT>
 void matrix<T, R, C, LT>::_reduceRows() {
-    EntryType unusedValue = sOneValue;
+    EntryType unusedValue = ggl::one<T>();
     (*this)._reduceRows( unusedValue );
 }
 
 
 template <class T, size_t R, size_t C, class LT>
 void matrix<T, R, C, LT>::_reduceRows( T& oMatrixDelta ) {
-    oMatrixDelta = sOneValue;
+    oMatrixDelta = ggl::one<T>();
 
     for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx ) {
         size_t pivotIdx = rIdx;
@@ -335,9 +331,9 @@ void matrix<T, R, C, LT>::_reduceRows( T& oMatrixDelta ) {
                 pivotIdx = krIdx;
         (*this)._swapRows( pivotIdx, rIdx );
 
-        if( _areEqual((*this)(rIdx, rIdx), sZeroValue) ) {
+        if( _areEqual((*this)(rIdx, rIdx), ggl::zero<T>()) ) {
             *this = matrix<T, R, C, LT>();
-            oMatrixDelta = sZeroValue;
+            oMatrixDelta = ggl::zero<T>();
             return;
         }
 
@@ -345,7 +341,7 @@ void matrix<T, R, C, LT>::_reduceRows( T& oMatrixDelta ) {
             if( krIdx != rIdx ) {
                 EntryType krScale = -1 * (*this)(krIdx, rIdx) / (*this)(rIdx, rIdx);
                 (*this)._addRows( rIdx, krIdx, krScale );
-                (*this)(krIdx, rIdx) = sZeroValue;
+                (*this)(krIdx, rIdx) = ggl::zero<T>();
             }
         }
 

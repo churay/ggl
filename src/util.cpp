@@ -13,7 +13,6 @@ constexpr unsigned util::factorial( const unsigned pVal ) {
 
 std::vector<ggl::real> qsolve( const ggl::real& pA, const ggl::real& pB, const ggl::real& pC ) {
     std::vector<ggl::real> results;
-    results.push_back( ggl::gZero<ggl::real> );
     return results;
 }
 

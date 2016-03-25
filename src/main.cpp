@@ -15,8 +15,7 @@ void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod )
 }
 
 int main() {
-    /*
-    const ggl::matrix<ggl::real, 3, 3> rotMat = ggl::xform::rotate( ggl::gPif );
+    const ggl::matrix<ggl::real, 3, 3> rotMat = ggl::xform::rotate( ggl::pi() );
     std::cout << rotMat << std::endl;
 
     const ggl::geom::ray<3> ray = {
@@ -32,8 +31,8 @@ int main() {
     std::cout << tri.intersect( ray ) << std::endl;
 
     return 0;
-    */
 
+    /*
     if( !glfwInit() )
         return 1;
 
@@ -78,4 +77,5 @@ int main() {
     glfwTerminate();
 
     return 0;
+    */
 }

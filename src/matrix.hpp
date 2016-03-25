@@ -22,9 +22,6 @@ class matrix {
     static constexpr size_t sNumRows{ R };
     static constexpr size_t sNumCols{ C };
     static constexpr size_t sNumEnts{ R * C };
-
-    static constexpr EntryType sZeroValue{ 0 };
-    static constexpr EntryType sOneValue{ 1 };
     static constexpr Compare sLessThan{};
 
     /// Constructors ///
