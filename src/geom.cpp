@@ -1,8 +1,10 @@
 #include <array>
 #include <cmath>
+#include <utility>
 
 #include "matrix.hpp"
 #include "interval.h"
+#include "util.h"
 #include "consts.hpp"
 
 namespace ggl {
@@ -25,11 +27,13 @@ ggl::real geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
 
 
 ggl::real geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
-    const ggl::real quadA = pRay.mVector.dot( pRay.mVector );
-    const ggl::real quadB = pRay.mVector.dot( pRay.mOrigin - mOrigin );
-    const ggl::real quadC = std::pow((pRay.mOrigin - mOrigin).normal(), 2) - std::pow( mRadius, 2 );
+    std::pair<ggl::real, ggl::real> rayIntxs = ggl::util::solveQuadratic(
+        pRay.mVector.dot( pRay.mVector ),
+        pRay.mVector.dot( pRay.mOrigin - mOrigin ),
+        std::pow( (pRay.mOrigin - mOrigin).normal(), 2 ) - std::pow( mRadius, 2 )
+    );
 
-    return ( -quadB + std::sqrt(std::pow(quadB, 2) - 4 * quadA * quadC) ) / ( 2 * quadC );
+    return rayIntxs.first;
 }
 
 
