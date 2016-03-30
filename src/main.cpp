@@ -15,35 +15,12 @@ void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod )
 }
 
 int main() {
-    /*
-    const ggl::matrix<ggl::real, 3, 3> rotMat = ggl::xform::rotate( ggl::pi() );
-    std::cout << rotMat << std::endl;
-
-    const ggl::geom::ray<3> ray = {
-        ggl::vectorf<3>{ 0.0f, 0.0f, 0.0f },
-        ggl::vectorf<3>{ 0.0f, 0.0f, +1.0f }
-    };
-
-    const ggl::geom::surface<ggl::geom::triangle> tri = { ggl::geom::triangle{
-        ggl::vectorf<3>{ -1.0f, 0.0f, 33.0f },
-        ggl::vectorf<3>{ +1.0f, 0.0f, 33.0f },
-        ggl::vectorf<3>{ 0.0f, +1.0f, 33.0f }
-    } };
-    std::cout << tri.intersect( ray ) << std::endl;
-
-    const ggl::geom::surface<ggl::geom::sphere> sphere = { ggl::geom::sphere{
-        ggl::vectorf<3>{ 0.0f, 0.0f, 0.0f },
-        10.0f
-    } };
-    std::cout << sphere.intersect( ray ) << std::endl;
-
-    return 0;
-    */
+    /// Initialize GLFW Window ///
 
     if( !glfwInit() )
         return 1;
 
-    GLFWwindow* window = glfwCreateWindow( 640, 480, "ggl", NULL, NULL );
+    GLFWwindow* window = glfwCreateWindow( 500, 500, "ggl", NULL, NULL );
     if( window == NULL )
         return 1;
 
@@ -51,34 +28,57 @@ int main() {
     glfwSetKeyCallback( window, handleInputs );
     glfwSwapInterval( 1 );
 
+    /// Initialize Scene Geometry ///
+
+    /*
+    const uint32_t black = 0x000000ff, grey = 0xaaaaaaff, white = 0xffffffff;
+
+    const ggl::geom::surface<ggl::geom::sphere> sphere = { ggl::geom::sphere{
+        ggl::vectorf<3>{ -1.0f, -1.0f, 0.0f },
+        2.0f
+    } };
+
+    const ggl::geom::surface<ggl::geom::triangle> triangle = { ggl::geom::triangle{
+        ggl::vectorf<3>{ -1.0f, -1.0f, -0.5f },
+        ggl::vectorf<3>{ +1.0f, -1.0f, -0.5f },
+        ggl::vectorf<3>{ +0.5f, +1.0f, -0.5f }
+    } };
+
+    uint32_t scene[2000 * 2000];
+    for( size_t sy = 0; sy < 2000; ++sy ) {
+        for( size_t sx = 0; sx < 2000; ++sx ) {
+            // TODO(JRC): Update this code so that each of the pixels in the
+            // "scene" array is filled with the color of the surface that
+            // was hit first by a ray coming from the viewing plane.
+            scene[sy * 2000 + sx] = 0xffffffff;
+        }
+    }
+    */
+
+    /// Update and Render ///
+
     while( !glfwWindowShouldClose(window) ) {
         int windowWidth = 0, windowHeight = 0;
         glfwGetFramebufferSize( window, &windowWidth, &windowHeight );
-        ggl::real windowRatio = static_cast<ggl::real>( windowWidth ) / windowHeight;
 
         glViewport( 0, 0, windowWidth, windowHeight );
-        glClear( GL_COLOR_BUFFER_BIT );
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
         glMatrixMode( GL_PROJECTION );
         glLoadIdentity();
-        glOrtho( -windowRatio, +windowRatio, -1.0f, +1.0f, +1.0f, -1.0f );
+        glOrtho( -1.0f, +1.0f, -1.0f, +1.0f, -1.0f, +1.0f );
 
         glMatrixMode( GL_MODELVIEW );
         glLoadIdentity();
-        glRotatef( 50.0f * glfwGetTime(), 0.0f, 0.0f, 1.0f );
 
-        glBegin( GL_TRIANGLES );
-        glColor3f( +1.0f, +0.0f, +0.0f );
-        glVertex3f( -0.6f, -0.4f, +0.0f );
-        glColor3f( +0.0f, +1.0f, +0.0f );
-        glVertex3f( +0.6f, -0.4f, +0.0f );
-        glColor3f( +0.0f, +0.0f, +1.0f );
-        glVertex3f( +0.0f, +0.6f, 0.0f );
-        glEnd();
+        // TODO(JRC): Render the pixels in the "scene" array by rendering it as
+        // a texture map that lies at the near viewing plane.
 
         glfwSwapBuffers( window );
         glfwPollEvents();
     }
+
+    /// Uninitialize GLFW Window ///
 
     glfwDestroyWindow( window );
     glfwTerminate();
