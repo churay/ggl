@@ -25,7 +25,7 @@ std::pair<ggl::real, ggl::real> util::solveQuadratic( const ggl::real& pA,
         const ggl::real& pB, const ggl::real& pC ) {
     std::pair<ggl::real, ggl::real> results = std::make_pair( ggl::nan(), ggl::nan() );
 
-    ggl::real discriminant = std::pow( pB, 2 ) - 4 * pA * pC;
+    ggl::real discriminant = pB * pB - 4 * pA * pC;
     if( ggl::util::feq(discriminant, ggl::zero()) ) {
         results.first = ( -pB ) / ( 2 * pA );
     } else if( discriminant > ggl::zero() ) {

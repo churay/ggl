@@ -12,7 +12,7 @@ class interval {
     
     /// Constructors ///
 
-    interval();
+    interval( const ggl::real pCenter = ggl::zero() );
     interval( const ggl::real& pMin, const ggl::real& pMax );
 
     /// Class Functions ///
@@ -26,6 +26,7 @@ class interval {
 
     std::pair<ggl::real, ggl::real> bounds() const;
     bool empty() const;
+    bool valid() const;
 
     const ggl::real& min() const;
     const ggl::real& max() const;

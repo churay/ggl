@@ -16,28 +16,29 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 
 
 template <class T>
-ggl::real geom::surface<T>::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::surface<T>::intersect( const ggl::geom::ray<3>& pRay ) const {
     return mSurface.intersect( pRay );
 }
 
 
-ggl::real geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
-    return mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
+ggl::interval geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
+    ggl::real rayIntx = mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
+    return ggl::interval( rayIntx );
 }
 
 
-ggl::real geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
     std::pair<ggl::real, ggl::real> rayIntxs = ggl::util::solveQuadratic(
         pRay.mVector.dot( pRay.mVector ),
         pRay.mVector.dot( pRay.mOrigin - mOrigin ),
         std::pow( (pRay.mOrigin - mOrigin).normal(), 2 ) - std::pow( mRadius, 2 )
     );
 
-    return rayIntxs.first;
+    return ggl::interval( rayIntxs.first, rayIntxs.second );
 }
 
 
-ggl::real geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
     std::array<ggl::interval, 3> rayAxisSpans;
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx )
         rayAxisSpans[axisIdx] = ggl::interval(
@@ -45,13 +46,11 @@ ggl::real geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
             ( mMax[axisIdx] - pRay.mOrigin[axisIdx] ) / pRay.mVector[axisIdx]
         );
 
-    ggl::interval rayBoxSpan =
-        rayAxisSpans[0].intersect( rayAxisSpans[1] ).intersect( rayAxisSpans[2] );
-    return rayBoxSpan.min();
+    return rayAxisSpans[0].intersect( rayAxisSpans[1] ).intersect( rayAxisSpans[2] );
 }
 
 
-ggl::real geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::matrixf<3, 4> rayIntxEqs;
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx ) {
         rayIntxEqs(axisIdx, 0) = mV0[axisIdx] - mV1[axisIdx];
@@ -65,7 +64,9 @@ ggl::real geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
     const ggl::real& triIntxWV2 = rayIntxSolns(1, 3);
     const ggl::real& triIntxRayT = rayIntxSolns(2, 3);
 
-    return ( triIntxWV1 + triIntxWV2 < ggl::one() ) ? triIntxRayT : ggl::zero();
+    ggl::real rayIntx = ( triIntxWV1 + triIntxWV2 < ggl::one() ) ?
+        triIntxRayT : ggl::nan();
+    return ggl::interval( rayIntx );
 }
 
 }

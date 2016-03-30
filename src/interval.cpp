@@ -1,12 +1,14 @@
 #include <algorithm>
+#include <cmath>
 #include <utility>
 
+#include "util.h"
 #include "interval.h"
 
 namespace ggl {
 
-interval::interval() {
-    mMin = mMax = static_cast<ggl::real>( 0 );
+interval::interval( const ggl::real pCenter ) {
+    mMin = mMax = pCenter;
 }
 
 
@@ -53,7 +55,12 @@ std::pair<ggl::real, ggl::real> interval::bounds() const {
 
 
 bool interval::empty() const {
-    return mMin == mMax;
+    return ggl::util::feq( mMin, mMax );
+}
+
+
+bool interval::valid() const {
+    return !( std::isnan(mMin) || std::isnan(mMax) || std::isinf(mMin) || std::isinf(mMax) );
 }
 
 

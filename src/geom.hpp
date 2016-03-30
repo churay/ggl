@@ -2,6 +2,7 @@
 #define GGL_GEOM_H
 
 #include "matrix.hpp"
+#include "interval.h"
 #include "consts.hpp"
 
 namespace ggl {
@@ -15,27 +16,27 @@ namespace geom {
 
     template <class T>
     struct surface {
-        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         T mSurface;
     };
 
     struct plane {
-        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mOrigin, mNormal;
     };
 
     struct sphere {
-        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mOrigin; ggl::real mRadius;
     };
 
     struct box {
-        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mMin, mMax;
     };
 
     struct triangle {
-        ggl::real intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mV0, mV1, mV2;
     };
 }
