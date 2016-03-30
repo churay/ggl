@@ -24,14 +24,17 @@ int main() {
         ggl::vectorf<3>{ 0.0f, 0.0f, +1.0f }
     };
 
-    const ggl::geom::triangle tri = {
+    const ggl::geom::surface<ggl::geom::triangle> tri = { ggl::geom::triangle{
         ggl::vectorf<3>{ -1.0f, 0.0f, 33.0f },
         ggl::vectorf<3>{ +1.0f, 0.0f, 33.0f },
         ggl::vectorf<3>{ 0.0f, +1.0f, 33.0f }
-    };
+    } };
     std::cout << tri.intersect( ray ) << std::endl;
 
-    const ggl::geom::sphere sphere = { ggl::vectorf<3>{ 0.0f, 0.0f, 0.0f }, 10.0f };
+    const ggl::geom::surface<ggl::geom::sphere> sphere = { ggl::geom::sphere{
+        ggl::vectorf<3>{ 0.0f, 0.0f, 0.0f },
+        10.0f
+    } };
     std::cout << sphere.intersect( ray ) << std::endl;
 
     return 0;

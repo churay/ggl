@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <sstream>
 #include <utility>
 
 #include "util.h"
@@ -73,4 +74,9 @@ const ggl::real& interval::max() const {
     return mMax;
 }
 
+}
+
+std::ostream& operator<<( std::ostream& pOS, const ggl::interval& pInt ) {
+    pOS << "[ " << pInt.min() << ", " << pInt.max() << " ]";
+    return pOS;
 }

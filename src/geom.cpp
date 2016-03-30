@@ -17,7 +17,16 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 
 template <class T>
 ggl::interval geom::surface<T>::intersect( const ggl::geom::ray<3>& pRay ) const {
-    return mSurface.intersect( pRay );
+    ggl::interval raySurfIntx = mSurface.intersect( pRay );
+
+    if( ggl::util::flt(raySurfIntx.max(), ggl::zero()) ) {
+        return ggl::interval( ggl::nan() );
+    } else {
+        return ggl::interval(
+            std::max( raySurfIntx.min(), ggl::zero() ),
+            std::max( raySurfIntx.max(), ggl::zero() )
+        );
+    }
 }
 
 

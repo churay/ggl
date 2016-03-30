@@ -1,6 +1,7 @@
 #ifndef GGL_INTERVAL_H
 #define GGL_INTERVAL_H
 
+#include <sstream>
 #include <utility>
 
 #include "consts.hpp"
@@ -39,5 +40,7 @@ class interval {
 };
 
 }
+
+std::ostream& operator<<( std::ostream& pOS, const ggl::interval& pInt );
 
 #endif

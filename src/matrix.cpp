@@ -388,16 +388,16 @@ void matrix<T, R, C, LT>::_addRows( size_t pSrcRow, size_t pDstRow, const T& pSc
 }
 
 template <class T, size_t R, size_t C, class LT>
-std::ostream& operator<<( std::ostream& os, const ggl::matrix<T, R, C, LT>& m ) {
-    os << "[ ";
-    for( size_t rIdx = 0; rIdx < m.sNumRows; ++rIdx ) {
-        os << "| ";
-        for( size_t cIdx = 0; cIdx < m.sNumCols; ++cIdx ) {
-            os << m(rIdx, cIdx) << ( cIdx < m.sNumCols - 1 ? ", " : " " );
+std::ostream& operator<<( std::ostream& pOS, const ggl::matrix<T, R, C, LT>& pMat ) {
+    pOS << "[ ";
+    for( size_t rIdx = 0; rIdx < pMat.sNumRows; ++rIdx ) {
+        pOS << "| ";
+        for( size_t cIdx = 0; cIdx < pMat.sNumCols; ++cIdx ) {
+            pOS << pMat(rIdx, cIdx) << ( cIdx < pMat.sNumCols - 1 ? ", " : " " );
         }
-        os << ( rIdx < m.sNumRows - 1 ? "|, " : "| " );
+        pOS << ( rIdx < pMat.sNumRows - 1 ? "|, " : "| " );
     }
-    os << "]";
+    pOS << "]";
 
-    return os;
+    return pOS;
 }
