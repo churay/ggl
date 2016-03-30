@@ -6,7 +6,7 @@ namespace ggl {
 namespace util {
     template <class T>
     struct fless {
-        bool operator()( const T& pValue1, const T& pValue2 ) const;
+        bool operator()( const T& pV1, const T& pV2 ) const;
     };
 }
 
