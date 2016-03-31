@@ -33,15 +33,15 @@ int main() {
     const GLuint black = 0xff000000, grey = 0xffaaaaaa, white = 0xffffffff;
 
     const ggl::geom::surface<ggl::geom::sphere> sphere = { ggl::geom::sphere{
-        ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 1.0f
+        ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f
     } };
     const ggl::geom::surface<ggl::geom::triangle> triangle = { ggl::geom::triangle{
-        ggl::vectorf<3>{ 0.0f, 0.0f, -0.25f },
-        ggl::vectorf<3>{ 1.0f, 0.0f, -0.25f },
-        ggl::vectorf<3>{ 0.5f, 1.0f, -0.25f }
+        ggl::vectorf<3>{ 0.0f, 0.0f, -0.10f },
+        ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
+        ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
     } };
 
-    const unsigned sceneDim = 10;
+    const unsigned sceneDim = 500;
     const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );
     GLuint scenePixels[sceneDim * sceneDim];
     for( size_t sy = 0; sy < sceneDim; ++sy ) {
@@ -56,17 +56,13 @@ int main() {
             const ggl::interval sxyTriIntxs = triangle.intersect( sxyRay );
 
             GLuint& sxyPixel = scenePixels[sy * sceneDim + sx];
-            sxyPixel = sxyTriIntxs.valid() ? white : black;
-
-            /*
             if( !sxySphIntxs.valid() && !sxyTriIntxs.valid() ) {
                 sxyPixel = black;
-            } else if( !sxySphIntxs.valid() || sxyTriIntxs.min() <= sxySphIntxs.min() ) {
+            } else if( !sxySphIntxs.valid() || sxyTriIntxs.min() < sxySphIntxs.min() ) {
                 sxyPixel = grey;
-            } else if( !sxyTriIntxs.valid() || sxySphIntxs.min() <= sxyTriIntxs.min() ) {
+            } else {
                 sxyPixel = white;
             }
-            */
         }
     }
 

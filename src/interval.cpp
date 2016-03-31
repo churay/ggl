@@ -30,7 +30,7 @@ ggl::real interval::lerp( const ggl::real& pValue ) const {
 
 
 bool interval::contains( const ggl::real& pValue ) const {
-    return pValue >= mMin && pValue <= mMax;
+    return ggl::util::fle( mMin, pValue ) && ggl::util::fle( pValue, mMax );
 }
 
 

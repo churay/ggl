@@ -37,10 +37,11 @@ ggl::interval geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
 
 
 ggl::interval geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
+    const ggl::vectorf<3> rayToDir = pRay.mVector, origToDir = pRay.mOrigin - mOrigin;
     std::pair<ggl::real, ggl::real> rayIntxs = ggl::util::solveQuadratic(
-        pRay.mVector.dot( pRay.mVector ),
-        pRay.mVector.dot( pRay.mOrigin - mOrigin ),
-        std::pow( (pRay.mOrigin - mOrigin).normal(), 2 ) - std::pow( mRadius, 2 )
+        rayToDir.dot( rayToDir ),
+        2 * rayToDir.dot( origToDir ),
+        origToDir.dot( origToDir ) - mRadius * mRadius
     );
 
     return ggl::interval( rayIntxs.first, rayIntxs.second );
@@ -72,9 +73,10 @@ ggl::interval geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
     const ggl::real& triIntxWV1 = rayIntxSolns(0, 3);
     const ggl::real& triIntxWV2 = rayIntxSolns(1, 3);
     const ggl::real& triIntxRayT = rayIntxSolns(2, 3);
+    const bool triIntxValid = triIntxWV1 >= ggl::zero() && triIntxWV2 >= ggl::zero() &&
+        triIntxWV1 + triIntxWV2 <= ggl::one();
 
-    ggl::real rayIntx = ( triIntxWV1 + triIntxWV2 < ggl::one() ) ?
-        triIntxRayT : ggl::nan();
+    ggl::real rayIntx = triIntxValid ? triIntxRayT : ggl::nan();
     return ggl::interval( rayIntx );
 }
 

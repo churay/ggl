@@ -16,6 +16,11 @@ bool util::flt( const ggl::real& pV1, const ggl::real& pV2 ) {
 }
 
 
+bool util::fle( const ggl::real& pV1, const ggl::real& pV2 ) {
+    return ggl::util::flt( pV1, pV2 ) || ggl::util::feq( pV1, pV2 );
+}
+
+
 constexpr unsigned util::factorial( const unsigned& pVal ) {
     return ( pVal != 0 ) ? pVal * factorial( pVal - 1 ) : 1;
 }
