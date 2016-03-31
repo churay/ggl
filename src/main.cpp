@@ -30,32 +30,65 @@ int main() {
 
     /// Initialize Scene Geometry ///
 
-    /*
-    const uint32_t black = 0x000000ff, grey = 0xaaaaaaff, white = 0xffffffff;
+    const GLuint black = 0xff000000, grey = 0xffaaaaaa, white = 0xffffffff;
 
     const ggl::geom::surface<ggl::geom::sphere> sphere = { ggl::geom::sphere{
-        ggl::vectorf<3>{ -1.0f, -1.0f, 0.0f },
-        2.0f
+        ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 1.0f
     } };
-
     const ggl::geom::surface<ggl::geom::triangle> triangle = { ggl::geom::triangle{
-        ggl::vectorf<3>{ -1.0f, -1.0f, -0.5f },
-        ggl::vectorf<3>{ +1.0f, -1.0f, -0.5f },
-        ggl::vectorf<3>{ +0.5f, +1.0f, -0.5f }
+        ggl::vectorf<3>{ 0.0f, 0.0f, -0.25f },
+        ggl::vectorf<3>{ 1.0f, 0.0f, -0.25f },
+        ggl::vectorf<3>{ 0.5f, 1.0f, -0.25f }
     } };
 
-    uint32_t scene[2000 * 2000];
-    for( size_t sy = 0; sy < 2000; ++sy ) {
-        for( size_t sx = 0; sx < 2000; ++sx ) {
-            // TODO(JRC): Update this code so that each of the pixels in the
-            // "scene" array is filled with the color of the surface that
-            // was hit first by a ray coming from the viewing plane.
-            scene[sy * 2000 + sx] = 0xffffffff;
+    const unsigned sceneDim = 10;
+    const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );
+    GLuint scenePixels[sceneDim * sceneDim];
+    for( size_t sy = 0; sy < sceneDim; ++sy ) {
+        for( size_t sx = 0; sx < sceneDim; ++sx ) {
+            const ggl::real syf = sy / sceneDimf, sxf = sx / sceneDimf;
+            const ggl::geom::ray<3> sxyRay = {
+                ggl::vectorf<3>{ sxf, syf, +1.0f },
+                ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
+            };
+
+            const ggl::interval sxySphIntxs = sphere.intersect( sxyRay );
+            const ggl::interval sxyTriIntxs = triangle.intersect( sxyRay );
+
+            GLuint& sxyPixel = scenePixels[sy * sceneDim + sx];
+            sxyPixel = sxyTriIntxs.valid() ? white : black;
+
+            /*
+            if( !sxySphIntxs.valid() && !sxyTriIntxs.valid() ) {
+                sxyPixel = black;
+            } else if( !sxySphIntxs.valid() || sxyTriIntxs.min() <= sxySphIntxs.min() ) {
+                sxyPixel = grey;
+            } else if( !sxyTriIntxs.valid() || sxySphIntxs.min() <= sxyTriIntxs.min() ) {
+                sxyPixel = white;
+            }
+            */
         }
     }
-    */
+
+    /// Bind Scene Rendering to a Texture ///
+
+    GLuint sceneTID = 0;
+
+    glGenTextures( 1, &sceneTID );
+    glBindTexture( GL_TEXTURE_2D, sceneTID );
+
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, sceneDim, sceneDim, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, scenePixels );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
 
     /// Update and Render ///
+
+    glEnable( GL_TEXTURE_2D );
+    glDisable( GL_LIGHTING );
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
     while( !glfwWindowShouldClose(window) ) {
         int windowWidth = 0, windowHeight = 0;
@@ -71,8 +104,12 @@ int main() {
         glMatrixMode( GL_MODELVIEW );
         glLoadIdentity();
 
-        // TODO(JRC): Render the pixels in the "scene" array by rendering it as
-        // a texture map that lies at the near viewing plane.
+        glBegin( GL_QUADS );
+        glTexCoord2f( 0.0f, 0.0f ); glVertex3f( -1.0f, -1.0f, 0.0f );
+        glTexCoord2f( 0.0f, 1.0f ); glVertex3f( -1.0f, +1.0f, 0.0f );
+        glTexCoord2f( 1.0f, 1.0f ); glVertex3f( +1.0f, +1.0f, 0.0f );
+        glTexCoord2f( 1.0f, 0.0f ); glVertex3f( +1.0f, -1.0f, 0.0f );
+        glEnd();
 
         glfwSwapBuffers( window );
         glfwPollEvents();
