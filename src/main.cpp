@@ -32,14 +32,12 @@ int main() {
 
     const GLuint black = 0xff000000, grey = 0xffaaaaaa, white = 0xffffffff;
 
-    const ggl::geom::surface<ggl::geom::sphere> sphere = { ggl::geom::sphere{
-        ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f
-    } };
-    const ggl::geom::surface<ggl::geom::triangle> triangle = { ggl::geom::triangle{
+    const ggl::geom::sphere sphere{ ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f };
+    const ggl::geom::triangle triangle{
         ggl::vectorf<3>{ 0.0f, 0.0f, -0.10f },
         ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
         ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
-    } };
+    };
 
     const unsigned sceneDim = 500;
     const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );

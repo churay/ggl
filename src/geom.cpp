@@ -9,32 +9,29 @@
 
 namespace ggl {
 
+/// Ray Functions ///
+
 template <size_t D>
 ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
     return mOrigin + pParam * mVector;
 }
 
+/// Plane Functions ///
 
-template <class T>
-ggl::interval geom::surface<T>::intersect( const ggl::geom::ray<3>& pRay ) const {
-    ggl::interval raySurfIntx = mSurface.intersect( pRay );
-
-    if( ggl::util::flt(raySurfIntx.max(), ggl::zero()) ) {
-        return ggl::interval( ggl::nan() );
-    } else {
-        return ggl::interval(
-            std::max( raySurfIntx.min(), ggl::zero() ),
-            std::max( raySurfIntx.max(), ggl::zero() )
-        );
-    }
+geom::plane::plane( ggl::vectorf<3> pOrigin, ggl::vectorf<3> pNormal ) :
+        mOrigin( std::move(pOrigin) ), mNormal( std::move(pNormal) ) {
 }
-
 
 ggl::interval geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::real rayIntx = mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
     return ggl::interval( rayIntx );
 }
 
+/// Sphere Functions ///
+
+geom::sphere::sphere( ggl::vectorf<3> pOrigin, ggl::real pRadius ) :
+        mOrigin( std::move(pOrigin) ), mRadius( std::move(pRadius) ) {
+}
 
 ggl::interval geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
     const ggl::vectorf<3> rayToDir = pRay.mVector, origToDir = pRay.mOrigin - mOrigin;
@@ -47,6 +44,11 @@ ggl::interval geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
     return ggl::interval( rayIntxs.first, rayIntxs.second );
 }
 
+/// Box Functions ///
+
+geom::box::box( ggl::vectorf<3> pMin, ggl::vectorf<3> pMax ) :
+        mMin( std::move(pMin) ), mMax( std::move(pMax) ) {
+}
 
 ggl::interval geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
     std::array<ggl::interval, 3> rayAxisSpans;
@@ -59,6 +61,11 @@ ggl::interval geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
     return rayAxisSpans[0].intersect( rayAxisSpans[1] ).intersect( rayAxisSpans[2] );
 }
 
+/// Triangle Functions ///
+
+geom::triangle::triangle( ggl::vectorf<3> pV0, ggl::vectorf<3> pV1, ggl::vectorf<3> pV2 ) :
+        mV0( std::move(pV0) ), mV1( std::move(pV1) ), mV2( std::move(pV2) ) {
+}
 
 ggl::interval geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::matrixf<3, 4> rayIntxEqs;

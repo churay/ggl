@@ -31,9 +31,6 @@ SRC_OBJ_FILES = $(patsubst $(SRC_DIR)/%.h,$(BIN_DIR)/%.o,$(SRC_H_FILES))
 TEST_FILES = $(filter-out $(TEST_DIR)/main.cpp,$(wildcard $(TEST_DIR)/*.cpp))
 TEST_OBJ_FILES = $(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%.to,$(TEST_FILES))
 
-GENSUITE = $(ETC_DIR)/gensuite.py
-SUITE_SRC_FILE = $(ETC_DIR)/suite.cpp
-
 ### Generated Files or Directories ###
 
 PROJ_NAME = ggl
