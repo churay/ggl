@@ -149,6 +149,14 @@ SCENARIO( "ggl::interval intersect operation works", "[interval]" ) {
                 const ggl::interval result2 = int2.intersect( int1 );
                 REQUIRE( result2.empty() );
             }
+
+            THEN( "the result of the intersection is invalid" ) {
+                const ggl::interval result1 = int1.intersect( int2 );
+                REQUIRE( !result1.valid() );
+
+                const ggl::interval result2 = int2.intersect( int1 );
+                REQUIRE( !result2.valid() );
+            }
         }
 
         WHEN( "the intervals are partially intersecting" ) {
