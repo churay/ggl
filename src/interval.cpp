@@ -43,25 +43,25 @@ bool interval::overlaps( const interval& pOther ) const {
 interval interval::intersect( const interval& pOther ) const {
     if( !(*this).contains(pOther.mMin) && !(*this).contains(pOther.mMax) &&
             !pOther.contains(mMin) && !pOther.contains(mMax) ) {
-        return interval();
+        return interval( ggl::nan() );
     } else {
         return interval( std::max(mMin, pOther.mMin), std::min(mMax, pOther.mMax) );
     }
 }
 
 
-std::pair<ggl::real, ggl::real> interval::bounds() const {
-    return std::make_pair( mMin, mMax );
-}
-
-
 bool interval::empty() const {
-    return ggl::util::feq( mMin, mMax );
+    return ggl::util::feq( mMin, mMax ) || !(*this).valid();
 }
 
 
 bool interval::valid() const {
     return !( std::isnan(mMin) || std::isnan(mMax) || std::isinf(mMin) || std::isinf(mMax) );
+}
+
+
+std::pair<ggl::real, ggl::real> interval::bounds() const {
+    return std::make_pair( mMin, mMax );
 }
 
 

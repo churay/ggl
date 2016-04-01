@@ -25,10 +25,10 @@ class interval {
     bool overlaps( const interval& pOther ) const;
     interval intersect( const interval& pOther ) const;
 
-    std::pair<ggl::real, ggl::real> bounds() const;
     bool empty() const;
     bool valid() const;
 
+    std::pair<ggl::real, ggl::real> bounds() const;
     const ggl::real& min() const;
     const ggl::real& max() const;
 
