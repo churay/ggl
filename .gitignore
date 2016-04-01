@@ -2,7 +2,6 @@
 bin/*
 
 ## Compiled Source Files ##
-etc/*.cpp
 *.o
 *.so
 

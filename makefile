@@ -57,6 +57,9 @@ $(TEST_NAME) : $(TEST_EXE)
 $(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $(TEST_LIB)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
 
+$(BIN_DIR)/%.ex : $(ETC_DIR)/%.cpp $(SRC_FILES) $(SRC_OBJ_FILES)
+	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
+
 $(BIN_DIR)/%.to : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/%.h*) $(SRC_CONFIG_FILES) $(TEST_LIB)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $< -c -o $@
 
