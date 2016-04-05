@@ -258,6 +258,7 @@ SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
                 REQUIRE( v2.normal() == 53 );
             }
         }
+
         WHEN( "the matrix isn't a vector" ) {
             THEN( "the normal is the square root of the product of the entry squares" ) {
                 const ggl::matrixf<2, 2> m1{ 1.0f, 1.0f, 1.0f, 1.0f };
