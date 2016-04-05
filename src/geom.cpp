@@ -19,8 +19,16 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 
 /// Surface Functions ///
 
-ggl::interval geom::surface::pintersect( const ggl::geom::ray<3>& pRay ) const {
-    ggl::interval raySurfIntx = (*this).intersect( pRay );
+bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
+    const ggl::vectorf<3> zVec{ ggl::zero(), ggl::zero(), ggl::one() };
+    const ggl::geom::ray<3> posRay = { pPos, zVec };
+
+    const ggl::interval posIntx = (*this).intersect( posRay );
+    return posIntx.valid() && ggl::util::feq( posIntx.min(), ggl::zero() );
+}
+
+ggl::interval geom::surface::intersect( const ggl::geom::ray<3>& pRay ) const {
+    ggl::interval raySurfIntx = (*this)._intersect( pRay );
 
     if( ggl::util::flt(raySurfIntx.max(), ggl::zero()) ) {
         return ggl::interval( ggl::nan() );
@@ -32,15 +40,24 @@ ggl::interval geom::surface::pintersect( const ggl::geom::ray<3>& pRay ) const {
     }
 }
 
+ggl::vectorf<3> geom::surface::normalAt( const ggl::vectorf<3>& pPos ) const {
+    return (*this).contains( pPos ) ? (*this)._normalAt( pPos ) :
+        ggl::vectorf<3>{ ggl::nan(), ggl::nan(), ggl::nan() };
+}
+
 /// Plane Functions ///
 
 geom::plane::plane( ggl::vectorf<3> pOrigin, ggl::vectorf<3> pNormal ) :
         mOrigin( std::move(pOrigin) ), mNormal( std::move(pNormal) ) {
 }
 
-ggl::interval geom::plane::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::plane::_intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::real rayIntx = mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
     return ggl::interval( rayIntx );
+}
+
+ggl::vectorf<3> geom::plane::_normalAt( const ggl::vectorf<3>& pPos ) const {
+    return mNormal;
 }
 
 /// Sphere Functions ///
@@ -49,7 +66,7 @@ geom::sphere::sphere( ggl::vectorf<3> pOrigin, ggl::real pRadius ) :
         mOrigin( std::move(pOrigin) ), mRadius( std::move(pRadius) ) {
 }
 
-ggl::interval geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::sphere::_intersect( const ggl::geom::ray<3>& pRay ) const {
     const ggl::vectorf<3> rayToDir = pRay.mVector, origToDir = pRay.mOrigin - mOrigin;
     std::pair<ggl::real, ggl::real> rayIntxs = ggl::util::solveQuadratic(
         rayToDir.dot( rayToDir ),
@@ -60,13 +77,17 @@ ggl::interval geom::sphere::intersect( const ggl::geom::ray<3>& pRay ) const {
     return ggl::interval( rayIntxs.first, rayIntxs.second );
 }
 
+ggl::vectorf<3> geom::sphere::_normalAt( const ggl::vectorf<3>& pPos ) const {
+    return pPos - mOrigin;
+}
+
 /// Box Functions ///
 
 geom::box::box( ggl::vectorf<3> pMin, ggl::vectorf<3> pMax ) :
         mMin( std::move(pMin) ), mMax( std::move(pMax) ) {
 }
 
-ggl::interval geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::box::_intersect( const ggl::geom::ray<3>& pRay ) const {
     std::array<ggl::interval, 3> rayAxisSpans;
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx )
         rayAxisSpans[axisIdx] = ggl::interval(
@@ -77,13 +98,18 @@ ggl::interval geom::box::intersect( const ggl::geom::ray<3>& pRay ) const {
     return rayAxisSpans[0].intersect( rayAxisSpans[1] ).intersect( rayAxisSpans[2] );
 }
 
+ggl::vectorf<3> geom::box::_normalAt( const ggl::vectorf<3>& pPos ) const {
+    // TODO(JRC): Implement this function.
+    return ggl::vectorf<3>{ ggl::nan(), ggl::nan(), ggl::nan() };
+}
+
 /// Triangle Functions ///
 
 geom::triangle::triangle( ggl::vectorf<3> pV0, ggl::vectorf<3> pV1, ggl::vectorf<3> pV2 ) :
         mV0( std::move(pV0) ), mV1( std::move(pV1) ), mV2( std::move(pV2) ) {
 }
 
-ggl::interval geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::triangle::_intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::matrixf<3, 4> rayIntxEqs;
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx ) {
         rayIntxEqs(axisIdx, 0) = mV0[axisIdx] - mV1[axisIdx];
@@ -103,6 +129,10 @@ ggl::interval geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
     return ggl::interval( rayIntx );
 }
 
+ggl::vectorf<3> geom::triangle::_normalAt( const ggl::vectorf<3>& pPos ) const {
+    return ( mV1 - mV0 ).cross( mV2 - mV0 );
+}
+
 /// Namespace Functions ///
 
 ggl::geom::surface* geom::findClosest( const ggl::geom::ray<3>& pRay,
@@ -111,7 +141,7 @@ ggl::geom::surface* geom::findClosest( const ggl::geom::ray<3>& pRay,
     ggl::interval closestIntx( ggl::nan() );
 
     for( ggl::geom::surface* surf : pSurfaces ) {
-        ggl::interval surfIntx = surf->pintersect( pRay );
+        ggl::interval surfIntx = surf->intersect( pRay );
         if( surfIntx.valid() && (!closestIntx.valid() || surfIntx.min() < closestIntx.min()) ) {
             closestSurf = surf;
             closestIntx = surfIntx;
