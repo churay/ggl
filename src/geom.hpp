@@ -1,6 +1,8 @@
 #ifndef GGL_GEOM_H
 #define GGL_GEOM_H
 
+#include <vector>
+
 #include "matrix.hpp"
 #include "interval.h"
 #include "consts.hpp"
@@ -8,6 +10,8 @@
 namespace ggl {
 
 namespace geom {
+    /// Namespace Types ///
+
     template <size_t D>
     struct ray {
         ggl::vectorf<D> at( const ggl::real& pParam ) const;
@@ -16,6 +20,7 @@ namespace geom {
 
     struct surface {
         virtual ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const = 0;
+        ggl::interval pintersect( const ggl::geom::ray<3>& pRay ) const;
     };
 
     struct plane : public surface {
@@ -41,6 +46,11 @@ namespace geom {
         ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> mV0, mV1, mV2;
     };
+
+    /// Namespace Functions ///
+
+    ggl::geom::surface* findClosest( const ggl::geom::ray<3>& pRay,
+        const std::vector<ggl::geom::surface*>& pSurfaces );
 }
 
 }

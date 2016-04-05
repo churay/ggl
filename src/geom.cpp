@@ -1,5 +1,6 @@
 #include <array>
 #include <cmath>
+#include <vector>
 #include <utility>
 
 #include "matrix.hpp"
@@ -14,6 +15,21 @@ namespace ggl {
 template <size_t D>
 ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
     return mOrigin + pParam * mVector;
+}
+
+/// Surface Functions ///
+
+ggl::interval geom::surface::pintersect( const ggl::geom::ray<3>& pRay ) const {
+    ggl::interval raySurfIntx = (*this).intersect( pRay );
+
+    if( ggl::util::flt(raySurfIntx.max(), ggl::zero()) ) {
+        return ggl::interval( ggl::nan() );
+    } else {
+        return ggl::interval(
+            std::max( raySurfIntx.min(), ggl::zero() ),
+            std::max( raySurfIntx.max(), ggl::zero() )
+        );
+    }
 }
 
 /// Plane Functions ///
@@ -85,6 +101,24 @@ ggl::interval geom::triangle::intersect( const ggl::geom::ray<3>& pRay ) const {
 
     ggl::real rayIntx = triIntxValid ? triIntxRayT : ggl::nan();
     return ggl::interval( rayIntx );
+}
+
+/// Namespace Functions ///
+
+ggl::geom::surface* geom::findClosest( const ggl::geom::ray<3>& pRay,
+        const std::vector<ggl::geom::surface*>& pSurfaces ) {
+    ggl::geom::surface* closestSurf( nullptr );
+    ggl::interval closestIntx( ggl::nan() );
+
+    for( ggl::geom::surface* surf : pSurfaces ) {
+        ggl::interval surfIntx = surf->pintersect( pRay );
+        if( surfIntx.valid() && (!closestIntx.valid() || surfIntx.min() < closestIntx.min()) ) {
+            closestSurf = surf;
+            closestIntx = surfIntx;
+        }
+    }
+
+    return closestSurf;
 }
 
 }

@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <vector>
 
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
@@ -32,12 +33,13 @@ int main() {
 
     const GLuint black = 0xff000000, grey = 0xffaaaaaa, white = 0xffffffff;
 
-    const ggl::geom::sphere sphere{ ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f };
-    const ggl::geom::triangle triangle{
+    ggl::geom::sphere sphere{ ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f };
+    ggl::geom::triangle triangle{
         ggl::vectorf<3>{ 0.0f, 0.0f, -0.10f },
         ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
         ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
     };
+    std::vector<ggl::geom::surface*> surfaces{ &sphere, &triangle };
 
     const unsigned sceneDim = 500;
     const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );
@@ -50,17 +52,11 @@ int main() {
                 ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
             };
 
-            const ggl::interval sxySphIntxs = sphere.intersect( sxyRay );
-            const ggl::interval sxyTriIntxs = triangle.intersect( sxyRay );
-
+            ggl::geom::surface* sxyClosest = ggl::geom::findClosest( sxyRay, surfaces );
             GLuint& sxyPixel = scenePixels[sy * sceneDim + sx];
-            if( !sxySphIntxs.valid() && !sxyTriIntxs.valid() ) {
-                sxyPixel = black;
-            } else if( !sxySphIntxs.valid() || sxyTriIntxs.min() < sxySphIntxs.min() ) {
-                sxyPixel = grey;
-            } else {
-                sxyPixel = white;
-            }
+            if( sxyClosest == &triangle ) { sxyPixel = grey; }
+            else if( sxyClosest == &sphere ) { sxyPixel = white; }
+            else { sxyPixel = black; }
         }
     }
 
