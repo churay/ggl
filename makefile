@@ -68,4 +68,4 @@ $(TEST_LIB) :
 	wget https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp -O $(TEST_LIB)
 
 clean : 
-	rm -rf $(BIN_DIR)/* $(ETC_DIR)/*.cpp
+	rm -rf $(BIN_DIR)/*

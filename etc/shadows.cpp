@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <utility>
 
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
@@ -32,12 +33,9 @@ int main() {
 
     /// Initialize Scene Geometry ///
 
-    auto copyColor = [] ( const GLfloat* pSrcColor, GLfloat* pDstColor ) {
-        std::memcpy( pDstColor, pSrcColor, 3 * sizeof(GLfloat) );
-    };
-
     const ggl::vector<GLfloat, 3> red{ 1.0f, 0.0f, 0.0f },
         green{ 0.0f, 1.0f, 0.0f }, black{ 0.0f, 0.0f, 0.0f };
+    const ggl::vectorf<3> lightPos{ 5.0f, 20.0f, -5.0f };
 
     ggl::geom::sphere sphereT{ ggl::vectorf<3>{5.0f, 8.0f, -5.0f}, 2.0f };
     ggl::geom::sphere sphereB{ ggl::vectorf<3>{5.0f, 3.0f, -5.0f}, 3.0f };
@@ -56,9 +54,21 @@ int main() {
 
             ggl::geom::surface* sxyClosest = ggl::geom::findClosest( sxyRay, surfaces );
             GLfloat* sxyPixel = &scenePixels[3 * (sy * sceneDim + sx)];
-            if( sxyClosest == &sphereT ) { copyColor(red.data(), sxyPixel); }
-            else if( sxyClosest == &sphereB ) { copyColor(green.data(), sxyPixel); }
-            else { copyColor(black.data(), sxyPixel); }
+            const ggl::vector<GLfloat, 3> sxyBaseColor = ( sxyClosest == &sphereT ) ?
+                red : ( (sxyClosest == &sphereB) ? green : black );
+
+            ggl::real sxyLightScale = 1.0f;
+            if( sxyClosest != nullptr ) {
+                ggl::real sxyRayT = sxyClosest->intersect( sxyRay ).min();
+                ggl::vectorf<3> sxySurfPos = sxyRay.at( sxyRayT );
+
+                ggl::vectorf<3> sxySurfNorm = sxyClosest->normalAt( sxySurfPos );
+                ggl::vectorf<3> sxySurfLDir = ( lightPos - sxySurfPos ).normalize();
+                sxyLightScale = std::max( 0.0f, sxySurfNorm.dot(sxySurfLDir) );
+            }
+
+            ggl::vector<GLfloat, 3> sxyColor = sxyLightScale * sxyBaseColor;
+            std::memcpy( sxyPixel, sxyColor.data(), 3 * sizeof(GLfloat) );
         }
     }
 

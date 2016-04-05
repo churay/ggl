@@ -41,7 +41,7 @@ ggl::interval geom::surface::intersect( const ggl::geom::ray<3>& pRay ) const {
 }
 
 ggl::vectorf<3> geom::surface::normalAt( const ggl::vectorf<3>& pPos ) const {
-    return (*this).contains( pPos ) ? (*this)._normalAt( pPos ) :
+    return (*this).contains( pPos ) ? (*this)._normalAt( pPos ).normalize() :
         ggl::vectorf<3>{ ggl::nan(), ggl::nan(), ggl::nan() };
 }
 
