@@ -11,6 +11,9 @@ namespace util {
     bool flt( const ggl::real& pV1, const ggl::real& pV2 );
     bool fle( const ggl::real& pV1, const ggl::real& pV2 );
 
+    ggl::real clamp( const ggl::real& pVal, const ggl::real& pMin, const ggl::real& pMax );
+    ggl::real lerp( const ggl::real& pVal, const ggl::real& pMin, const ggl::real& pMax );
+
     constexpr unsigned factorial( const unsigned& pVal );
     std::pair<ggl::real, ggl::real> solveQuadratic( const ggl::real& pA,
         const ggl::real& pB, const ggl::real& pC );

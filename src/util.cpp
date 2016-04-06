@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <utility>
 
@@ -18,6 +19,16 @@ bool util::flt( const ggl::real& pV1, const ggl::real& pV2 ) {
 
 bool util::fle( const ggl::real& pV1, const ggl::real& pV2 ) {
     return ggl::util::flt( pV1, pV2 ) || ggl::util::feq( pV1, pV2 );
+}
+
+
+ggl::real util::clamp( const ggl::real& pVal, const ggl::real& pMin, const ggl::real& pMax ) {
+    return std::max( pMin, std::min(pMax, pVal) );
+}
+
+
+ggl::real util::lerp( const ggl::real& pVal, const ggl::real& pMin, const ggl::real& pMax ) {
+    return pMin + ggl::util::clamp( pVal, ggl::zero(), ggl::one() ) * ( pMax - pMin );
 }
 
 

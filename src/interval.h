@@ -18,9 +18,6 @@ class interval {
 
     /// Class Functions ///
 
-    ggl::real clamp( const ggl::real& pValue ) const;
-    ggl::real lerp( const ggl::real& pValue ) const;
-
     bool contains( const ggl::real& pValue ) const;
     bool overlaps( const interval& pOther ) const;
     interval intersect( const interval& pOther ) const;

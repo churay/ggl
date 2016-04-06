@@ -19,16 +19,6 @@ interval::interval( const ggl::real& pMin, const ggl::real& pMax ) {
 }
 
 
-ggl::real interval::clamp( const ggl::real& pValue ) const {
-    return std::max( mMin, std::min(mMax, pValue) );
-}
-
-
-ggl::real interval::lerp( const ggl::real& pValue ) const {
-    return (*this).clamp( mMin + pValue * (mMax - mMin) );
-}
-
-
 bool interval::contains( const ggl::real& pValue ) const {
     return ggl::util::fle( mMin, pValue ) && ggl::util::fle( pValue, mMax );
 }
