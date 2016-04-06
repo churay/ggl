@@ -32,11 +32,6 @@ ggl::real util::lerp( const ggl::real& pVal, const ggl::real& pMin, const ggl::r
 }
 
 
-constexpr unsigned util::factorial( const unsigned& pVal ) {
-    return ( pVal != 0 ) ? pVal * factorial( pVal - 1 ) : 1;
-}
-
-
 std::pair<ggl::real, ggl::real> util::solveQuadratic( const ggl::real& pA,
         const ggl::real& pB, const ggl::real& pC ) {
     std::pair<ggl::real, ggl::real> results = std::make_pair( ggl::nan(), ggl::nan() );

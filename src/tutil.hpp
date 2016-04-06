@@ -8,6 +8,8 @@ namespace util {
     struct fless {
         bool operator()( const T& pV1, const T& pV2 ) const;
     };
+
+    constexpr unsigned factorial( const unsigned& pVal );
 }
 
 }
