@@ -37,14 +37,9 @@ int main() {
         green{ 0.0f, 1.0f, 0.0f }, black{ 0.0f, 0.0f, 0.0f };
     const ggl::vectorf<3> lightPos{ 5.0f, 100.0f, -5.0f };
 
-    /*
     ggl::geom::sphere sphereT{ ggl::vectorf<3>{5.0f, 8.0f, -5.0f}, 2.0f };
     ggl::geom::sphere sphereB{ ggl::vectorf<3>{5.0f, 3.0f, -5.0f}, 3.0f };
     std::vector<ggl::geom::surface*> surfaces{ &sphereT, &sphereB };
-    */
-
-    ggl::geom::sphere sphere{ ggl::vectorf<3>{5.0f, 5.0f, -5.0f}, 4.0f };
-    std::vector<ggl::geom::surface*> surfaces{ &sphere };
 
     const unsigned sceneDim = 500;
     const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );
@@ -59,11 +54,8 @@ int main() {
 
             ggl::geom::surface* sxyClosest = ggl::geom::findClosest( sxyRay, surfaces );
             GLfloat* sxyPixel = &scenePixels[3 * (sy * sceneDim + sx)];
-            /*
             const ggl::vector<GLfloat, 3> sxyBaseColor = ( sxyClosest == &sphereT ) ?
                 red : ( (sxyClosest == &sphereB) ? green : black );
-            */
-            const ggl::vector<GLfloat, 3> sxyBaseColor = ( sxyClosest == nullptr ) ? black : red;
 
             ggl::real sxyLightScale = 1.0f;
             if( sxyClosest != nullptr ) {
@@ -73,6 +65,16 @@ int main() {
                 ggl::vectorf<3> sxySurfNorm = sxyClosest->normalAt( sxySurfPos );
                 ggl::vectorf<3> sxySurfLDir = ( lightPos - sxySurfPos ).normalize();
                 sxyLightScale = std::max( 0.05f, sxySurfNorm.dot(sxySurfLDir) );
+
+                const ggl::geom::ray<3> sxyShadowRay = { sxySurfPos, sxySurfLDir };
+                std::vector<ggl::geom::surface*> sxyShadowSurfaces;
+                for( ggl::geom::surface* surface : surfaces )
+                    if( surface != sxyClosest )
+                        sxyShadowSurfaces.push_back( surface );
+
+                ggl::geom::surface* sxyShadowClosest = ggl::geom::findClosest(
+                    sxyShadowRay, sxyShadowSurfaces );
+                sxyLightScale = ( sxyShadowClosest != nullptr ) ? 0.05f : sxyLightScale;
             }
 
             ggl::vector<GLfloat, 3> sxyColor = sxyLightScale * sxyBaseColor;
