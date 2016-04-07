@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "src/matrix.hpp"
+#include <iostream>
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
@@ -103,7 +104,7 @@ SCENARIO( "ggl::matrix subtraction works", "[matrix]" ) {
         const ggl::matrixi<2, 2> m1{ 1, 2, 3, 4 };
         const ggl::matrixi<2, 2> m2{ 8, 7, 6, 5 };
 
-        WHEN( "the matrices are added" ) {
+        WHEN( "the matrices are subtracted" ) {
             THEN( "the result matrix is the entry subtraction of the operands" ) {
                 const ggl::matrixi<2, 2> expected{ 0, 0, 0, 0 };
                 REQUIRE( (m1 - m1) == expected );
@@ -271,11 +272,27 @@ SCENARIO( "ggl::matrix normal operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix normalize operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::matrix normalize operation works", "[matrix]" ) {
+    GIVEN( "a matrix with nontrivial dimensions" ) {
+        WHEN( "the matrix is a vector" ) {
+            THEN( "the normalized vector is an equivalent vector of unit length" ) {
+                const ggl::vectorf<2> testvec{ 3.0f, 4.0f };
+                const ggl::real testvecNorm = testvec.normal();
+                const ggl::vectorf<2> ntestvec{ testvec.normalize() };
+
+                REQUIRE( ntestvec.normal() == Approx(1.0f) );
+                REQUIRE( testvecNorm * ntestvec == testvec );
+            }
+        }
+
+        WHEN( "the matrix isn't a vector" ) {
+            THEN( "the normalized matrix is an equivalent matrix normalized by the 2-norm" ) {
+                const ggl::matrixf<2, 2> testmat{ 2.0f, 2.0f, 2.0f, 2.0f };
+                const ggl::real testmatNorm = testmat.normal();
+                const ggl::matrixf<2, 2> ntestmat{ testmat.normalize() };
+
+                REQUIRE( ntestmat.normal() == Approx(1.0f) );
+                REQUIRE( testmatNorm * ntestmat == testmat );
             }
         }
     }
@@ -287,15 +304,47 @@ SCENARIO( "ggl::matrix transpose operation works", "[matrix]" ) {
 
         WHEN( "the matrix transpose operation is invoked" ) {
             THEN( "the result matrix is an n by m matrix with the input rows as columns" ) {
-                const ggl::matrixi<3, 2> e{ 1, 4, 2, 5, 3, 6 };
-                REQUIRE( m.transpose() == e );
+                const ggl::matrixi<3, 2> expected{ 1, 4, 2, 5, 3, 6 };
+                REQUIRE( m.transpose() == expected );
             }
         }
     }
 }
 
 SCENARIO( "ggl::matrix rreform operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
+    GIVEN( "a square n by n matrix" ) {
+        WHEN( "one or more of the matrix's rows are linearly dependent" ) {
+            THEN( "the rreform is the identity for the number of linearly independent rows" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+
+        WHEN( "all of the matrix's rows are linearly independent" ) {
+            THEN( "the rreform is the identity matrix" ) {
+                const ggl::matrixf<3, 3> identity{ 1.0f };
+                REQUIRE( identity.rreform() == identity );
+
+                const ggl::matrixf<3, 3> uptri{
+                    10.0f, 8.0f, 3.0f,
+                    0.0f, -3.0f, 2.0f,
+                    0.0f, 0.0f, 3.0f
+                };
+                REQUIRE( uptri.rreform() == identity );
+
+                const ggl::matrixf<3, 3> lotri{ uptri.transpose() };
+                REQUIRE( lotri.rreform() == identity );
+
+                const ggl::matrixf<3, 3> full{
+                    10.0f, -10.0f, 3.0f,
+                    33.0f, 55.0f, -23.0f,
+                    1.0f, 5.0f, 9.0f
+                };
+                REQUIRE( full.rreform() == identity );
+            }
+        }
+    }
+
+    GIVEN( "a non-square m by n matrix" ) {
         WHEN( "" ) {
             THEN( "" ) {
                 REQUIRE( 1 != 1 );
