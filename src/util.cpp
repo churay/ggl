@@ -39,6 +39,7 @@ std::pair<ggl::real, ggl::real> util::solveQuadratic( const ggl::real& pA,
     ggl::real discriminant = pB * pB - 4 * pA * pC;
     if( ggl::util::feq(discriminant, ggl::zero()) ) {
         results.first = ( -pB ) / ( 2 * pA );
+        results.second = results.first;
     } else if( discriminant > ggl::zero() ) {
         results.first = ( -pB - std::sqrt(discriminant) ) / ( 2 * pA );
         results.second = ( -pB + std::sqrt(discriminant) ) / ( 2 * pA );

@@ -99,17 +99,22 @@ SCENARIO( "ggl::util quadratic operation works", "[util]" ) {
     GIVEN( "any set of real quadratic terms" ) {
         WHEN( "the determinant of the terms is negative" ) {
             THEN( "the quadratic operation returns a pair of nans" ) {
-                REQUIRE( std::isnan(ggl::util::solveQuadratic(1.0f, 1.0f, 1.0f).first) );
-                REQUIRE( std::isnan(ggl::util::solveQuadratic(3.0f, 4.0f, 4.0f).first) );
+                const auto q1results = ggl::util::solveQuadratic( 1.0f, 1.0f, 1.0f );
+                REQUIRE( std::isnan(q1results.first) );
+                REQUIRE( std::isnan(q1results.second) );
+
+                const auto q2results = ggl::util::solveQuadratic( 3.0f, 4.0f, 4.0f );
+                REQUIRE( std::isnan(q2results.first) );
+                REQUIRE( std::isnan(q2results.second) );
             }
         }
 
         WHEN( "the determinant of the terms is zero" ) {
             THEN( "the quadratic operation returns a pair with the one solution" ) {
-                const auto q1solns = std::make_pair( 1.0f, 1.0f );
+                const auto q1solns = std::make_pair( -1.0f, -1.0f );
                 REQUIRE( ggl::util::solveQuadratic(1.0f, 2.0f, 1.0f) == q1solns );
 
-                const auto q2solns = std::make_pair( 2.0f, 2.0f );
+                const auto q2solns = std::make_pair( -2.0f, -2.0f );
                 REQUIRE( ggl::util::solveQuadratic(1.0f, 4.0f, 4.0f) == q2solns );
             }
         }
