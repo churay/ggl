@@ -1,6 +1,5 @@
 #include "catch.hpp"
 #include "src/matrix.hpp"
-#include <iostream>
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
@@ -461,10 +460,31 @@ SCENARIO( "ggl::matrix cross operation works", "[matrix][stub]" ) {
 }
 
 SCENARIO( "ggl::matrix angleTo operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+    GIVEN( "two nontrivial vectors with the same dimensions" ) {
+        const ggl::vectorf<2> xvector{ 1.0f, 0.0f };
+        const ggl::vectorf<2> yvector{ 0.0f, 1.0f };
+
+        WHEN( "the vectors are identical" ) {
+            THEN( "the angleTo operation returns 0" ) {
+                REQUIRE( xvector.angleTo(xvector) == Approx(0.0f) );
+                REQUIRE( yvector.angleTo(yvector) == Approx(0.0f) );
+            }
+        }
+
+        WHEN( "the vectors are different" ) {
+            const ggl::vectorf<2> nxvector{ -1.0f * xvector };
+            const ggl::vectorf<2> nyvector{ -1.0f * yvector };
+
+            THEN( "the angleTo operation returns the shortest angle between the vectors" ) {
+                REQUIRE( xvector.angleTo(yvector) == Approx(ggl::pi() / 2.0f) );
+                REQUIRE( xvector.angleTo(nxvector) == Approx(ggl::pi()) );
+                REQUIRE( xvector.angleTo(nyvector) == Approx(ggl::pi() / 2.0f) );
+            }
+
+            THEN( "the angleTo operation is commutative" ) {
+                REQUIRE( xvector.angleTo(yvector) == yvector.angleTo(xvector) );
+                REQUIRE( xvector.angleTo(nxvector) == nxvector.angleTo(xvector) );
+                REQUIRE( xvector.angleTo(nyvector) == nyvector.angleTo(xvector) );
             }
         }
     }
