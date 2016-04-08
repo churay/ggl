@@ -477,7 +477,7 @@ SCENARIO( "ggl::matrix cross operation works", "[matrix][stub]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix angleTo operation works", "[matrix][stub]" ) {
+SCENARIO( "ggl::matrix angleTo operation works", "[matrix]" ) {
     GIVEN( "two nontrivial vectors with the same dimensions" ) {
         const ggl::vectorf<2> xvector{ 1.0f, 0.0f };
         const ggl::vectorf<2> yvector{ 0.0f, 1.0f };
