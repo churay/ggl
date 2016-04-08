@@ -118,6 +118,16 @@ SCENARIO( "ggl::matrix subtraction works", "[matrix]" ) {
     }
 }
 
+SCENARIO( "ggl::matrix negation works", "[matrix][stub]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
 SCENARIO( "ggl::matrix matrix multiplication works", "[matrix]" ) {
     GIVEN( "two matrices with the same dimensions" ) {
         const ggl::matrixi<2, 2> m1{ 1, 2, 3, 4 };
