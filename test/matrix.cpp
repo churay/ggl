@@ -508,11 +508,36 @@ SCENARIO( "ggl::matrix angleTo operation works", "[matrix][stub]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix projectOnto operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::matrix projectOnto operation works", "[matrix]" ) {
+    GIVEN( "two nontrivial vectors with the same dimensions" ) {
+        const ggl::vectorf<2> xvector{ 1.0f, 0.0f };
+        const ggl::vectorf<2> yvector{ 0.0f, 1.0f };
+
+        WHEN( "the vectors are parallel" ) {
+            THEN( "the result of the projection is the input vector" ) {
+                REQUIRE( xvector.projectOnto(xvector) == xvector );
+                REQUIRE( xvector.projectOnto(2.0f*xvector) == xvector );
+                REQUIRE( xvector.projectOnto(0.5f*xvector) == xvector );
+            }
+        }
+
+        WHEN( "the vectors are orthogonal" ) {
+            THEN( "the result of the projection is the zero vector" ) {
+                const ggl::vectorf<2> zerovector{ 0.0f, 0.0f };
+
+                REQUIRE( xvector.projectOnto(yvector) == zerovector );
+                REQUIRE( xvector.projectOnto(2.0f*yvector) == zerovector );
+                REQUIRE( xvector.projectOnto(0.5f*yvector) == zerovector );
+            }
+        }
+
+        WHEN( "the vectors are neither parallel nor orthogonal" ) {
+            THEN( "the result of the projection is the projection of the LHS onto the RHS" ) {
+                const ggl::vectorf<2> xvectorDelta{ 1.0f, 3.0f };
+                REQUIRE( xvectorDelta.projectOnto(xvector) == xvector );
+
+                const ggl::vectorf<2> yvectorDelta{ 0.25f, 1.0f };
+                REQUIRE( yvectorDelta.projectOnto(yvector) == yvector );
             }
         }
     }
