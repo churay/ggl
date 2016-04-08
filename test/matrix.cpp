@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "src/matrix.hpp"
+#include <iostream>
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
@@ -118,11 +119,18 @@ SCENARIO( "ggl::matrix subtraction works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix negation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::matrix negation works", "[matrix]" ) {
+    GIVEN( "a matrix with nontrivial dimensions" ) {
+        const ggl::matrixi<2, 2> m1{ 1, 2, 3, 4 };
+        const ggl::matrixi<2, 2> m2{ 5, 6, 7, 8 };
+
+        WHEN( "the matrix is negated" ) {
+            THEN( "the result matrix is the entry negation of the operands" ) {
+                const ggl::matrixi<2, 2> e1{ -1, -2, -3, -4 };
+                REQUIRE( -m1 == e1 );
+
+                const ggl::matrixi<2, 2> e2{ -5, -6, -7, -8 };
+                REQUIRE( -m2 == e2 );
             }
         }
     }
