@@ -3,6 +3,8 @@
 #include <vector>
 #include <utility>
 
+#include <iostream>
+
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
 
@@ -104,23 +106,16 @@ int main() {
 
         int wKeyAction = glfwGetKey( window, GLFW_KEY_W );
         if( wKeyAction == GLFW_PRESS )
-            viewPos = viewPos + ggl::vectorf<3>{ 0.0f, 0.1f, 0.0f };
+            viewPos = viewPos - ggl::vectorf<3>{ 0.0f, 0.0f, 0.1f };
 
         int sKeyAction = glfwGetKey( window, GLFW_KEY_S );
         if( sKeyAction == GLFW_PRESS )
-            viewPos = viewPos - ggl::vectorf<3>{ 0.0f, 0.1f, 0.0f };
+            viewPos = viewPos + ggl::vectorf<3>{ 0.0f, 0.0f, 0.1f };
 
-        int dKeyAction = glfwGetKey( window, GLFW_KEY_D );
-        if( dKeyAction == GLFW_PRESS )
-            viewPos = viewPos + ggl::vectorf<3>{ 0.1f, 0.0f, 0.0f };
-
-        int aKeyAction = glfwGetKey( window, GLFW_KEY_A );
-        if( aKeyAction == GLFW_PRESS )
-            viewPos = viewPos - ggl::vectorf<3>{ 0.1f, 0.0f, 0.0f };
-
-        if( wKeyAction == GLFW_PRESS || aKeyAction == GLFW_PRESS ||
-                sKeyAction == GLFW_PRESS || dKeyAction == GLFW_PRESS )
+        if( wKeyAction == GLFW_PRESS || sKeyAction == GLFW_PRESS ) {
+            std::cout << "View Pos: " << viewPos << std::endl;
             renderScene();
+        }
     };
 
     /// Update and Render ///
