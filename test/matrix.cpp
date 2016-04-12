@@ -1,6 +1,5 @@
 #include "catch.hpp"
 #include "src/matrix.hpp"
-#include <iostream>
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {
@@ -447,11 +446,30 @@ SCENARIO( "ggl::matrix inverse operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix dot operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
+    GIVEN( "two nontrivial vectors with the same dimensions" ) {
+        const ggl::vectorf<3> zerovec{ 0.0f, 0.0f, 0.0f };
+        const ggl::vectorf<3> onevec{ 1.0f, 1.0f, 1.0f };
+
+        const ggl::vectorf<3> testvec1{ 1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f };
+        const ggl::vectorf<3> testvec2{ 3.0f, 3.0f, 3.0f };
+
+        WHEN( "the vectors are identical" ) {
+            THEN( "the result of the dot operation is the square of the vector length" ) {
+                REQUIRE( testvec1.dot(testvec1) == Approx(std::pow(testvec1.normal(), 2.0f)) );
+                REQUIRE( testvec2.dot(testvec2) == Approx(std::pow(testvec2.normal(), 2.0f)) );
+            }
+        }
+
+        WHEN( "the vectors are different" ) {
+            THEN( "the result of the dot operation is the sum product of its components" ) {
+                REQUIRE( testvec1.dot(zerovec) == Approx(0.0f) );
+                REQUIRE( testvec1.dot(onevec) == Approx(1.0f) );
+                REQUIRE( testvec1.dot(testvec2) == Approx(3.0f) );
+            } THEN( "the dot operation is commutative" ) {
+                REQUIRE( testvec1.dot(zerovec) == zerovec.dot(testvec1) );
+                REQUIRE( testvec1.dot(onevec) == onevec.dot(testvec1) );
+                REQUIRE( testvec1.dot(testvec2) == testvec2.dot(testvec1) );
             }
         }
     }
@@ -467,11 +485,33 @@ SCENARIO( "ggl::matrix tensor operation works", "[matrix][stub]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix cross operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::matrix cross operation works", "[matrix]" ) {
+    GIVEN( "two nontrivial vectors both with dimensionality three" ) {
+        const ggl::vectori<3> zerovec{ 0, 0, 0 };
+        const ggl::vectori<3> testvec1{ 1, 1, 1 };
+        const ggl::vectori<3> testvec2{ 10, 0, -3 };
+
+        WHEN( "the vectors are parallel or antiparallel" ) {
+            THEN( "the result of the cross operation is the zero vector" ) {
+                REQUIRE( testvec1.cross(+1*testvec1) == zerovec );
+                REQUIRE( testvec1.cross(+5*testvec1) == zerovec );
+                REQUIRE( testvec1.cross(-1*testvec1) == zerovec );
+
+                REQUIRE( testvec2.cross(+1*testvec2) == zerovec );
+                REQUIRE( testvec2.cross(+5*testvec2) == zerovec );
+                REQUIRE( testvec2.cross(-1*testvec2) == zerovec );
+            }
+        }
+
+        WHEN( "the vectors aren't parallel" ) {
+            THEN( "the result of the cross operation is their combined entry matrix's determinant" ) {
+                REQUIRE( testvec1.cross(zerovec) == zerovec );
+                REQUIRE( testvec2.cross(zerovec) == zerovec );
+
+                const ggl::vectori<3> expected{ -3, 13, -10 };
+                REQUIRE( testvec1.cross(testvec2) == expected );
+            } THEN( "the result of the cross operation is the negation of its commuted operation" ) {
+                REQUIRE( testvec1.cross(testvec2) == -testvec2.cross(testvec1) );
             }
         }
     }
@@ -497,9 +537,7 @@ SCENARIO( "ggl::matrix angleTo operation works", "[matrix]" ) {
                 REQUIRE( xvector.angleTo(yvector) == Approx(ggl::pi() / 2.0f) );
                 REQUIRE( xvector.angleTo(nxvector) == Approx(ggl::pi()) );
                 REQUIRE( xvector.angleTo(nyvector) == Approx(ggl::pi() / 2.0f) );
-            }
-
-            THEN( "the angleTo operation is commutative" ) {
+            } THEN( "the angleTo operation is commutative" ) {
                 REQUIRE( xvector.angleTo(yvector) == yvector.angleTo(xvector) );
                 REQUIRE( xvector.angleTo(nxvector) == nxvector.angleTo(xvector) );
                 REQUIRE( xvector.angleTo(nyvector) == nyvector.angleTo(xvector) );
