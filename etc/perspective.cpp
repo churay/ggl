@@ -3,8 +3,6 @@
 #include <vector>
 #include <utility>
 
-#include <iostream>
-
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
 
@@ -53,12 +51,12 @@ int main() {
 
         for( size_t sj = 0; sj < sceneDim; ++sj ) {
             for( size_t si = 0; si < sceneDim; ++si ) {
+                // TODO(JRC): Fix the slight numerical error in the calculation of
+                // the view coordinates for each pixel.
                 const ggl::real su = ggl::util::lerp( si / sceneDimf, viewRectMin[0], viewRectMax[0] );
                 const ggl::real sv = ggl::util::lerp( sj / sceneDimf, viewRectMin[1], viewRectMax[1] );
-                const ggl::geom::ray<3> sijRay = {
-                    su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2],
-                    viewPos
-                };
+                const ggl::geom::ray<3> sijRay = { viewPos,
+                    su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
                 ggl::geom::surface* sijClosest = ggl::geom::findClosest( sijRay, surfaces );
                 GLfloat* sijPixel = &scenePixels[3 * (sj * sceneDim + si)];
@@ -112,10 +110,8 @@ int main() {
         if( sKeyAction == GLFW_PRESS )
             viewPos = viewPos + ggl::vectorf<3>{ 0.0f, 0.0f, 0.1f };
 
-        if( wKeyAction == GLFW_PRESS || sKeyAction == GLFW_PRESS ) {
-            std::cout << "View Pos: " << viewPos << std::endl;
+        if( wKeyAction == GLFW_PRESS || sKeyAction == GLFW_PRESS )
             renderScene();
-        }
     };
 
     /// Update and Render ///
