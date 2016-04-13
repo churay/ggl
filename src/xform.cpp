@@ -32,7 +32,7 @@ auto xform::scale( Ts&&... pValues ) {
     constexpr unsigned D = sizeof...( Ts );
     const std::array<T, D> pValueArray{{ std::forward<Ts>(pValues)... }};
 
-    ggl::matrix<T, D+1, D+1> result{ T(1) };
+    ggl::matrix<T, D+1, D+1> result{ ggl::one<T>() };
     for( unsigned eIdx = 0; eIdx < D; ++eIdx )
         result(eIdx, eIdx) = pValueArray[eIdx];
 
@@ -46,7 +46,7 @@ auto xform::translate( Ts&&... pValues ) {
     constexpr unsigned D = sizeof...( Ts );
     const std::array<T, D> pValueArray{{ std::forward<Ts>(pValues)... }};
 
-    ggl::matrix<T, D+1, D+1> result{ T(1) };
+    ggl::matrix<T, D+1, D+1> result{ ggl::one<T>() };
     for( unsigned eIdx = 0; eIdx < D; ++eIdx )
         result(eIdx, D) = pValueArray[eIdx];
 
@@ -86,7 +86,7 @@ auto xform::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
 
 template <class T, class LT>
 auto xform::rotate( const std::array<vector<T, 3, LT>, 3>& pAxes ) {
-    ggl::matrix<T, 4, 4, LT> result{ static_cast<T>(1) };
+    ggl::matrix<T, 4, 4, LT> result{ ggl::one<T>() };
 
     result.template embed<0, 0>( pAxes[0] );
     result.template embed<0, 1>( pAxes[1] );

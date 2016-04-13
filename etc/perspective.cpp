@@ -27,18 +27,24 @@ int main() {
 
     /// Initialize Scene Geometry ///
 
-    const ggl::vector<GLfloat, 3> white{ 1.0f, 1.0f, 1.0f }, black{ 0.0f, 0.0f, 0.0f };
-    const ggl::vectorf<3> lightDir{ 0.0f, 1.0f, 0.0f };
+    const ggl::vectorf<3> xDir{ 1.0f, 0.0f, 0.0f };
+    const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
+    const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
 
-    ggl::geom::sphere sphere{ ggl::vectorf<3>{0.0f, 0.0f, 0.0f}, 1.85f };
+    const ggl::vectorf<3> lightDir{ 0.0f, 1.0f, 0.0f };
+    const ggl::vector<GLfloat, 3> white{ 1.0f, 1.0f, 1.0f };
+    const ggl::vector<GLfloat, 3> black{ 0.0f, 0.0f, 0.0f };
+
+    ggl::geom::sphere sphere{ ggl::vectorf<3>{0.0f, 0.0f, 0.0f}, 2.0f };
     std::vector<ggl::geom::surface*> surfaces{ &sphere };
 
     const ggl::real viewRectW{ -2.0f };
     const ggl::vectorf<3> viewRectMin{ -2.0f, -2.0f, viewRectW };
     const ggl::vectorf<3> viewRectMax{ +2.0f, +2.0f, viewRectW };
 
-    ggl::vectorf<3> viewPos{ 0.0f, 0.0f, +2.0f };
-    ggl::vectorf<3> viewDir{ 0.0f, 0.0f, -1.0f };
+    ggl::real viewPosRadius{ 5.0f };
+    ggl::real viewPosAngleH{ 0.0f };
+    ggl::real viewPosAngleV{ 0.0f };
 
     const unsigned sceneDim = 100;
     GLfloat scenePixels[3 * sceneDim * sceneDim];
@@ -46,6 +52,13 @@ int main() {
     /// Create Scene Rendering Function ///
 
     auto renderScene = [ & ] ( ) {
+        ggl::matrixf<3, 3> viewPosHXform =
+            ggl::xform::rotate( viewPosAngleH, zDir ).template submatrix<0, 0, 3, 3>();
+        ggl::matrixf<3, 3> viewPosVXform =
+            ggl::xform::rotate( viewPosAngleV, viewPosHXform * yDir ).template submatrix<0, 0, 3, 3>();
+
+        ggl::vectorf<3> viewPos = viewPosRadius * ( viewPosVXform * viewPosHXform * xDir );
+        ggl::vectorf<3> viewDir = -viewPos.normalize();
         std::array<ggl::vectorf<3>, 3> viewBasis = ggl::xform::basis( -viewDir );
 
         for( size_t sj = 0; sj < sceneDim; ++sj ) {
@@ -91,7 +104,16 @@ int main() {
 
     /// Handle Inputs ///
 
-    auto glfwHandleInputs = [ &renderScene, &viewPos, &viewDir ] ( GLFWwindow* window ) {
+    auto angleWrap = [] ( const ggl::real& pAngle ) {
+        return ggl::util::wrap( pAngle, 0.0f, 2.0f * ggl::pi() );
+    };
+
+    auto radiusClamp = [] ( const ggl::real& pRadius ) {
+        return ggl::util::clamp( pRadius, 3.0f, 20.0f );
+    };
+
+    auto glfwHandleInputs = [ &renderScene, &angleWrap, &radiusClamp,
+            &viewPosRadius, &viewPosAngleH, &viewPosAngleV ] ( GLFWwindow* window ) {
         // Quit Handling //
 
         int qKeyAction = glfwGetKey( window, GLFW_KEY_Q );
@@ -101,15 +123,33 @@ int main() {
 
         // Scene Modification Handling //
 
+        const ggl::real viewAngleIncr{ ggl::pi() / 32.0f };
+        const ggl::real viewRadiusIncr{ 0.05f };
+
         int wKeyAction = glfwGetKey( window, GLFW_KEY_W );
         if( wKeyAction == GLFW_PRESS )
-            viewPos = viewPos - ggl::vectorf<3>{ 0.0f, 0.0f, 0.1f };
-
+            viewPosAngleV = angleWrap( viewPosAngleV + viewAngleIncr );
         int sKeyAction = glfwGetKey( window, GLFW_KEY_S );
         if( sKeyAction == GLFW_PRESS )
-            viewPos = viewPos + ggl::vectorf<3>{ 0.0f, 0.0f, 0.1f };
+            viewPosAngleV = angleWrap( viewPosAngleV - viewAngleIncr );
 
-        if( wKeyAction == GLFW_PRESS || sKeyAction == GLFW_PRESS )
+        int aKeyAction = glfwGetKey( window, GLFW_KEY_A );
+        if( aKeyAction == GLFW_PRESS )
+            viewPosAngleH = angleWrap( viewPosAngleH - viewAngleIncr );
+        int dKeyAction = glfwGetKey( window, GLFW_KEY_D );
+        if( dKeyAction == GLFW_PRESS )
+            viewPosAngleH = angleWrap( viewPosAngleH + viewAngleIncr );
+
+        int rKeyAction = glfwGetKey( window, GLFW_KEY_R );
+        if( rKeyAction == GLFW_PRESS )
+            viewPosRadius = radiusClamp( viewPosRadius - viewRadiusIncr );
+        int fKeyAction = glfwGetKey( window, GLFW_KEY_F );
+        if( fKeyAction == GLFW_PRESS )
+            viewPosRadius = radiusClamp( viewPosRadius + viewRadiusIncr );
+
+        if( wKeyAction == GLFW_PRESS || sKeyAction == GLFW_PRESS ||
+                aKeyAction == GLFW_PRESS || dKeyAction == GLFW_PRESS ||
+                rKeyAction == GLFW_PRESS || fKeyAction == GLFW_PRESS )
             renderScene();
     };
 
