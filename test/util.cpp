@@ -75,6 +75,16 @@ SCENARIO( "ggl::util lerp operation works", "[util]" ) {
     }
 }
 
+SCENARIO( "ggl::util wrap operation works", "[util][stub]" ) {
+    GIVEN( "" ) {
+        WHEN( "" ) {
+            THEN( "" ) {
+                REQUIRE( 1 != 1 );
+            }
+        }
+    }
+}
+
 SCENARIO( "ggl::util factorial operation works", "[util]" ) {
     GIVEN( "any non-negative integer" ) {
         WHEN( "the non-negative integer is zero" ) {

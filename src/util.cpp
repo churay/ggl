@@ -32,6 +32,13 @@ ggl::real util::lerp( const ggl::real& pVal, const ggl::real& pMin, const ggl::r
 }
 
 
+ggl::real util::wrap( const ggl::real& pVal, const ggl::real& pMin, const ggl::real& pMax ) {
+    const ggl::real normVal = ( pVal - pMin ) / ( pMax - pMin );
+    const ggl::real normValWrap = normVal - std::floor( normVal );
+    return ggl::util::lerp( normValWrap, pMin, pMax );
+}
+
+
 std::pair<ggl::real, ggl::real> util::solveQuadratic( const ggl::real& pA,
         const ggl::real& pB, const ggl::real& pC ) {
     std::pair<ggl::real, ggl::real> results = std::make_pair( ggl::nan(), ggl::nan() );
