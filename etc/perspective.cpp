@@ -41,7 +41,6 @@ int main() {
     ggl::vectorf<3> viewDir{ 0.0f, 0.0f, -1.0f };
 
     const unsigned sceneDim = 100;
-    const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );
     GLfloat scenePixels[3 * sceneDim * sceneDim];
 
     /// Create Scene Rendering Function ///
@@ -51,10 +50,10 @@ int main() {
 
         for( size_t sj = 0; sj < sceneDim; ++sj ) {
             for( size_t si = 0; si < sceneDim; ++si ) {
-                // TODO(JRC): Fix the slight numerical error in the calculation of
-                // the view coordinates for each pixel.
-                const ggl::real su = ggl::util::lerp( si / sceneDimf, viewRectMin[0], viewRectMax[0] );
-                const ggl::real sv = ggl::util::lerp( sj / sceneDimf, viewRectMin[1], viewRectMax[1] );
+                const ggl::real su = ggl::util::lerp( ( si + 0.5f ) / sceneDim,
+                    viewRectMin[0], viewRectMax[0] );
+                const ggl::real sv = ggl::util::lerp( ( sj + 0.5f ) / sceneDim,
+                    viewRectMin[1], viewRectMax[1] );
                 const ggl::geom::ray<3> sijRay = { viewPos,
                     su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
