@@ -75,11 +75,32 @@ SCENARIO( "ggl::util lerp operation works", "[util]" ) {
     }
 }
 
-SCENARIO( "ggl::util wrap operation works", "[util][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::util wrap operation works", "[util]" ) {
+    GIVEN( "a nonempty interval" ) {
+        const ggl::real min = -2.0f, max = 4.0f;
+        WHEN( "the given value is inside the wrapping range (in [min, max])" ) {
+            THEN( "the returned value is the same as the input value" ) {
+                REQUIRE( ggl::util::wrap(-1.0f, min, max) == Approx(-1.0f) );
+                REQUIRE( ggl::util::wrap(+1.0f, min, max) == Approx(+1.0f) );
+
+                REQUIRE( ggl::util::wrap(min + 0.0001f, min, max) == Approx(min + 0.0001f) );
+                REQUIRE( ggl::util::wrap(max - 0.0001f, min, max) == Approx(max - 0.0001f) );
+            }
+        }
+
+        WHEN( "the given value is above the wrapping range (in (max, +inf)" ) {
+            THEN( "the returned value is properly wrapped to the range" ) {
+                REQUIRE( ggl::util::wrap(min - 0.1f, min, max) == Approx(max - 0.1f) );
+                REQUIRE( ggl::util::wrap(min - 7.0f, min, max) == Approx(max - 1.0f) );
+                REQUIRE( ggl::util::wrap(min - 14.0f, min, max) == Approx(max - 2.0f) );
+            }
+        }
+
+        WHEN( "the given value is below the wrapping range (in (-inf, min)" ) {
+            THEN( "the returned value is properly wrapped to the range" ) {
+                REQUIRE( ggl::util::wrap(max + 0.1f, min, max) == Approx(min + 0.1f) );
+                REQUIRE( ggl::util::wrap(max + 7.0f, min, max) == Approx(min + 1.0f) );
+                REQUIRE( ggl::util::wrap(max + 14.0f, min, max) == Approx(min + 2.0f) );
             }
         }
     }
