@@ -18,7 +18,7 @@ namespace xform {
     template <class... Ts>
     auto translate( Ts&&... pValues );
 
-    template <class T>
+    template <class T, class LT=std::less<T>>
     auto rotate( const T& pRadians );
 
     template <class T, class LT>

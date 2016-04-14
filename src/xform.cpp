@@ -54,9 +54,9 @@ auto xform::translate( Ts&&... pValues ) {
 }
 
 
-template <class T>
+template <class T, class LT>
 auto xform::rotate( const T& pRadians ) {
-    ggl::matrix<T, 3, 3> result{ 
+    ggl::matrix<T, 3, 3, LT> result{ 
         +std::cos( pRadians ), -std::sin( pRadians ), ggl::zero<T>(),
         +std::sin( pRadians ), +std::cos( pRadians ), ggl::zero<T>(),
         ggl::zero<T>(), ggl::zero<T>(), ggl::one<T>()
