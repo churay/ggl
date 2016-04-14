@@ -14,6 +14,7 @@ CXX_LIB_INCLS = `pkg-config --static --libs glfw3`
 
 PROJ_DIR = .
 BIN_DIR = $(PROJ_DIR)/bin
+OBJ_DIR = $(PROJ_DIR)/obj
 ETC_DIR = $(PROJ_DIR)/etc
 SRC_DIR = $(PROJ_DIR)/src
 LIB_DIR = $(PROJ_DIR)/lib
@@ -27,9 +28,9 @@ SRC_HPP_FILES = $(wildcard $(SRC_DIR)/*.hpp)
 SRC_CONFIG_FILES = $(SRC_DIR)/consts.hpp
 
 SRC_FILES = $(SRC_CPP_FILES) $(SRC_H_FILES) $(SRC_HPP_FILES) $(SRC_CONFIG_FILES)
-SRC_OBJ_FILES = $(patsubst $(SRC_DIR)/%.h,$(BIN_DIR)/%.o,$(SRC_H_FILES))
+SRC_OBJ_FILES = $(patsubst $(SRC_DIR)/%.h,$(OBJ_DIR)/%.o,$(SRC_H_FILES))
 TEST_FILES = $(filter-out $(TEST_DIR)/main.cpp,$(wildcard $(TEST_DIR)/*.cpp))
-TEST_OBJ_FILES = $(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%.to,$(TEST_FILES))
+TEST_OBJ_FILES = $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/%.to,$(TEST_FILES))
 
 ### Generated Files or Directories ###
 
@@ -57,15 +58,18 @@ $(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILE
 $(BIN_DIR)/%.ex : $(ETC_DIR)/%.cpp $(SRC_FILES) $(SRC_OBJ_FILES)
 	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
 
-$(BIN_DIR)/%.to : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/%.h*) $(SRC_CONFIG_FILES) $(TEST_LIB)
+$(OBJ_DIR)/%.to : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/%.h*) $(SRC_CONFIG_FILES) $(OBJ_DIR) $(TEST_LIB)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $< -c -o $@
 
-$(BIN_DIR)/%.o : $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(SRC_CONFIG_FILES)
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(SRC_CONFIG_FILES) $(OBJ_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_INCLS) $< -c -o $@
 
 $(TEST_LIB) :
 	mkdir -p $(LIB_DIR)
 	wget https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp -O $(TEST_LIB)
 
+$(OBJ_DIR) :
+	mkdir -p $(OBJ_DIR)
+
 clean : 
-	rm -rf $(BIN_DIR)/*
+	rm -rf $(BIN_DIR)/* $(OBJ_DIR)/*
