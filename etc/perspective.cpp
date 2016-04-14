@@ -53,9 +53,9 @@ int main() {
 
     auto renderScene = [ & ] ( ) {
         ggl::matrixf<3, 3> viewPosHXform =
-            ggl::xform::rotate( viewPosAngleH, zDir ).template submatrix<0, 0, 3, 3>();
+            ggl::xform::rotate( viewPosAngleH, yDir ).template submatrix<0, 0, 3, 3>();
         ggl::matrixf<3, 3> viewPosVXform =
-            ggl::xform::rotate( viewPosAngleV, viewPosHXform * yDir ).template submatrix<0, 0, 3, 3>();
+            ggl::xform::rotate( viewPosAngleV, viewPosHXform * zDir ).template submatrix<0, 0, 3, 3>();
 
         ggl::vectorf<3> viewPos = viewPosRadius * ( viewPosVXform * viewPosHXform * xDir );
         ggl::vectorf<3> viewDir = -viewPos.normalize();
