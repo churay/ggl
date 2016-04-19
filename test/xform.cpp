@@ -1,11 +1,39 @@
 #include "catch.hpp"
 #include "src/xform.hpp"
 
-SCENARIO( "ggl::xform basis operation works", "[xform][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+#include <iostream>
+
+SCENARIO( "ggl::xform basis operation works", "[xform]" ) {
+    GIVEN( "an arbitrary basis vector" ) {
+        WHEN( "the basis vector is the +z vector" ) {
+            THEN( "the output basis is the canonical basis" ) {
+                const ggl::vectorf<3> zvec{ ggl::zero(), ggl::zero(), ggl::one() };
+                const std::array<ggl::vectorf<3>, 3> zbasis = ggl::xform::basis( zvec );
+                const std::array<ggl::vectorf<3>, 3> expected{{
+                    ggl::vectorf<3>{ ggl::one(), ggl::zero(), ggl::zero() },
+                    ggl::vectorf<3>{ ggl::zero(), ggl::one(), ggl::zero() },
+                    zvec
+                }};
+
+                REQUIRE( zbasis == expected );
+            }
+        }
+
+        WHEN( "the basis vector is a vector that isn't a canonical basis vector" ) {
+            const ggl::vectorf<3> bvec{ ggl::pi(), ggl::pi(), ggl::pi() };
+            const std::array<ggl::vectorf<3>, 3> basis = ggl::xform::basis( bvec );
+
+            THEN( "the output basis has the normalized basis vector input as its +Z" ) {
+                REQUIRE( basis[2] == bvec.normalize() );
+            } THEN( "the output basis is a valid basis" ) {
+                for( size_t vIdx = 0; vIdx < 3; ++vIdx ) {
+                    size_t nvIdx = ( vIdx + 1 ) % 3;
+                    REQUIRE( basis[vIdx].dot(basis[nvIdx]) == Approx(ggl::zero()) );
+                }
+            } THEN( "the output basis is properly oriented to the canonical up vector" ) {
+                const ggl::vectorf<3> upvec{ ggl::zero(), ggl::one(), ggl::zero() };
+                REQUIRE( basis[0] == upvec.cross(bvec).normalize() );
+                REQUIRE( basis[1] == bvec.cross(upvec.cross(bvec)).normalize() );
             }
         }
     }
