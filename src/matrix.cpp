@@ -82,6 +82,22 @@ bool matrix<T, R, C, LT>::operator!=( const matrix& pOther ) const {
 
 
 template <class T, size_t R, size_t C, class LT>
+matrix<T, R, C, LT> matrix<T, R, C, LT>::operator+() const {
+    return (*this);
+}
+
+
+template <class T, size_t R, size_t C, class LT>
+matrix<T, R, C, LT> matrix<T, R, C, LT>::operator-() const {
+    matrix<EntryType, sNumRows, sNumCols, Compare> result;
+    for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
+        result[eIdx] = -ggl::one<T>() * (*this)[eIdx];
+
+    return result;
+}
+
+
+template <class T, size_t R, size_t C, class LT>
 matrix<T, R, C, LT> matrix<T, R, C, LT>::operator+( const matrix& pOther ) const {
     matrix<EntryType, sNumRows, sNumCols, Compare> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
@@ -96,16 +112,6 @@ matrix<T, R, C, LT> matrix<T, R, C, LT>::operator-( const matrix& pOther ) const
     matrix<EntryType, sNumRows, sNumCols, Compare> result;
     for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
         result[eIdx] = (*this)[eIdx] - pOther[eIdx];
-
-    return result;
-}
-
-
-template <class T, size_t R, size_t C, class LT>
-matrix<T, R, C, LT> matrix<T, R, C, LT>::operator-() const {
-    matrix<EntryType, sNumRows, sNumCols, Compare> result;
-    for( size_t eIdx = 0; eIdx < sNumEnts; ++eIdx )
-        result[eIdx] = -ggl::one<T>() * (*this)[eIdx];
 
     return result;
 }

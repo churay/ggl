@@ -84,8 +84,22 @@ SCENARIO( "ggl::xform rotate operation works", "[xform][stub]" ) {
         }
 
         WHEN( "the rotation amount is nonzero" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+            THEN( "the rotate transform output transforms the space by the given angle CCW" ) {
+                const ggl::vectorf<3> xAxis{ ggl::one(), ggl::zero(), ggl::zero() };
+                const ggl::vectorf<3> yAxis{ ggl::zero(), ggl::one(), ggl::zero() };
+                const ggl::vectorf<3> nilVec{ ggl::zero(), ggl::zero(), ggl::one() };
+
+                const ggl::real rotAmt90{ (1.0f * ggl::pi()) / 2.0f };
+                const ggl::matrixf<3, 3> rotMat90 = ggl::xform::rotate<F, FLT>( rotAmt90 );
+                REQUIRE( (rotMat90.template submatrix<0, 0, 3, 1>()) == +yAxis );
+                REQUIRE( (rotMat90.template submatrix<0, 1, 3, 1>()) == -xAxis );
+                REQUIRE( (rotMat90.template submatrix<0, 2, 3, 1>()) == nilVec );
+
+                const ggl::real rotAmt180{ (2.0f * ggl::pi()) / 2.0f };
+                const ggl::matrixf<3, 3> rotMat180 = ggl::xform::rotate<F, FLT>( rotAmt180 );
+                REQUIRE( (rotMat180.template submatrix<0, 0, 3, 1>()) == -xAxis );
+                REQUIRE( (rotMat180.template submatrix<0, 1, 3, 1>()) == -yAxis );
+                REQUIRE( (rotMat180.template submatrix<0, 2, 3, 1>()) == nilVec );
             }
         }
     }

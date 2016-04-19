@@ -39,9 +39,11 @@ class matrix {
     bool operator==( const matrix& pOther ) const;
     bool operator!=( const matrix& pOther ) const;
 
+    matrix<T, R, C, LT> operator+() const;
+    matrix<T, R, C, LT> operator-() const;
+
     matrix<T, R, C, LT> operator+( const matrix& pOther ) const;
     matrix<T, R, C, LT> operator-( const matrix& pOther ) const;
-    matrix<T, R, C, LT> operator-() const;
     matrix<T, R, C, LT> operator*( const EntryType& pValue ) const;
     template <size_t C2>
     matrix<T, R, C2, LT> operator*( const matrix<T, C, C2, LT>& pOther ) const;
