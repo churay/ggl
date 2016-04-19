@@ -11,21 +11,59 @@ SCENARIO( "ggl::xform basis operation works", "[xform][stub]" ) {
     }
 }
 
-SCENARIO( "ggl::xform scale operation works", "[xform][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::xform scale operation works", "[xform]" ) {
+    const int zero = ggl::zero<int>(), one = ggl::one<int>();
+    const ggl::matrixi<3, 3> identity2d{ one };
+    const ggl::matrixi<4, 4> identity3d{ one };
+
+    GIVEN( "an arbitrary scale" ) {
+        WHEN( "the scale amount is uniformly one" ) {
+            THEN( "the scale transform output is the identity matrix" ) {
+                REQUIRE( ggl::xform::scale(one, one) == identity2d );
+                REQUIRE( ggl::xform::scale(one, one, one) == identity3d );
+            }
+        }
+
+        WHEN( "the scale amount is nonuniform" ) {
+            THEN( "the scale transform output appropriately scales along each dimension" ) {
+                const int xScale = 5, yScale = -3, zScale = 1;
+                const ggl::matrixi<4, 4> expected{
+                    xScale, zero, zero, zero,
+                    zero, yScale, zero, zero,
+                    zero, zero, zScale, zero,
+                    zero, zero, zero, one
+                };
+
+                REQUIRE( ggl::xform::scale(xScale, yScale, zScale) == expected );
             }
         }
     }
 }
 
-SCENARIO( "ggl::xform translate operation works", "[xform][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::xform translate operation works", "[xform]" ) {
+    const int zero = ggl::zero<int>(), one = ggl::one<int>();
+    const ggl::matrixi<3, 3> identity2d{ one };
+    const ggl::matrixi<4, 4> identity3d{ one };
+
+    GIVEN( "an arbitrary translation" ) {
+        WHEN( "the translation amount is uniformly zero" ) {
+            THEN( "the translation transform output is the identity matrix" ) {
+                REQUIRE( ggl::xform::translate(zero, zero) == identity2d );
+                REQUIRE( ggl::xform::translate(zero, zero, zero) == identity3d );
+            }
+        }
+
+        WHEN( "the translation amount is nonuniform and nonzero" ) {
+            THEN( "the translation transform output appropriately transforms along each dimension" ) {
+                const int xTrans = 5, yTrans = -3, zTrans = 1;
+                const ggl::matrixi<4, 4> expected{
+                    one, zero, zero, xTrans,
+                    zero, one, zero, yTrans,
+                    zero, zero, one, zTrans,
+                    zero, zero, zero, one
+                };
+
+                REQUIRE( ggl::xform::translate(xTrans, yTrans, zTrans) == expected );
             }
         }
     }
@@ -40,6 +78,7 @@ SCENARIO( "ggl::xform rotate operation works", "[xform][stub]" ) {
             THEN( "the rotate transform output is the identity matrix" ) {
                 const ggl::real rotAmount{ ggl::zero() };
                 const ggl::matrixf<3, 3> identity{ ggl::one() };
+
                 REQUIRE( (ggl::xform::rotate<F, FLT>(rotAmount)) == identity );
             }
         }

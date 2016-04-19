@@ -4,6 +4,7 @@ bin/*
 ## Compiled Source Files ##
 *.o
 *.so
+*.to
 
 ## External Library Files ##
 lib/*

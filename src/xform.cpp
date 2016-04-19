@@ -2,6 +2,7 @@
 #include <cmath>
 #include <tuple>
 #include <utility>
+#include <type_traits>
 
 #include "matrix.hpp"
 #include "consts.hpp"
@@ -26,13 +27,18 @@ auto xform::basis( const vector<T, 3, LT>& pWVector ) {
 
 // TODO(JRC): Improve the implementation of the following two functions so
 // that there isn't as much duplication.
+// TODO(JRC): Improve this implementation so that the comparator that is used
+// by the matrix in this function can be specified.
 template <class... Ts>
 auto xform::scale( Ts&&... pValues ) {
     using T = typename std::tuple_element<0, std::tuple<Ts...>>::type;
-    constexpr unsigned D = sizeof...( Ts );
-    const std::array<T, D> pValueArray{{ std::forward<Ts>(pValues)... }};
+    using TV = typename std::remove_reference<T>::type;
 
-    ggl::matrix<T, D+1, D+1> result{ ggl::one<T>() };
+    using MTV = typename std::remove_const<TV>::type;
+    constexpr unsigned D = sizeof...( Ts );
+    const std::array<MTV, D> pValueArray{{ std::forward<Ts>(pValues)... }};
+
+    ggl::matrix<MTV, D+1, D+1> result{ ggl::one<MTV>() };
     for( unsigned eIdx = 0; eIdx < D; ++eIdx )
         result(eIdx, eIdx) = pValueArray[eIdx];
 
@@ -43,10 +49,13 @@ auto xform::scale( Ts&&... pValues ) {
 template <class... Ts>
 auto xform::translate( Ts&&... pValues ) {
     using T = typename std::tuple_element<0, std::tuple<Ts...>>::type;
-    constexpr unsigned D = sizeof...( Ts );
-    const std::array<T, D> pValueArray{{ std::forward<Ts>(pValues)... }};
+    using TV = typename std::remove_reference<T>::type;
 
-    ggl::matrix<T, D+1, D+1> result{ ggl::one<T>() };
+    using MTV = typename std::remove_const<TV>::type;
+    constexpr unsigned D = sizeof...( Ts );
+    const std::array<MTV, D> pValueArray{{ std::forward<Ts>(pValues)... }};
+
+    ggl::matrix<MTV, D+1, D+1> result{ ggl::one<MTV>() };
     for( unsigned eIdx = 0; eIdx < D; ++eIdx )
         result(eIdx, D) = pValueArray[eIdx];
 
