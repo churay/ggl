@@ -462,10 +462,10 @@ SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
         }
 
         WHEN( "the vectors are different" ) {
-            THEN( "the result of the dot operation is the sum product of its components" ) {
-                REQUIRE( testvec1.dot(zerovec) == Approx(0.0f) );
-                REQUIRE( testvec1.dot(onevec) == Approx(1.0f) );
-                REQUIRE( testvec1.dot(testvec2) == Approx(3.0f) );
+            THEN( "the result of the dot operation matches the matrix inner product" ) {
+                REQUIRE( testvec1.dot(zerovec) == (testvec1.transpose() * zerovec)[0] );
+                REQUIRE( testvec1.dot(onevec) == (testvec1.transpose() * onevec)[0] );
+                REQUIRE( testvec1.dot(testvec2) == (testvec1.transpose() * testvec2)[0] );
             } THEN( "the dot operation is commutative" ) {
                 REQUIRE( testvec1.dot(zerovec) == zerovec.dot(testvec1) );
                 REQUIRE( testvec1.dot(onevec) == onevec.dot(testvec1) );
@@ -475,11 +475,17 @@ SCENARIO( "ggl::matrix dot operation works", "[matrix]" ) {
     }
 }
 
-SCENARIO( "ggl::matrix tensor operation works", "[matrix][stub]" ) {
-    GIVEN( "" ) {
-        WHEN( "" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+SCENARIO( "ggl::matrix tensor operation works", "[matrix]" ) {
+    GIVEN( "two nontrivial vectors with the same dimensions" ) {
+        const ggl::vectori<3> testvec1{ +1, +2, +3 };
+        const ggl::vectori<3> testvec2{ +1, +0, -1 };
+        const ggl::vectori<3> testvec3{ +5, +5, +5 };
+
+        WHEN( "the operand vectors both have arbitrary values" ) {
+            THEN( "the result of the tensor operation matches the matrix outer product" ) {
+                REQUIRE( testvec1.tensor(testvec2) == testvec1 * testvec2.transpose() );
+                REQUIRE( testvec1.tensor(testvec3) == testvec1 * testvec3.transpose() );
+                REQUIRE( testvec2.tensor(testvec3) == testvec2 * testvec3.transpose() );
             }
         }
     }
