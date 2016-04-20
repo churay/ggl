@@ -20,11 +20,28 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 /// Surface Functions ///
 
 bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
-    const ggl::vectorf<3> zVec{ ggl::zero(), ggl::zero(), ggl::one() };
-    const ggl::geom::ray<3> posRay = { pPos, zVec };
+    // TODO(JRC): Consider moving this functionality to a standalone function
+    // so that the canonical basis vectors can be produced and used freely.
+    std::array<ggl::vectorf<3>, 6> basisVectors;
+    for( size_t basisIdx = 0; basisIdx < 3; ++basisIdx ) {
+        ggl::vectorf<3> basisVector;
+        for( size_t dimIdx = 0; dimIdx < 3; ++dimIdx )
+            basisVector[dimIdx] = ( basisIdx == dimIdx ) ? ggl::one() : ggl::zero();
+        for( size_t signIdx = 0; signIdx < 2; ++signIdx ) {
+            ggl::real basisSign = ( signIdx == 0 ) ? +ggl::one() : -ggl::one();
+            basisVectors[2 * basisIdx + signIdx] = basisSign * basisVector;
+        }
+    }
 
-    const ggl::interval posIntx = (*this).intersect( posRay );
-    return posIntx.valid() && ggl::util::feq( posIntx.min(), ggl::zero() );
+    for( const ggl::vectorf<3>& basisVector : basisVectors ) {
+        const ggl::geom::ray<3> basisRay = { pPos, basisVector };
+        const ggl::interval rayIntx = (*this).intersect( basisRay );
+
+        if( rayIntx.valid() && ggl::util::feq(rayIntx.min(), ggl::zero()) )
+            return true;
+    }
+
+    return false;
 }
 
 ggl::interval geom::surface::intersect( const ggl::geom::ray<3>& pRay ) const {

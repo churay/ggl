@@ -19,7 +19,6 @@ namespace geom {
     };
 
     struct surface {
-        public:
         bool contains( const ggl::vectorf<3>& pPos ) const;
         ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> normalAt( const ggl::vectorf<3>& pPos ) const;
