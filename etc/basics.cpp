@@ -1,5 +1,4 @@
 #include <array>
-#include <iostream>
 #include <vector>
 
 #define GLFW_INCLUDE_GLU
@@ -8,10 +7,11 @@
 #include "matrix.hpp"
 #include "geom.hpp"
 #include "xform.hpp"
+#include "timer.h"
 #include "consts.hpp"
 
 void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod ) {
-    if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
+    if( (key == GLFW_KEY_Q || key == GLFW_KEY_ESCAPE) && action == GLFW_PRESS )
         glfwSetWindowShouldClose( window, GL_TRUE );
 }
 
@@ -80,7 +80,11 @@ int main() {
     glDisable( GL_LIGHTING );
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
+    ggl::timer glfwTimer;
+
     while( !glfwWindowShouldClose(window) ) {
+        glfwTimer.split();
+
         int windowWidth = 0, windowHeight = 0;
         glfwGetFramebufferSize( window, &windowWidth, &windowHeight );
 
@@ -103,6 +107,8 @@ int main() {
 
         glfwSwapBuffers( window );
         glfwPollEvents();
+
+        glfwTimer.wait();
     }
 
     /// Uninitialize GLFW Window ///

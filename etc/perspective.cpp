@@ -1,7 +1,6 @@
 #include <array>
 #include <cmath>
 #include <vector>
-#include <utility>
 
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
@@ -9,6 +8,7 @@
 #include "matrix.hpp"
 #include "geom.hpp"
 #include "xform.hpp"
+#include "timer.h"
 #include "util.h"
 #include "consts.hpp"
 
@@ -159,7 +159,11 @@ int main() {
     glDisable( GL_LIGHTING );
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
+    ggl::timer glfwTimer;
+
     while( !glfwWindowShouldClose(window) ) {
+        glfwTimer.split();
+
         glfwHandleInputs( window );
 
         int windowWidth = 0, windowHeight = 0;
@@ -184,6 +188,8 @@ int main() {
 
         glfwSwapBuffers( window );
         glfwPollEvents();
+
+        glfwTimer.wait();
     }
 
     /// Uninitialize GLFW Window ///
