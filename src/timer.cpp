@@ -1,25 +1,30 @@
 #include <chrono>
+#include <ratio>
 #include <thread>
 
 #include "timer.h"
 
 namespace ggl {
 
-timer::timer( const size_t pRefRate ) {
-    // TODO(JRC): Improve the implementation here so that conversions won't
-    // be needed between the refresh rate (in hertz) and the split time units.
-    mRefRate = pRefRate;
+timer::timer( const size_t pFPS ) {
+    std::chrono::duration<long double, std::ratio<1>> frameDurationSecs( 1.0 / pFPS );
+
+    mFrameDuration = std::chrono::duration_cast<TimeDuration>( frameDurationSecs );
+    mSplitTime = Clock::now();
 }
 
 
 void timer::split() {
-    // TODO(JRC): Implement this function using "std::chrono" timers.
-    mSplit = std::chrono::high_resolution_clock::now();
+    mSplitTime = Clock::now();
 }
 
 
 void timer::wait() {
-    // TODO(JRC): Implement this function using "std::this_thread::sleep_for".
+    auto currTime = Clock::now();
+    auto elapsedTime = currTime - mSplitTime;
+    auto remainingTime = mFrameDuration - elapsedTime;
+
+    std::this_thread::sleep_for( remainingTime );
 }
 
 }
