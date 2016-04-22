@@ -20,13 +20,12 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 /// Surface Functions ///
 
 bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
-    // TODO(JRC): Consider moving this functionality to a standalone function
-    // so that the canonical basis vectors can be produced and used freely.
-    const std::array<ggl::vectorf<3>, 6> basisVectors = geom::basis();
+    const ggl::vectorf<3>& centerPos = (*this)._center();
 
-    for( const ggl::vectorf<3>& basisVector : basisVectors ) {
-        const ggl::geom::ray<3> basisRay = { pPos, basisVector };
-        const ggl::interval rayIntx = (*this).intersect( basisRay );
+    std::array<ggl::vectorf<3>, 2> testVectors{{ pPos - centerPos, centerPos - pPos }};
+    for( const ggl::vectorf<3>& testVector : testVectors ) {
+        const ggl::geom::ray<3> testRay = { pPos, testVector };
+        const ggl::interval rayIntx = (*this).intersect( testRay );
 
         if( rayIntx.valid() && ggl::util::feq(rayIntx.min(), ggl::zero()) )
             return true;
@@ -59,6 +58,10 @@ geom::plane::plane( ggl::vectorf<3> pOrigin, ggl::vectorf<3> pNormal ) :
         mOrigin( std::move(pOrigin) ), mNormal( std::move(pNormal) ) {
 }
 
+ggl::vectorf<3> geom::plane::_center() const {
+    return mOrigin;
+}
+
 ggl::interval geom::plane::_intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::real rayIntx = mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
     return ggl::interval( rayIntx );
@@ -72,6 +75,10 @@ ggl::vectorf<3> geom::plane::_normalAt( const ggl::vectorf<3>& pPos ) const {
 
 geom::sphere::sphere( ggl::vectorf<3> pOrigin, ggl::real pRadius ) :
         mOrigin( std::move(pOrigin) ), mRadius( std::move(pRadius) ) {
+}
+
+ggl::vectorf<3> geom::sphere::_center() const {
+    return mOrigin;
 }
 
 ggl::interval geom::sphere::_intersect( const ggl::geom::ray<3>& pRay ) const {
@@ -93,6 +100,10 @@ ggl::vectorf<3> geom::sphere::_normalAt( const ggl::vectorf<3>& pPos ) const {
 
 geom::box::box( ggl::vectorf<3> pMin, ggl::vectorf<3> pMax ) :
         mMin( std::move(pMin) ), mMax( std::move(pMax) ) {
+}
+
+ggl::vectorf<3> geom::box::_center() const {
+    return ( 1.0f / 2.0f ) * ( mMin + mMax );
 }
 
 ggl::interval geom::box::_intersect( const ggl::geom::ray<3>& pRay ) const {
@@ -124,6 +135,10 @@ ggl::vectorf<3> geom::box::_normalAt( const ggl::vectorf<3>& pPos ) const {
 
 geom::triangle::triangle( ggl::vectorf<3> pV0, ggl::vectorf<3> pV1, ggl::vectorf<3> pV2 ) :
         mV0( std::move(pV0) ), mV1( std::move(pV1) ), mV2( std::move(pV2) ) {
+}
+
+ggl::vectorf<3> geom::triangle::_center() const {
+    return ( 1.0f / 3.0f ) * ( mV0 + mV1 + mV2 );
 }
 
 ggl::interval geom::triangle::_intersect( const ggl::geom::ray<3>& pRay ) const {

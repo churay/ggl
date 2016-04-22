@@ -34,20 +34,23 @@ int main() {
     const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
     const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
 
-    const ggl::vectorf<3> lightDir{ 0.0f, 1.0f, 0.0f };
+    const ggl::vectorf<3> lightPos{ 1.5f, 1.5f, 1.5f };
     const ggl::vector<GLfloat, 3> white{ 1.0f, 1.0f, 1.0f };
     const ggl::vector<GLfloat, 3> black{ 0.0f, 0.0f, 0.0f };
 
-    ggl::geom::sphere sphere{ ggl::vectorf<3>{0.0f, 0.0f, 0.0f}, 2.0f };
-    std::vector<ggl::geom::surface*> surfaces{ &sphere };
+    ggl::geom::box box{
+        ggl::vectorf<3>{ -1.0f, -1.0f, -1.0f },
+        ggl::vectorf<3>{ +1.0f, +1.0f, +1.0f }
+    };
+    std::vector<ggl::geom::surface*> surfaces{ &box };
 
     const ggl::real viewRectW{ -2.0f };
     const ggl::vectorf<3> viewRectMin{ -2.0f, -2.0f, viewRectW };
     const ggl::vectorf<3> viewRectMax{ +2.0f, +2.0f, viewRectW };
 
     ggl::real viewPosRadius{ 5.0f };
-    ggl::real viewPosAngleH{ 0.0f };
-    ggl::real viewPosAngleV{ 0.0f };
+    ggl::real viewPosAngleH{ -ggl::pi() / 4.0f };
+    ggl::real viewPosAngleV{ +ggl::pi() / 4.0f };
 
     const unsigned sceneDim = 100;
     GLfloat scenePixels[3 * sceneDim * sceneDim];
@@ -84,7 +87,8 @@ int main() {
                     ggl::vectorf<3> sijSurfPos = sijRay.at( sijRayT );
 
                     ggl::vectorf<3> sijSurfNorm = sijClosest->normalAt( sijSurfPos );
-                    sijColor = std::max( 0.05f, sijSurfNorm.dot(lightDir) ) * white;
+                    ggl::vectorf<3> sijLightDir = ( lightPos - sijSurfPos ).normalize();
+                    sijColor = std::max( 0.05f, sijSurfNorm.dot(sijLightDir) ) * white;
                 }
 
                 std::memcpy( sijPixel, sijColor.data(), 3 * sizeof(GLfloat) );
@@ -198,6 +202,8 @@ int main() {
         std::cout << '\r' << "Frame Rate: " << std::setw( 5 ) <<
             glfwTimer.prevFrameFPS() << std::flush;
     }
+
+    std::cout << std::endl;
 
     /// Uninitialize GLFW Window ///
 

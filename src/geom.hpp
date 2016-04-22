@@ -24,6 +24,7 @@ namespace geom {
         ggl::vectorf<3> normalAt( const ggl::vectorf<3>& pPos ) const;
 
         private:
+        virtual ggl::vectorf<3> _center() const = 0;
         virtual ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const = 0;
         virtual ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const = 0;
     };
@@ -33,6 +34,7 @@ namespace geom {
         ggl::vectorf<3> mOrigin, mNormal;
 
         private:
+        ggl::vectorf<3> _center() const;
         ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
@@ -42,6 +44,7 @@ namespace geom {
         ggl::vectorf<3> mOrigin; ggl::real mRadius;
 
         private:
+        ggl::vectorf<3> _center() const;
         ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
@@ -51,6 +54,7 @@ namespace geom {
         ggl::vectorf<3> mMin, mMax;
 
         private:
+        ggl::vectorf<3> _center() const;
         ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
@@ -60,6 +64,7 @@ namespace geom {
         ggl::vectorf<3> mV0, mV1, mV2;
 
         private:
+        ggl::vectorf<3> _center() const;
         ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
