@@ -2,6 +2,9 @@
 #include <cmath>
 #include <vector>
 
+#include <iostream>
+#include <iomanip>
+
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
 
@@ -159,7 +162,7 @@ int main() {
     glDisable( GL_LIGHTING );
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
-    ggl::timer glfwTimer;
+    ggl::timer glfwTimer( 60 );
 
     while( !glfwWindowShouldClose(window) ) {
         glfwTimer.split();
@@ -190,6 +193,10 @@ int main() {
         glfwPollEvents();
 
         glfwTimer.wait();
+
+        // Report Simulation Statistics for the Previous Frame //
+        std::cout << '\r' << "Frame Rate: " << std::setw( 5 ) <<
+            glfwTimer.prevFrameFPS() << std::flush;
     }
 
     /// Uninitialize GLFW Window ///
