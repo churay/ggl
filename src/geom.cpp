@@ -22,16 +22,7 @@ ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
 bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
     // TODO(JRC): Consider moving this functionality to a standalone function
     // so that the canonical basis vectors can be produced and used freely.
-    std::array<ggl::vectorf<3>, 6> basisVectors;
-    for( size_t basisIdx = 0; basisIdx < 3; ++basisIdx ) {
-        ggl::vectorf<3> basisVector;
-        for( size_t dimIdx = 0; dimIdx < 3; ++dimIdx )
-            basisVector[dimIdx] = ( basisIdx == dimIdx ) ? ggl::one() : ggl::zero();
-        for( size_t signIdx = 0; signIdx < 2; ++signIdx ) {
-            ggl::real basisSign = ( signIdx == 0 ) ? +ggl::one() : -ggl::one();
-            basisVectors[2 * basisIdx + signIdx] = basisSign * basisVector;
-        }
-    }
+    const std::array<ggl::vectorf<3>, 6> basisVectors = geom::basis();
 
     for( const ggl::vectorf<3>& basisVector : basisVectors ) {
         const ggl::geom::ray<3> basisRay = { pPos, basisVector };
@@ -116,8 +107,17 @@ ggl::interval geom::box::_intersect( const ggl::geom::ray<3>& pRay ) const {
 }
 
 ggl::vectorf<3> geom::box::_normalAt( const ggl::vectorf<3>& pPos ) const {
-    // TODO(JRC): Implement this function.
-    return ggl::vectorf<3>{ ggl::nan(), ggl::nan(), ggl::nan() };
+    ggl::vectorf<3> normal{ ggl::zero() };
+
+    const std::array<ggl::vectorf<3>, 6> basisVectors = geom::basis();
+    for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx ) {
+        if( ggl::util::feq(pPos[axisIdx], mMin[axisIdx]) )
+            normal = normal + basisVectors[2 * axisIdx + 0];
+        else if( ggl::util::feq(pPos[axisIdx], mMax[axisIdx]) )
+            normal = normal + basisVectors[2 * axisIdx + 1];
+    }
+
+    return normal.normalize();
 }
 
 /// Triangle Functions ///
@@ -151,6 +151,21 @@ ggl::vectorf<3> geom::triangle::_normalAt( const ggl::vectorf<3>& pPos ) const {
 }
 
 /// Namespace Functions ///
+
+std::array<ggl::vectorf<3>, 6> geom::basis() {
+    std::array<ggl::vectorf<3>, 6> basisVectors;
+    for( size_t basisIdx = 0; basisIdx < 3; ++basisIdx ) {
+        ggl::vectorf<3> basisVector;
+        for( size_t dimIdx = 0; dimIdx < 3; ++dimIdx )
+            basisVector[dimIdx] = ( basisIdx == dimIdx ) ? ggl::one() : ggl::zero();
+        for( size_t signIdx = 0; signIdx < 2; ++signIdx ) {
+            ggl::real basisSign = ( signIdx == 0 ) ? -ggl::one() : +ggl::one();
+            basisVectors[2 * basisIdx + signIdx] = basisSign * basisVector;
+        }
+    }
+
+    return basisVectors;
+}
 
 ggl::geom::surface* geom::findClosest( const ggl::geom::ray<3>& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces ) {

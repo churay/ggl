@@ -66,6 +66,7 @@ namespace geom {
 
     /// Namespace Functions ///
 
+    std::array<ggl::vectorf<3>, 6> basis();
     ggl::geom::surface* findClosest( const ggl::geom::ray<3>& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces );
 }
