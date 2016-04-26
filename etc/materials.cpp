@@ -15,6 +15,40 @@
 #include "util.h"
 #include "consts.hpp"
 
+ggl::vector<GLfloat, 3> lightSmoothMetal(
+        const ggl::geom::ray<3>& pRay,
+        const std::vector<ggl::geom::surface*>& pSurfaces,
+        const size_t pCasts = 0 ) {
+    const static ggl::vectorf<3> sLightPos{ 0.0f, 100.0f, 0.0f };
+    const static ggl::real sLightRefl{ 0.8f };
+    const static ggl::vector<GLfloat, 3> sWhite{ 1.0f, 1.0f, 1.0f };
+    const static ggl::vector<GLfloat, 3> sBlack{ 0.0f, 0.0f, 0.0f };
+
+    const ggl::geom::surface* surface = ggl::geom::findClosest( pRay, pSurfaces );
+    const size_t surfType = ( surface == pSurfaces[0] ) ? 0 : 1;
+
+    if( surface == nullptr )
+        return sBlack;
+
+    const ggl::vectorf<3> rayVec = pRay.mVector;
+    const ggl::real rayT = surface->intersect( pRay ).min();
+    const ggl::vectorf<3> surfPos = pRay.at( rayT );
+    const ggl::vectorf<3> surfNorm = surface->normalAt( surfPos );
+
+    const ggl::vectorf<3> surfToLight = ( sLightPos - surfPos ).normalize();
+    const ggl::vectorf<3> surfReflLight =
+        ( rayVec + 2.0f * rayVec.projectOnto(surfNorm) ).normalize();
+    const ggl::real surfReflectance = sLightRefl + ( 1.0f - sLightRefl ) *
+        ( 1.0f - std::pow(std::cos(rayVec.angleTo(surfNorm)), 5.0f) );
+
+    if( surfType == 0 || pCasts > 5 ) {
+        return surfReflectance * std::max( 0.05f, surfNorm.dot(surfToLight) ) * sWhite;
+    } else {
+        const ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
+        return surfReflectance * lightSmoothMetal( reflRay, pSurfaces, pCasts+1 );
+    }
+}
+
 int main() {
     /// Initialize GLFW Window ///
 
@@ -34,10 +68,6 @@ int main() {
     const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
     const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
 
-    const ggl::vectorf<3> lightPos{ 0.0f, 100.0f, 0.0f };
-    const ggl::vector<GLfloat, 3> white{ 1.0f, 1.0f, 1.0f };
-    const ggl::vector<GLfloat, 3> black{ 0.0f, 0.0f, 0.0f };
-
     ggl::geom::sphere diffSphere{ ggl::vectorf<3>{0.0f, 0.0f, -3.0f}, 1.0f };
     ggl::geom::sphere specSphere{ ggl::vectorf<3>{0.0f, 0.0f, +3.0f}, 1.0f };
     std::vector<ggl::geom::surface*> surfaces{ &diffSphere, &specSphere };
@@ -54,6 +84,7 @@ int main() {
     GLfloat scenePixels[3 * sceneDim * sceneDim];
 
     /// Create Scene Rendering Function ///
+
 
     auto renderScene = [ & ] ( ) {
         ggl::matrixf<3, 3> viewPosHXform =
@@ -74,30 +105,8 @@ int main() {
                 const ggl::geom::ray<3> sijRay = { viewPos,
                     su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
-                ggl::geom::surface* sijClosest = ggl::geom::findClosest( sijRay, surfaces );
                 GLfloat* sijPixel = &scenePixels[3 * (sj * sceneDim + si)];
-
-                ggl::vector<GLfloat, 3> sijColor;
-                if( sijClosest == nullptr ) {
-                    sijColor = black;
-                } else {
-                    ggl::real sijRayT = sijClosest->intersect( sijRay ).min();
-                    ggl::vectorf<3> sijSurfPos = sijRay.at( sijRayT );
-
-                    ggl::vectorf<3> sijSurfNorm = sijClosest->normalAt( sijSurfPos );
-                    ggl::vectorf<3> sijLightDir = ( lightPos - sijSurfPos ).normalize();
-                    sijColor = std::max( 0.05f, sijSurfNorm.dot(sijLightDir) ) * white;
-
-                    // TODO(JRC): Implement the functionality for the different
-                    // lighting schemes in the code below.
-                    /*
-                    if( sijClosest == &diffSphere ) {
-                        sijColor = std::max( 0.05f, sijSurfNorm.dot(sijLightDir) ) * white;
-                    } else { // sijClosest == &specSphere
-
-                    }
-                    */
-                }
+                ggl::vector<GLfloat, 3> sijColor = lightSmoothMetal( sijRay, surfaces );
 
                 std::memcpy( sijPixel, sijColor.data(), 3 * sizeof(GLfloat) );
             }
