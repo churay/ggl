@@ -1,4 +1,5 @@
 #include <array>
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -18,13 +19,18 @@
 ggl::vector<GLfloat, 3> lightSmoothMetal(
         const ggl::geom::ray<3>& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces,
+        const ggl::geom::surface* pPrevSurface = nullptr,
         const size_t pCasts = 0 ) {
     const static ggl::vectorf<3> sLightPos{ 0.0f, 100.0f, 0.0f };
     const static ggl::real sLightRefl{ 0.8f };
     const static ggl::vector<GLfloat, 3> sWhite{ 1.0f, 1.0f, 1.0f };
     const static ggl::vector<GLfloat, 3> sBlack{ 0.0f, 0.0f, 0.0f };
 
-    const ggl::geom::surface* surface = ggl::geom::findClosest( pRay, pSurfaces );
+    std::vector<ggl::geom::surface*> surfaces = pSurfaces;
+    if( pPrevSurface != nullptr )
+        surfaces.erase( std::find(surfaces.begin(), surfaces.end(), pPrevSurface) );
+
+    const ggl::geom::surface* surface = ggl::geom::findClosest( pRay, surfaces );
     const size_t surfType = ( surface == pSurfaces[0] ) ? 0 : 1;
 
     if( surface == nullptr )
@@ -45,7 +51,7 @@ ggl::vector<GLfloat, 3> lightSmoothMetal(
         return surfReflectance * std::max( 0.05f, surfNorm.dot(surfToLight) ) * sWhite;
     } else {
         const ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
-        return surfReflectance * lightSmoothMetal( reflRay, pSurfaces, pCasts+1 );
+        return surfReflectance * lightSmoothMetal( reflRay, pSurfaces, surface, pCasts+1 );
     }
 }
 
