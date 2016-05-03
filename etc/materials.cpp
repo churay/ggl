@@ -47,7 +47,7 @@ ggl::vectorgl<3> lightSmoothMetal(
 
     const ggl::vectorf<3> surfToLight = ( sLightPos - surfPos ).normalize();
     const ggl::vectorf<3> surfReflLight =
-        ( rayVec + 2.0f * rayVec.projectOnto(surfNorm) ).normalize();
+        ( rayVec - 2.0f * rayVec.projectOnto(surfNorm) ).normalize();
     const ggl::real surfReflectance = sLightRefl + ( 1.0f - sLightRefl ) *
         ( 1.0f - std::pow(std::cos(rayVec.angleTo(surfNorm)), 5.0f) );
 
@@ -68,7 +68,7 @@ ggl::vectorgl<3> lightSmoothMetal(
         else if( faceIdx == 5 ) { faceColor = ggl::vectorgl<3>{0.0f, 1.0f, 1.0f}; }
         else { faceColor = ggl::vectorgl<3>{1.0f, 1.0f, 1.0f}; }
 
-        return surfReflectance * std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
+        return std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
     } else {
         const ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
         return surfReflectance * lightSmoothMetal( reflRay, pSurfaces, surface, pCasts+1 );
