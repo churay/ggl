@@ -41,7 +41,7 @@ ggl::vectorgl<3> lightSmoothMetal(
         return sBlack;
 
     const ggl::vectorf<3> rayVec = pRay.mVector;
-    const ggl::real rayT = surfIdx ? surface->intersect( pRay ).max() : surface->intersect( pRay ).min();
+    const ggl::real rayT = surface->intersect( pRay ).min();
     const ggl::vectorf<3> surfPos = pRay.at( rayT );
     const ggl::vectorf<3> surfNorm = ( surfIdx ? -1.0f : 1.0f ) * surface->normalAt( surfPos );
 
