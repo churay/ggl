@@ -16,15 +16,20 @@
 #include "util.h"
 #include "consts.hpp"
 
-ggl::vector<GLfloat, 3> lightSmoothMetal(
+namespace ggl {
+    template <size_t R, size_t C> using matrixgl = matrix<GLfloat, R, C, ggl::util::fless<GLfloat>>;
+    template <size_t R> using vectorgl = vector<GLfloat, R, ggl::util::fless<GLfloat>>;
+};
+
+ggl::vectorgl<3> lightSmoothMetal(
         const ggl::geom::ray<3>& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces,
         const ggl::geom::surface* pPrevSurface = nullptr,
         const size_t pCasts = 0 ) {
     const static ggl::vectorf<3> sLightPos{ 0.0f, 100.0f, 0.0f };
     const static ggl::real sLightRefl{ 0.8f };
-    const static ggl::vector<GLfloat, 3> sWhite{ 1.0f, 1.0f, 1.0f };
-    const static ggl::vector<GLfloat, 3> sBlack{ 0.0f, 0.0f, 0.0f };
+    const static ggl::vectorgl<3> sWhite{ 1.0f, 1.0f, 1.0f };
+    const static ggl::vectorgl<3> sBlack{ 0.0f, 0.0f, 0.0f };
 
     std::vector<ggl::geom::surface*> surfaces = pSurfaces;
     if( pPrevSurface != nullptr )
@@ -36,7 +41,7 @@ ggl::vector<GLfloat, 3> lightSmoothMetal(
         return sBlack;
 
     const ggl::vectorf<3> rayVec = pRay.mVector;
-    const ggl::real rayT = surface->intersect( pRay ).min();
+    const ggl::real rayT = surfIdx ? surface->intersect( pRay ).max() : surface->intersect( pRay ).min();
     const ggl::vectorf<3> surfPos = pRay.at( rayT );
     const ggl::vectorf<3> surfNorm = ( surfIdx ? -1.0f : 1.0f ) * surface->normalAt( surfPos );
 
@@ -54,14 +59,14 @@ ggl::vector<GLfloat, 3> lightSmoothMetal(
 
         // NOTE(JRC): This ugly little piece of code is responsible for giving
         // a color to each of the separate faces of the environment cube.
-        ggl::vector<GLfloat, 3> faceColor;
-        if( faceIdx == 0 ) { faceColor = ggl::vector<GLfloat, 3>{1.0f, 0.0f, 0.0f}; }
-        else if( faceIdx == 1 ) { faceColor = ggl::vector<GLfloat, 3>{0.0f, 1.0f, 0.0f}; }
-        else if( faceIdx == 2 ) { faceColor = ggl::vector<GLfloat, 3>{0.0f, 0.0f, 1.0f}; }
-        else if( faceIdx == 3 ) { faceColor = ggl::vector<GLfloat, 3>{1.0f, 1.0f, 0.0f}; }
-        else if( faceIdx == 4 ) { faceColor = ggl::vector<GLfloat, 3>{1.0f, 0.0f, 1.0f}; }
-        else if( faceIdx == 5 ) { faceColor = ggl::vector<GLfloat, 3>{0.0f, 1.0f, 1.0f}; }
-        else { faceColor = ggl::vector<GLfloat, 3>{1.0f, 1.0f, 1.0f}; }
+        ggl::vectorgl<3> faceColor;
+        if( faceIdx == 0 ) { faceColor = ggl::vectorgl<3>{1.0f, 0.0f, 0.0f}; }
+        else if( faceIdx == 1 ) { faceColor = ggl::vectorgl<3>{0.0f, 1.0f, 0.0f}; }
+        else if( faceIdx == 2 ) { faceColor = ggl::vectorgl<3>{0.0f, 0.0f, 1.0f}; }
+        else if( faceIdx == 3 ) { faceColor = ggl::vectorgl<3>{1.0f, 1.0f, 0.0f}; }
+        else if( faceIdx == 4 ) { faceColor = ggl::vectorgl<3>{1.0f, 0.0f, 1.0f}; }
+        else if( faceIdx == 5 ) { faceColor = ggl::vectorgl<3>{0.0f, 1.0f, 1.0f}; }
+        else { faceColor = ggl::vectorgl<3>{1.0f, 1.0f, 1.0f}; }
 
         return surfReflectance * std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
     } else {
@@ -109,7 +114,6 @@ int main() {
 
     /// Create Scene Rendering Function ///
 
-
     auto renderScene = [ & ] ( ) {
         ggl::matrixf<3, 3> viewPosHXform =
             ggl::xform::rotate( viewPosAngleH, yDir ).template submatrix<0, 0, 3, 3>();
@@ -130,7 +134,7 @@ int main() {
                     su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
                 GLfloat* sijPixel = &scenePixels[3 * (sj * sceneDim + si)];
-                ggl::vector<GLfloat, 3> sijColor = lightSmoothMetal( sijRay, surfaces );
+                ggl::vectorgl<3> sijColor = lightSmoothMetal( sijRay, surfaces );
 
                 std::memcpy( sijPixel, sijColor.data(), 3 * sizeof(GLfloat) );
             }

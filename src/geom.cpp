@@ -37,13 +37,15 @@ bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
 ggl::interval geom::surface::intersect( const ggl::geom::ray<3>& pRay ) const {
     ggl::interval raySurfIntx = (*this)._intersect( pRay );
 
+    // TODO(JRC): Add an option to this function that allows for volumetric
+    // intersections to be queried instead of surface intersections (which
+    // will make the interval return less nonsensical).
     if( ggl::util::flt(raySurfIntx.max(), ggl::zero()) ) {
         return ggl::interval( ggl::nan() );
+    } else if( ggl::util::flt(raySurfIntx.min(), ggl::zero()) ) {
+        return ggl::interval( raySurfIntx.max() );
     } else {
-        return ggl::interval(
-            std::max( raySurfIntx.min(), ggl::zero() ),
-            std::max( raySurfIntx.max(), ggl::zero() )
-        );
+        return raySurfIntx;
     }
 }
 
