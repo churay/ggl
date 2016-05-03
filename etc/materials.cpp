@@ -31,15 +31,14 @@ ggl::vector<GLfloat, 3> lightSmoothMetal(
         surfaces.erase( std::find(surfaces.begin(), surfaces.end(), pPrevSurface) );
 
     const ggl::geom::surface* surface = ggl::geom::findClosest( pRay, surfaces );
-    const size_t surfType = ( surface == pSurfaces[0] ) ? 0 : 1;
-
+    const size_t surfIdx = std::find( pSurfaces.begin(), pSurfaces.end(), surface ) - pSurfaces.begin();
     if( surface == nullptr )
         return sBlack;
 
     const ggl::vectorf<3> rayVec = pRay.mVector;
     const ggl::real rayT = surface->intersect( pRay ).min();
     const ggl::vectorf<3> surfPos = pRay.at( rayT );
-    const ggl::vectorf<3> surfNorm = surface->normalAt( surfPos );
+    const ggl::vectorf<3> surfNorm = ( surfIdx ? -1.0f : 1.0f ) * surface->normalAt( surfPos );
 
     const ggl::vectorf<3> surfToLight = ( sLightPos - surfPos ).normalize();
     const ggl::vectorf<3> surfReflLight =
@@ -47,8 +46,24 @@ ggl::vector<GLfloat, 3> lightSmoothMetal(
     const ggl::real surfReflectance = sLightRefl + ( 1.0f - sLightRefl ) *
         ( 1.0f - std::pow(std::cos(rayVec.angleTo(surfNorm)), 5.0f) );
 
-    if( surfType == 0 || pCasts > 5 ) {
-        return surfReflectance * std::max( 0.05f, surfNorm.dot(surfToLight) ) * sWhite;
+    if( pCasts > 5 ) {
+        return sWhite;
+    } else if( surfIdx == 1 ) {
+        const std::array<ggl::vectorf<3>, 6> basis = ggl::geom::basis();
+        size_t faceIdx = std::find( basis.begin(), basis.end(), surfNorm ) - basis.begin();
+
+        // NOTE(JRC): This ugly little piece of code is responsible for giving
+        // a color to each of the separate faces of the environment cube.
+        ggl::vector<GLfloat, 3> faceColor;
+        if( faceIdx == 0 ) { faceColor = ggl::vector<GLfloat, 3>{1.0f, 0.0f, 0.0f}; }
+        else if( faceIdx == 1 ) { faceColor = ggl::vector<GLfloat, 3>{0.0f, 1.0f, 0.0f}; }
+        else if( faceIdx == 2 ) { faceColor = ggl::vector<GLfloat, 3>{0.0f, 0.0f, 1.0f}; }
+        else if( faceIdx == 3 ) { faceColor = ggl::vector<GLfloat, 3>{1.0f, 1.0f, 0.0f}; }
+        else if( faceIdx == 4 ) { faceColor = ggl::vector<GLfloat, 3>{1.0f, 0.0f, 1.0f}; }
+        else if( faceIdx == 5 ) { faceColor = ggl::vector<GLfloat, 3>{0.0f, 1.0f, 1.0f}; }
+        else { faceColor = ggl::vector<GLfloat, 3>{1.0f, 1.0f, 1.0f}; }
+
+        return surfReflectance * std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
     } else {
         const ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
         return surfReflectance * lightSmoothMetal( reflRay, pSurfaces, surface, pCasts+1 );
@@ -74,9 +89,12 @@ int main() {
     const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
     const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
 
-    ggl::geom::sphere diffSphere{ ggl::vectorf<3>{0.0f, 0.0f, -3.0f}, 1.0f };
-    ggl::geom::sphere specSphere{ ggl::vectorf<3>{0.0f, 0.0f, +3.0f}, 1.0f };
-    std::vector<ggl::geom::surface*> surfaces{ &diffSphere, &specSphere };
+    ggl::geom::sphere sphere{ ggl::vectorf<3>{0.0f, 0.0f, 0.0f}, 2.0f };
+    ggl::geom::box environment{
+        ggl::vectorf<3>{ -10.0f, -10.0f, -10.0f },
+        ggl::vectorf<3>{ +10.0f, +10.0f, +10.0f },
+    };
+    std::vector<ggl::geom::surface*> surfaces{ &sphere, &environment };
 
     const ggl::real viewRectW{ -2.0f };
     const ggl::vectorf<3> viewRectMin{ -2.0f, -2.0f, viewRectW };
@@ -139,7 +157,7 @@ int main() {
     };
 
     auto radiusClamp = [] ( const ggl::real& pRadius ) {
-        return ggl::util::clamp( pRadius, 3.0f, 20.0f );
+        return ggl::util::clamp( pRadius, 3.0f, 9.0f );
     };
 
     auto glfwHandleInputs = [ &renderScene, &angleWrap, &radiusClamp,
