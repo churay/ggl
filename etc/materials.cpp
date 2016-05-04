@@ -21,7 +21,7 @@ namespace ggl {
     template <size_t R> using vectorgl = vector<GLfloat, R, ggl::util::fless<GLfloat>>;
 };
 
-ggl::vectorgl<3> lightSmoothMetal(
+ggl::vectorgl<3> calcRayLight(
         const ggl::geom::ray<3>& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces,
         const ggl::geom::surface* pPrevSurface = nullptr,
@@ -53,6 +53,8 @@ ggl::vectorgl<3> lightSmoothMetal(
 
     if( pCasts > 5 ) {
         return sWhite;
+    // NOTE(JRC): The environment in this geometry (surface with material index 1)
+    // is a diffuse illuminated surface with a different diffuse factor on each face.
     } else if( surfIdx == 1 ) {
         const std::array<ggl::vectorf<3>, 6> basis = ggl::geom::basis();
         size_t faceIdx = std::find( basis.begin(), basis.end(), surfNorm ) - basis.begin();
@@ -69,9 +71,12 @@ ggl::vectorgl<3> lightSmoothMetal(
         else { faceColor = ggl::vectorgl<3>{1.0f, 1.0f, 1.0f}; }
 
         return std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
+    // NOTE(JRC): The sphere in this geometry (surface with material index 0) is
+    // a smooth reflective surface, which simply takes the color of the surface to
+    // which the viewing light ray is cast.
     } else {
         const ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
-        return surfReflectance * lightSmoothMetal( reflRay, pSurfaces, surface, pCasts+1 );
+        return surfReflectance * calcRayLight( reflRay, pSurfaces, surface, pCasts+1 );
     }
 }
 
@@ -134,7 +139,7 @@ int main() {
                     su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
                 GLfloat* sijPixel = &scenePixels[3 * (sj * sceneDim + si)];
-                ggl::vectorgl<3> sijColor = lightSmoothMetal( sijRay, surfaces );
+                ggl::vectorgl<3> sijColor = calcRayLight( sijRay, surfaces );
 
                 std::memcpy( sijPixel, sijColor.data(), 3 * sizeof(GLfloat) );
             }
