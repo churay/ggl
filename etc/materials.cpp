@@ -23,37 +23,50 @@ namespace ggl {
     enum material { diffuse, reflective, dielectric, polished };
 };
 
+ggl::vectorf<3> refractLight(
+        const ggl::vectorf<3>& pIncident,
+        const ggl::vectorf<3>& pNormal,
+        const ggl::real& pRefrIndex ) {
+    // TODO(JRC): Implement the equation for refracted light here.
+    return pIncident;
+}
+
 ggl::vectorgl<3> calcRayLight(
         const ggl::geom::ray<3>& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces,
         const std::vector<ggl::material>& pSurfMats,
         const ggl::geom::surface* pPrevSurface = nullptr,
         const size_t pCasts = 0 ) {
-    const static ggl::vectorf<3> sLightPos{ 0.0f, 100.0f, 0.0f };
-    const static ggl::real sLightRefl{ 0.8f };
+    /// Light Constants ///
+    const static ggl::vectorf<3> sLightPos{ 0.0f, 5.0f, 0.0f };
     const static ggl::vectorgl<3> sWhite{ 1.0f, 1.0f, 1.0f };
     const static ggl::vectorgl<3> sBlack{ 0.0f, 0.0f, 0.0f };
+
+    /// Material Property Constants ///
+    const static ggl::real sMatRefl{ 0.8f };
+    const static ggl::real sMatRefr{ 0.90f };
+    const static ggl::real sMatAtten{ 0.75f };
 
     std::vector<ggl::geom::surface*> surfaces = pSurfaces;
     if( pPrevSurface != nullptr )
         surfaces.erase( std::find(surfaces.begin(), surfaces.end(), pPrevSurface) );
 
-    const ggl::geom::surface* surface = ggl::geom::findClosest( pRay, surfaces );
-    const size_t surfIdx = std::find( pSurfaces.begin(), pSurfaces.end(), surface ) - pSurfaces.begin();
-    const ggl::material surfmat = pSurfMats[surfIdx];
+    ggl::geom::surface* surface = ggl::geom::findClosest( pRay, surfaces );
+    size_t surfIdx = std::find( pSurfaces.begin(), pSurfaces.end(), surface ) - pSurfaces.begin();
+    ggl::material surfmat = pSurfMats[surfIdx];
 
     if( surface == nullptr ) { return sBlack; }
     if( pCasts > 5 ) { return sWhite; }
 
-    const ggl::vectorf<3> rayVec = pRay.mVector;
-    const ggl::real rayT = surface->intersect( pRay ).min();
-    const ggl::vectorf<3> surfPos = pRay.at( rayT );
-    const ggl::vectorf<3> surfNorm = ( surfIdx ? -1.0f : 1.0f ) * surface->normalAt( surfPos );
+    ggl::vectorf<3> rayVec = pRay.mVector.normalize();
+    ggl::real rayT = surface->intersect( pRay ).min();
+    ggl::vectorf<3> surfPos = pRay.at( rayT );
+    ggl::vectorf<3> surfNorm = ( surfIdx ? -1.0f : 1.0f ) * surface->normalAt( surfPos );
 
-    const ggl::vectorf<3> surfToLight = ( sLightPos - surfPos ).normalize();
-    const ggl::vectorf<3> surfReflLight =
+    ggl::vectorf<3> surfToLight = ( sLightPos - surfPos ).normalize();
+    ggl::vectorf<3> surfReflLight =
         ( rayVec - 2.0f * rayVec.projectOnto(surfNorm) ).normalize();
-    const ggl::real surfReflectance = sLightRefl + ( 1.0f - sLightRefl ) *
+    ggl::real surfReflectance = sMatRefl + ( 1.0f - sMatRefl ) *
         ( 1.0f - std::pow(std::cos(rayVec.angleTo(surfNorm)), 5.0f) );
 
     if( surfmat == ggl::material::diffuse ) {
@@ -73,8 +86,28 @@ ggl::vectorgl<3> calcRayLight(
 
         return std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
     } else if( surfmat == ggl::material::reflective ) {
-        const ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
+        ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
         return surfReflectance * calcRayLight( reflRay, pSurfaces, pSurfMats, surface, pCasts+1 );
+    // TODO(JRC): Finish implementing the lighting properties for dielectric surfaces.
+    } else if( surfmat == ggl::material::dielectric ) {
+        /*
+        ggl::vectorf<3> surfRefrLight;
+        ggl::real surfRefrCos, surfAtten;
+
+        bool isRayEntering = ggl::util::flt( rayVec.dot(surfNorm), 0.0f );
+        if( isRayEntering ) {
+            surfRefrLight = refractLight( rayVec, surfNorm, sMatRefr );
+            surfRefrCos = ( -rayVec ).dot( surfNorm );
+            surfAtten = 1.0f;
+        } else {
+            surfRefrLight = refractLight( rayVec, surfNorm, 1.0f / sMatRefr );
+            surfRefrCos = surfRefrLight.dot( surfNorm );
+            surfAtten = std::pow( sMatAtten, (surfPos - pRay.mOrigin).length() );
+        }
+        */
+
+        return sMatRefr * sMatAtten * sBlack;
+    // TODO(JRC): Finish implementing the lighting properties for polished surfaces.
     } else {
         return sBlack;
     }
