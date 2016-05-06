@@ -54,6 +54,7 @@ ggl::vectorgl<3> calcRayLight(
         const std::vector<ggl::geom::surface*>& pSurfaces,
         const std::vector<ggl::material>& pSurfMats,
         const ggl::geom::surface* pPrevSurface = nullptr,
+        const ggl::vectorf<3> pPrevPtIntx = ggl::vectorf<3>(),
         const size_t pCasts = 0 ) {
     /// Light Constants ///
     const static ggl::vectorf<3> sLightPos{ 0.0f, 5.0f, 0.0f };
@@ -78,7 +79,8 @@ ggl::vectorgl<3> calcRayLight(
     // NOTE(JRC): Surfaces can still self-intersect, but they cannot reintersect
     // at zero; such vectors are always surface reflection/refraction vectors.
     ggl::interval surfRayIntx = surface->intersect( pRay );
-    if( surface == pPrevSurface && ggl::util::feq(surfRayIntx.min(), ggl::zero()) ) {
+    ggl::vectorf<3> surfPtIntx = pRay.at( surfRayIntx.min() );
+    if( surface == pPrevSurface && surface->normalAt(surfPtIntx) == surface->normalAt(pPrevPtIntx) ) {
         if( surfRayIntx.empty() ) {
             std::vector<ggl::geom::surface*> surfs = pSurfaces;
             surfs.erase( std::find(surfs.begin(), surfs.end(), pPrevSurface) );
@@ -122,7 +124,7 @@ ggl::vectorgl<3> calcRayLight(
         ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
         ggl::real surfReflFactor = calcReflectionFactor( rayVec, surfNorm, sMatReflBase );
 
-        return surfReflFactor * calcRayLight( reflRay, pSurfaces, pSurfMats, surface, pCasts+1 );
+        return surfReflFactor * calcRayLight( reflRay, pSurfaces, pSurfMats, surface, surfPos, pCasts+1 );
     } else if( surfmat == ggl::material::dielectric ) {
         ggl::vectorf<3> surfRefrLight;
         ggl::real surfReflFactor, surfAtten;
@@ -139,9 +141,9 @@ ggl::vectorgl<3> calcRayLight(
         }
 
         ggl::vectorgl<3> reflLight = calcRayLight( {surfPos, surfReflLight},
-            pSurfaces, pSurfMats, surface, pCasts+1 );
+            pSurfaces, pSurfMats, surface, surfPos, pCasts+1 );
         ggl::vectorgl<3> refrLight = calcRayLight( {surfPos, surfRefrLight},
-            pSurfaces, pSurfMats, surface, pCasts+1 );
+            pSurfaces, pSurfMats, surface, surfPos, pCasts+1 );
 
         return surfAtten * ( (surfReflFactor)*reflLight + (1.0f - surfReflFactor)*refrLight );
     // TODO(JRC): Finish implementing the lighting properties for polished surfaces.
