@@ -44,9 +44,17 @@ ggl::vectorf<3> reflectLight(
 ggl::vectorf<3> refractLight(
         const ggl::vectorf<3>& pIncident,
         const ggl::vectorf<3>& pNormal,
-        const ggl::real& pRefrIndex ) {
-    // TODO(JRC): Implement the equation for refracted light here.
-    return pIncident;
+        const ggl::real& pRefrIdx ) {
+    // NOTE(JRC): See "Realistic Ray Tracing" (p. 45) for the derivations of
+    // these formulas.
+    ggl::real reflectCos = ( -pIncident ).dot( pNormal );
+    ggl::real invRefrIdx = 1.0f / pRefrIdx;
+
+    ggl::vectorf<3> refrOrtho = invRefrIdx * ( pIncident - reflectCos * pNormal );
+    ggl::vectorf<3> refrNormal = pNormal * 
+        -std::sqrt( 1.0f - std::pow(invRefrIdx, 2.0f) * (1.0f - std::pow(reflectCos, 2.0f)) );
+
+    return ( refrOrtho + refrNormal ).normalize();
 }
 
 ggl::vectorgl<3> calcRayLight(
@@ -177,7 +185,7 @@ int main() {
         ggl::vectorf<3>{ +10.0f, +10.0f, +10.0f },
     };
     std::vector<ggl::geom::surface*> surfaces{ &sphere, &environment };
-    std::vector<ggl::material> surfaceMats{ ggl::material::reflective, ggl::material::diffuse };
+    std::vector<ggl::material> surfaceMats{ ggl::material::dielectric, ggl::material::diffuse };
 
     const ggl::real viewRectW{ -2.0f };
     const ggl::vectorf<3> viewRectMin{ -2.0f, -2.0f, viewRectW };
