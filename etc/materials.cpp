@@ -183,7 +183,7 @@ int main() {
     const ggl::vectorf<3> viewRectMin{ -2.0f, -2.0f, viewRectW };
     const ggl::vectorf<3> viewRectMax{ +2.0f, +2.0f, viewRectW };
 
-    ggl::real viewPosRadius{ 5.0f };
+    ggl::real viewPosRadius{ 6.05f };
     ggl::real viewPosAngleH{ 0.0f };
     ggl::real viewPosAngleV{ 0.0f };
 
