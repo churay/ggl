@@ -1,6 +1,8 @@
 #ifndef GGL_TUTIL_H
 #define GGL_TUTIL_H
 
+#include "consts.hpp"
+
 namespace ggl {
 
 namespace util {
@@ -9,7 +11,8 @@ namespace util {
         bool operator()( const T& pV1, const T& pV2 ) const;
     };
 
-    constexpr unsigned factorial( const unsigned& pVal );
+    template <class T>
+    T tlerp( const ggl::real& pVal, const T& pMin, const T& pMax );
 }
 
 }

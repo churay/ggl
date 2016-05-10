@@ -13,6 +13,7 @@
 #include "geom.hpp"
 #include "xform.hpp"
 #include "timer.h"
+#include "tutil.hpp"
 #include "util.h"
 #include "consts.hpp"
 
@@ -70,7 +71,7 @@ ggl::vectorgl<3> calcRayLight(
     const static ggl::vectorgl<3> sBlack{ 0.0f, 0.0f, 0.0f };
 
     /// Material Property Constants ///
-    const static ggl::real sMatRefrIdx{ 0.90f };
+    const static ggl::real sMatRefrIdx{ 1.330f };
     const static ggl::real sMatAtten{ 0.75f };
     const static ggl::real sMatReflBase{ 0.70f };
     // NOTE(JRC): This formula is another result of "Shlick's Approximation"
@@ -153,8 +154,11 @@ ggl::vectorgl<3> calcRayLight(
         ggl::vectorgl<3> refrLight = calcRayLight( {surfPos, surfRefrLight},
             pSurfaces, pSurfMats, surface, surfPos, pCasts+1 );
 
-        return surfAtten * ( (surfReflFactor)*reflLight + (1.0f - surfReflFactor)*refrLight );
+        return surfAtten * ggl::util::tlerp( surfReflFactor, refrLight, reflLight );
     // TODO(JRC): Finish implementing the lighting properties for polished surfaces.
+    // The equation given for these surfaces in the book seems only half constructed
+    // and without any explanations given for the meanings of variables.  That being
+    // said, I'm going to skip out on implementing this technique for now.
     } else {
         return sBlack;
     }
@@ -179,12 +183,17 @@ int main() {
     const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
     const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
 
-    ggl::geom::sphere sphere{ ggl::vectorf<3>{0.0f, 0.0f, 0.0f}, 2.0f };
+    // ggl::geom::sphere sphere{ ggl::vectorf<3>{0.0f, 0.0f, 0.0f}, 2.0f };
+    ggl::geom::box box{
+        ggl::vectorf<3>{ -1.0f, -1.0f, -1.0f },
+        ggl::vectorf<3>{ +1.0f, +1.0f, +1.0f },
+    
+    };
     ggl::geom::box environment{
         ggl::vectorf<3>{ -10.0f, -10.0f, -10.0f },
         ggl::vectorf<3>{ +10.0f, +10.0f, +10.0f },
     };
-    std::vector<ggl::geom::surface*> surfaces{ &sphere, &environment };
+    std::vector<ggl::geom::surface*> surfaces{ &box, &environment };
     std::vector<ggl::material> surfaceMats{ ggl::material::dielectric, ggl::material::diffuse };
 
     const ggl::real viewRectW{ -2.0f };
