@@ -14,4 +14,9 @@ T util::tlerp( const ggl::real& pVal, const T& pMin, const T& pMax ) {
     return pMin + ggl::util::clamp( pVal, ggl::zero(), ggl::one() ) * ( pMax - pMin );
 }
 
+
+constexpr unsigned util::factorial( const unsigned& pVal ) {
+    return ( pVal != 0 ) ? pVal * factorial( pVal - 1 ) : 1;
+}
+
 }

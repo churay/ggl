@@ -13,6 +13,8 @@ namespace util {
 
     template <class T>
     T tlerp( const ggl::real& pVal, const T& pMin, const T& pMax );
+
+    constexpr unsigned factorial( const unsigned& pVal );
 }
 
 }
