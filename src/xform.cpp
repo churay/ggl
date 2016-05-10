@@ -77,15 +77,18 @@ auto xform::rotate( const T& pRadians ) {
 
 template <class T, class LT>
 auto xform::rotate( const T& pRadians, const vector<T, 3, LT>& pAxis ) {
+    const vector<T, 3, LT> normAxis = pAxis.normalize();
+
     // NOTE(JRC): This succinct 3D rotation formula was taken from here:
     // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
     auto cosMatrix = std::cos( pRadians ) * ggl::matrix<T, 3, 3, LT>( ggl::one<T>() );
     auto sinMatrix = std::sin( pRadians ) * ggl::matrix<T, 3, 3, LT>{
-        ggl::zero<T>(), -pAxis[2], +pAxis[1],
-        +pAxis[2], ggl::zero<T>(), -pAxis[0],
-        -pAxis[1], +pAxis[0], ggl::zero<T>()
+        ggl::zero<T>(), -normAxis[2], +normAxis[1],
+        +normAxis[2], ggl::zero<T>(), -normAxis[0],
+        -normAxis[1], +normAxis[0], ggl::zero<T>()
     };
-    auto icosMatrix = ( ggl::one<T>() - std::cos(pRadians) ) * pAxis.tensor( pAxis );
+    auto icosMatrix = ( ggl::one<T>() - std::cos(pRadians) ) *
+        normAxis.tensor( normAxis );
 
     ggl::matrix<T, 4, 4, LT> result{ ggl::one<T>() };
     result.template embed<0, 0>( cosMatrix + sinMatrix + icosMatrix );

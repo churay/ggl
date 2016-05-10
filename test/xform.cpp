@@ -1,8 +1,6 @@
 #include "catch.hpp"
 #include "src/xform.hpp"
 
-#include <iostream>
-
 SCENARIO( "ggl::xform basis operation works", "[xform]" ) {
     GIVEN( "an arbitrary basis vector" ) {
         WHEN( "the basis vector is the +z vector" ) {
@@ -150,7 +148,7 @@ SCENARIO( "ggl::xform rotate operation works", "[xform][stub]" ) {
             }
         }
 
-        WHEN( "the rotation amount is nonzero the axis is one of the canonical basis axes" ) {
+        WHEN( "the rotation amount is nonzero and the axis is one of the canonical basis axes" ) {
             const ggl::vectorf<3> xAxis{ ggl::one(), ggl::zero(), ggl::zero() };
             const ggl::vectorf<3> yAxis{ ggl::zero(), ggl::one(), ggl::zero() };
             const ggl::vectorf<3> zAxis{ ggl::zero(), ggl::zero(), ggl::one() };
@@ -206,9 +204,28 @@ SCENARIO( "ggl::xform rotate operation works", "[xform][stub]" ) {
             }
         }
 
-        WHEN( "the axis is not one of the canonical basis axes" ) {
-            THEN( "" ) {
-                REQUIRE( 1 != 1 );
+        WHEN( "the rotation amount is nonzero and the axis is not one of the canonical basis axes" ) {
+            const ggl::vectorf<3> rotAxis{ ggl::one(), ggl::one(), ggl::one() };
+            const ggl::real rotAngle{ ggl::pi() / 2.0f };
+
+            const ggl::matrixf<4, 4> rotXformFull = ggl::xform::rotate( rotAngle, rotAxis );
+            const ggl::matrixf<3, 3> rotXform = rotXformFull.template submatrix<0, 0, 3, 3>();
+
+            THEN( "the output transform is comprised of three orthonormal basis vectors" ) {
+                std::array<ggl::vectorf<3>, 3> xformBases{{
+                    rotXform.template submatrix<0, 0, 3, 1>(),
+                    rotXform.template submatrix<0, 1, 3, 1>(),
+                    rotXform.template submatrix<0, 2, 3, 1>()
+                }};
+
+                for( const ggl::vectorf<3>& xformBasis : xformBases ) {
+                    REQUIRE( xformBasis.normal() == Approx(ggl::one()) );
+                    for( const ggl::vectorf<3>& xformBasis2 : xformBases )
+                        REQUIRE( xformBasis.dot(xformBasis2) == Approx(xformBasis == xformBasis2) );
+                }
+            } THEN( "the output transform correctly transforms trivial input vectors" ) {
+                const ggl::vectorf<3> parallelVector = rotAxis;
+                REQUIRE( (rotXform * parallelVector) == parallelVector );
             }
         }
     }
