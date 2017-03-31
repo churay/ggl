@@ -1,7 +1,7 @@
 ### Compilation/Linking Tools and Flags ###
 
 CXX = clang++
-CXX_FLAGS = -std=c++1y -stdlib=libc++ -Wall -g -O0
+CXX_FLAGS = -std=c++1y -Wall -g -O0
 # CXX = g++
 # CXX_FLAGS = -std=c++1y -Wall -Werror -g -O0
 CXX_INCLS = -I$(SRC_DIR)
@@ -48,14 +48,14 @@ TEST_LIB = $(LIB_DIR)/catch.hpp
 all : $(PROJ_EXE)
 
 $(PROJ_NAME) : $(PROJ_EXE)
-$(PROJ_EXE) : $(SRC_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES)
+$(PROJ_EXE) : $(SRC_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) | $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
 
 $(TEST_NAME) : $(TEST_EXE)
-$(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) | $(TEST_LIB)
+$(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) | $(TEST_LIB) $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
 
-$(BIN_DIR)/%.ex : $(ETC_DIR)/%.cpp $(SRC_FILES) $(SRC_OBJ_FILES)
+$(BIN_DIR)/%.ex : $(ETC_DIR)/%.cpp $(SRC_FILES) $(SRC_OBJ_FILES) | $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
 
 $(OBJ_DIR)/%.to : $(TEST_DIR)/%.cpp $(SRC_DIR)/%.cpp $(wildcard $(SRC_DIR)/%.h*) $(SRC_CONFIG_FILES) | $(TEST_LIB) $(OBJ_DIR)
@@ -68,8 +68,9 @@ $(TEST_LIB) :
 	mkdir -p $(LIB_DIR)
 	wget https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp -O $(TEST_LIB)
 
-$(OBJ_DIR) :
-	mkdir -p $(OBJ_DIR)
+
+$(OBJ_DIR) $(BIN_DIR) :
+	mkdir -p $@
 
 clean : 
 	rm -rf $(BIN_DIR)/* $(OBJ_DIR)
