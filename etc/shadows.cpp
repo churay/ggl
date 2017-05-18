@@ -1,5 +1,6 @@
 #include <array>
 #include <cmath>
+#include <cstring>
 #include <vector>
 
 #define GLFW_INCLUDE_GLU

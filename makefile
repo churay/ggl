@@ -5,7 +5,7 @@ CXX_FLAGS = -std=c++1y -Wall -g -O0
 # CXX = g++
 # CXX_FLAGS = -std=c++1y -Wall -Werror -g -O0
 CXX_INCLS = -I$(SRC_DIR)
-CXX_TINCLS = -I$(PROJ_DIR) -I$(LIB_DIR)
+CXX_TINCLS = -I$(PROJ_DIR) -I$(OPT_DIR)
 
 CXX_LIB_FLAGS = `pkg-config --cflags glfw3`
 CXX_LIB_INCLS = `pkg-config --static --libs glfw3`
@@ -17,7 +17,7 @@ BIN_DIR = $(PROJ_DIR)/bin
 OBJ_DIR = $(PROJ_DIR)/obj
 ETC_DIR = $(PROJ_DIR)/etc
 SRC_DIR = $(PROJ_DIR)/src
-LIB_DIR = $(PROJ_DIR)/lib
+OPT_DIR = $(PROJ_DIR)/opt
 TEST_DIR = $(PROJ_DIR)/test
 
 ### Project Files ###
@@ -39,7 +39,7 @@ PROJ_EXE = $(BIN_DIR)/$(PROJ_NAME)
 
 TEST_NAME = ggl.test
 TEST_EXE = $(BIN_DIR)/$(TEST_NAME)
-TEST_LIB = $(LIB_DIR)/catch.hpp
+TEST_LIB = $(OPT_DIR)/catch.hpp
 
 ### Project Build Rules and Procedures ###
 
@@ -65,9 +65,8 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp $(SRC_DIR)/%.h $(SRC_CONFIG_FILES) | $(OBJ_DIR
 	$(CXX) $(CXX_FLAGS) $(CXX_INCLS) $< -c -o $@
 
 $(TEST_LIB) :
-	mkdir -p $(LIB_DIR)
+	mkdir -p $(OPT_DIR)
 	wget https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp -O $(TEST_LIB)
-
 
 $(OBJ_DIR) $(BIN_DIR) :
 	mkdir -p $@
