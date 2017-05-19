@@ -3,7 +3,7 @@
 #include <sstream>
 #include <utility>
 
-#include "util.h"
+#include "util/util.h"
 #include "interval.h"
 
 namespace ggl {

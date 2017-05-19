@@ -5,7 +5,7 @@
 
 #include "matrix.hpp"
 #include "interval.h"
-#include "util.h"
+#include "util/util.h"
 #include "consts.hpp"
 
 namespace ggl {

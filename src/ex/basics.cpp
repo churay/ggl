@@ -7,7 +7,7 @@
 #include "matrix.hpp"
 #include "geom.hpp"
 #include "xform.hpp"
-#include "timer.h"
+#include "util/timer.h"
 #include "consts.hpp"
 
 void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod ) {

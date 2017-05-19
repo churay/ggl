@@ -2,7 +2,7 @@
 #include <cmath>
 #include <utility>
 
-#include "util.h"
+#include "util/util.h"
 #include "consts.hpp"
 
 namespace ggl {

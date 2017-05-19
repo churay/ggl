@@ -2,7 +2,7 @@
 #include <ratio>
 #include <thread>
 
-#include "timer.h"
+#include "util/timer.h"
 
 namespace ggl {
 

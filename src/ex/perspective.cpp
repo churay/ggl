@@ -12,8 +12,8 @@
 #include "matrix.hpp"
 #include "geom.hpp"
 #include "xform.hpp"
-#include "timer.h"
-#include "util.h"
+#include "util/timer.h"
+#include "util/util.h"
 #include "consts.hpp"
 
 int main() {

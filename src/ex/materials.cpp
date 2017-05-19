@@ -13,9 +13,9 @@
 #include "matrix.hpp"
 #include "geom.hpp"
 #include "xform.hpp"
-#include "timer.h"
-#include "tutil.hpp"
-#include "util.h"
+#include "util/timer.h"
+#include "util/tutil.hpp"
+#include "util/util.h"
 #include "consts.hpp"
 
 namespace ggl {
