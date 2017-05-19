@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "src/xform.hpp"
+#include "xform.hpp"
 
 SCENARIO( "ggl::xform basis operation works", "[xform]" ) {
     GIVEN( "an arbitrary basis vector" ) {

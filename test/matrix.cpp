@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "src/matrix.hpp"
+#include "matrix.hpp"
 
 SCENARIO( "ggl::matrix is correctly constructed", "[matrix]" ) {
     GIVEN( "no parameters (default constructor)" ) {

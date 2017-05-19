@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "src/interval.h"
+#include "util/interval.h"
 
 SCENARIO( "ggl::interval is correctly constructed", "[interval]" ) {
     GIVEN( "no parameters (default constructor)" ) {

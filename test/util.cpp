@@ -1,6 +1,6 @@
 #include "catch.hpp"
-#include "src/util.h"
-#include "src/tutil.hpp"
+#include "util/util.h"
+#include "util/tutil.hpp"
 
 SCENARIO( "ggl::util clamp operation works", "[util]" ) {
     GIVEN( "an empty clamp interval" ) {
