@@ -42,22 +42,24 @@ SRC_OBJ_FILES = $(call outputs,$(SRC_H_FILES),$(OBJ_DIR),.o)
 TEST_GLOBAL_FILES = $(OPT_DIR)/catch.hpp
 TEST_CPP_FILES = $(filter-out $(TEST_DIR)/main.cpp,$(wildcard $(TEST_DIR)/*.cpp))
 TEST_OBJ_FILES = $(call outputs,$(TEST_CPP_FILES),$(OBJ_DIR),.to)
+TEST_EXE_FILES = $(BIN_DIR)/ggl.test
 
 ### Generated Files or Directories ###
 
 TEST_NAME = ggl.test
-TEST_EXE = $(BIN_DIR)/$(TEST_NAME)
 
 ### Project Build Rules and Procedures ###
 
 .PHONY : clean
 .SECONDEXPANSION :
 
-all : $(TEST_EXE)
+all : $(TEST_EXE_FILES)
 
-$(TEST_EXE) : $(TEST_DIR)/main.cpp $(SRC_ALL_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $(TEST_GLOBAL_FILES) | $(BIN_DIR)
+$(notdir $(TEST_NAME)) : $(BIN_DIR)/$$@
+$(TEST_EXE_FILES) : $(TEST_DIR)/main.cpp $(SRC_ALL_FILES) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $(TEST_GLOBAL_FILES) | $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
 
+$(notdir $(EX_EXE_FILES)) : $(BIN_DIR)/$$@
 $(EX_EXE_FILES) : $$(call inputs,$$@,$(SRC_DIR),.cpp) $(SRC_OBJ_FILES) | $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
 
