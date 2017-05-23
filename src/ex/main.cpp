@@ -9,6 +9,12 @@
 #include "xform.hpp"
 #include "consts.hpp"
 
+#ifndef GGL_SCENE
+#define GGL_SCENE_NAME "basic"
+#else
+#define GGL_SCENE_NAME #GGL_SCENE
+#endif
+
 void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod ) {
     if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
         glfwSetWindowShouldClose( window, GL_TRUE );
