@@ -32,7 +32,7 @@ include $(shell find $(BUILD_DIR) -name '*.mk')
 EX_CPP_FILES = $(shell find $(EX_DIR) -name '*.cpp')
 EX_EXE_FILES = $(call outputs,$(EX_CPP_FILES),$(BIN_DIR),.ex)
 
-SRC_GLOBAL_FILES = $(SRC_DIR)/consts.hpp
+SRC_GLOBAL_FILES = $(SRC_DIR)/consts.hpp $(SRC_DIR)/colors.hpp
 SRC_CPP_FILES = $(filter-out $(EX_CPP_FILES),$(shell find $(SRC_DIR) -name '*.cpp'))
 SRC_H_FILES = $(shell find $(SRC_DIR) -name '*.h')
 SRC_HPP_FILES = $(shell find $(SRC_DIR) -name '*.hpp')

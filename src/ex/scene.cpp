@@ -19,7 +19,7 @@ void scene::input( GLFWwindow* pWindow ) {
 }
 
 
-const std::vector<GLfloat>& scene::pixels() {
+const std::vector<GLuint>& scene::pixels() {
     return mPixels;
 }
 

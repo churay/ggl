@@ -22,7 +22,7 @@ class basic_scene : scene {
     /// Class Functions ///
 
     virtual void input( GLFWwindow* pWindow );
-    virtual void update( ggl::real pDelta );
+    virtual bool update( ggl::real pDelta );
     virtual void render();
 
     private:

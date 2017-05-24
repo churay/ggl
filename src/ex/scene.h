@@ -20,10 +20,10 @@ class scene {
     /// Class Functions ///
 
     virtual void input( GLFWwindow* pWindow );
-    virtual void update( ggl::real pDelta ) = 0;
+    virtual bool update( ggl::real pDelta ) = 0;
     virtual void render() = 0;
 
-    const std::vector<GLfloat>& pixels();
+    const std::vector<GLuint>& pixels();
     size_t width();
     size_t height();
 
@@ -31,7 +31,7 @@ class scene {
 
     /// Class Fields ///
 
-    std::vector<GLfloat> mPixels;
+    std::vector<GLuint> mPixels;
     size_t mWidth, mHeight;
 };
 

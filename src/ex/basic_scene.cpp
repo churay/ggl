@@ -1,26 +1,26 @@
 #include "matrix.hpp"
 #include "geom.hpp"
+#include "colors.hpp"
 #include "consts.hpp"
 
 #include "ex/basic_scene.h"
 
 namespace ggl {
 
-basic_scene::basic_scene() : scene( sDim, sDim ) {
-    mSphere = { ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f };
-    mTriangle = {
-        ggl::vectorf<3>{ 0.0f, 0.0f, -0.10f },
-        ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
-        ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
-    };
-
+basic_scene::basic_scene() : scene( sDim, sDim ),
+        mSphere{ ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f },
+        mTriangle{
+            ggl::vectorf<3>{ 0.0f, 0.0f, -0.10f },
+            ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
+            ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
+        } {
     mSurfaces.push_back( &mSphere );
     mSurfaces.push_back( &mTriangle );
 }
 
 
-void basic_scene::update( ggl::real pDelta ) {
-    
+bool basic_scene::update( ggl::real pDelta ) {
+    return false;
 }
 
 
@@ -36,10 +36,10 @@ void basic_scene::render() {
             };
 
             ggl::geom::surface* sxyClosest = ggl::geom::findClosest( sxyRay, mSurfaces );
-            GLfloat& sxyPixel = mPixels[sy * sDim + sx];
-            if( sxyClosest == &mTriangle ) { sxyPixel = grey; }
-            else if( sxyClosest == &mSphere ) { sxyPixel = white; }
-            else { sxyPixel = black; }
+            GLuint& sxyPixel = mPixels[sy * sDim + sx];
+            if( sxyClosest == &mTriangle ) { sxyPixel = ggl::color::gray(); }
+            else if( sxyClosest == &mSphere ) { sxyPixel = ggl::color::white(); }
+            else { sxyPixel = ggl::color::black(); }
         }
     }
 }

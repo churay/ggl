@@ -7,18 +7,16 @@
 #include "matrix.hpp"
 #include "geom.hpp"
 #include "xform.hpp"
+#include "util/timer.h"
 #include "consts.hpp"
 
 #ifndef GGL_SCENE
-#define GGL_SCENE_NAME "basic"
+#define GGL_SCENE_NAME basic
 #else
-#define GGL_SCENE_NAME #GGL_SCENE
+#define GGL_SCENE_NAME GGL_SCENE
 #endif
 
-void handleInputs( GLFWwindow* window, int key, int scode, int action, int mod ) {
-    if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
-        glfwSetWindowShouldClose( window, GL_TRUE );
-}
+#define GGL_SCENE_CLASS GGL_SCENE_NAME ## _scene
 
 int main() {
     /// Initialize GLFW Window ///
@@ -31,58 +29,12 @@ int main() {
         return 1;
 
     glfwMakeContextCurrent( window );
-    glfwSetKeyCallback( window, handleInputs );
     glfwSwapInterval( 1 );
 
     /// Initialize Scene Geometry ///
 
-    const GLuint black = 0xff000000, grey = 0xffaaaaaa, white = 0xffffffff;
-
-    const ggl::geom::sphere sphere{ ggl::vectorf<3>{ 0.5f, 0.5f, -0.5f }, 0.5f };
-    const ggl::geom::triangle triangle{
-        ggl::vectorf<3>{ 0.0f, 0.0f, -0.10f },
-        ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
-        ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
-    };
-
-    const unsigned sceneDim = 500;
-    const ggl::real sceneDimf = static_cast<ggl::real>( sceneDim - 1 );
-    GLuint scenePixels[sceneDim * sceneDim];
-    for( size_t sy = 0; sy < sceneDim; ++sy ) {
-        for( size_t sx = 0; sx < sceneDim; ++sx ) {
-            const ggl::real syf = sy / sceneDimf, sxf = sx / sceneDimf;
-            const ggl::geom::ray<3> sxyRay = {
-                ggl::vectorf<3>{ sxf, syf, +1.0f },
-                ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
-            };
-
-            const ggl::interval sxySphIntxs = sphere.intersect( sxyRay );
-            const ggl::interval sxyTriIntxs = triangle.intersect( sxyRay );
-
-            GLuint& sxyPixel = scenePixels[sy * sceneDim + sx];
-            if( !sxySphIntxs.valid() && !sxyTriIntxs.valid() ) {
-                sxyPixel = black;
-            } else if( !sxySphIntxs.valid() || sxyTriIntxs.min() < sxySphIntxs.min() ) {
-                sxyPixel = grey;
-            } else {
-                sxyPixel = white;
-            }
-        }
-    }
-
-    /// Bind Scene Rendering to a Texture ///
-
-    GLuint sceneTID = 0;
-
-    glGenTextures( 1, &sceneTID );
-    glBindTexture( GL_TEXTURE_2D, sceneTID );
-
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, sceneDim, sceneDim, 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, scenePixels );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
+    ggl::scene* scene = new GGL_SCENE_CLASS();
+    const ggl::vector<GLuint>& scenePixels = scene->pixels();
 
     /// Update and Render ///
 
@@ -90,7 +42,31 @@ int main() {
     glDisable( GL_LIGHTING );
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
+    ggl::timer glfwTimer( 60 );
+    bool glfwDoRender = false;
+
     while( !glfwWindowShouldClose(window) ) {
+        glfwTimer.split();
+
+        scene->input( window );
+        glfwDoRender = scene->update( glfwTimer.delta() );
+
+        /// Bind Scene Rendering to a Texture ///
+        if( glfwDoRender ) {
+            scene->render();
+
+            GLuint sceneTID = 0;
+            glGenTextures( 1, &sceneTID );
+            glBindTexture( GL_TEXTURE_2D, sceneTID );
+
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, scene->width(), scene->height(),
+                0, GL_RGBA, GL_UNSIGNED_BYTE, scenePixels );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
+        }
+
         int windowWidth = 0, windowHeight = 0;
         glfwGetFramebufferSize( window, &windowWidth, &windowHeight );
 
@@ -113,6 +89,8 @@ int main() {
 
         glfwSwapBuffers( window );
         glfwPollEvents();
+
+        glfwTimer.wait();
     }
 
     /// Uninitialize GLFW Window ///
