@@ -4,6 +4,8 @@
 #include <chrono>
 #include <ratio>
 
+#include "consts.hpp"
+
 namespace ggl {
 
 class timer {
@@ -11,15 +13,15 @@ class timer {
 
     /// Constructors ///
 
-    timer( const size_t pFPS = 60 );
+    timer( size_t pFPS = 60 );
 
     /// Class Functions ///
 
     void split();
     void wait();
 
-    size_t prevFrameFPS() const;
-    size_t avgFrameFPS() const;
+    ggl::real fps( size_t pNumFrames = 1 ) const;
+    ggl::real dt( size_t pNumFrames = 1 ) const;
 
     private:
 

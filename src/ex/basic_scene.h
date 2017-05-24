@@ -1,14 +1,15 @@
-#ifndef GGL_STATIC_SCENE_H
-#define GGL_STATIC_SCENE_H
+#ifndef GGL_BASIC_SCENE_H
+#define GGL_BASIC_SCENE_H
 
 #include <vector>
 
 #include "ex/scene.h"
+#include "geom.hpp"
 #include "consts.hpp"
 
 namespace ggl {
 
-class basic_scene : scene {
+class basic_scene : public scene {
     public:
 
     /// Class Attributes ///

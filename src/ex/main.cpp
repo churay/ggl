@@ -1,4 +1,5 @@
 #include <array>
+#include <vector>
 #include <iostream>
 
 #define GLFW_INCLUDE_GLU
@@ -10,13 +11,19 @@
 #include "util/timer.h"
 #include "consts.hpp"
 
+#include "ex/scene.h"
+#include "ex/basic_scene.h"
+
 #ifndef GGL_SCENE
-#define GGL_SCENE_NAME basic
+#define GGL_SCENE_NAME basic_scene
 #else
 #define GGL_SCENE_NAME GGL_SCENE
 #endif
 
-#define GGL_SCENE_CLASS GGL_SCENE_NAME ## _scene
+// TODO(JRC): Fix this line so that it properly concatenates the compiler-defined
+// scene variable.
+// #define GGL_SCENE_CLASS ggl::##GGL_SCENE_NAME
+#define GGL_SCENE_CLASS ggl::basic_scene
 
 int main() {
     /// Initialize GLFW Window ///
@@ -34,7 +41,7 @@ int main() {
     /// Initialize Scene Geometry ///
 
     ggl::scene* scene = new GGL_SCENE_CLASS();
-    const ggl::vector<GLuint>& scenePixels = scene->pixels();
+    const std::vector<GLuint>& scenePixels = scene->pixels();
 
     /// Update and Render ///
 
@@ -49,7 +56,7 @@ int main() {
         glfwTimer.split();
 
         scene->input( window );
-        glfwDoRender = scene->update( glfwTimer.delta() );
+        glfwDoRender = scene->update( glfwTimer.dt() );
 
         /// Bind Scene Rendering to a Texture ///
         if( glfwDoRender ) {
@@ -60,7 +67,7 @@ int main() {
             glBindTexture( GL_TEXTURE_2D, sceneTID );
 
             glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, scene->width(), scene->height(),
-                0, GL_RGBA, GL_UNSIGNED_BYTE, scenePixels );
+                0, GL_RGBA, GL_UNSIGNED_BYTE, scenePixels.data() );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );

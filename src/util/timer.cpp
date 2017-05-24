@@ -2,11 +2,13 @@
 #include <ratio>
 #include <thread>
 
+#include "consts.hpp"
+
 #include "util/timer.h"
 
 namespace ggl {
 
-timer::timer( const size_t pFPS ) {
+timer::timer( size_t pFPS ) {
     SecDuration frameDuration( 1.0 / pFPS );
 
     mFrameDuration = std::chrono::duration_cast<ClockDuration>( frameDuration );
@@ -29,16 +31,19 @@ void timer::wait() {
 }
 
 
-size_t timer::prevFrameFPS() const {
+ggl::real timer::fps( size_t pNumFrames ) const {
+    // TODO(JRC): Implement this function so that it properly outputs the average
+    // FPS for the past "pNumFrames" frames.
     SecDuration prevFrameTime = std::chrono::duration_cast<SecDuration>( mWaitTime - mSplitTime );
-    return static_cast<size_t>( 1.0 / prevFrameTime.count() );
+    return static_cast<ggl::real>( 1.0 / prevFrameTime.count() );
 }
 
 
-size_t timer::avgFrameFPS() const {
+ggl::real timer::dt( size_t pNumFrames ) const {
     // TODO(JRC): Implement this function so that it properly outputs the average
-    // FPS for the past several frames.
-    return (*this).prevFrameFPS();
+    // time delta for the past "pNumFrames" frames.
+    SecDuration prevFrameTime = std::chrono::duration_cast<SecDuration>( mWaitTime - mSplitTime );
+    return static_cast<ggl::real>( prevFrameTime.count() );
 }
 
 }

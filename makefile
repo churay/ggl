@@ -60,8 +60,8 @@ $(TEST_EXE_FILES) : $(TEST_DIR)/main.cpp $(SRC_ALL_FILES) $(SRC_OBJ_FILES) $(TES
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $(SRC_OBJ_FILES) $(TEST_OBJ_FILES) $< -o $@
 
 $(notdir $(EX_EXE_FILES)) : $(BIN_DIR)/$$@
-$(EX_EXE_FILES) : $$(call inputs,$$@,$(SRC_DIR),.cpp) $(SRC_OBJ_FILES) | $(BIN_DIR)
-	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
+$(EX_EXE_FILES) : $(EX_DIR)/main.cpp $$(call inputs,$$@,$(SRC_DIR),.cpp) $(SRC_OBJ_FILES) | $(BIN_DIR)
+	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) -DGGL_SCENE=$(basename $(notdir $@)) $(SRC_OBJ_FILES) $< -o $@ $(CXX_LIB_INCLS)
 
 $(TEST_OBJ_FILES) : $$(call inputs,$$@,$(TEST_DIR),.cpp) $$(call inputs,$$@,$(SRC_DIR),.c*) $$(call inputs,$$@,$(SRC_DIR),.h*) $(SRC_GLOBAL_FILES) $(TEST_GLOBAL_FILES) | $(OBJ_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $< -c -o $@
