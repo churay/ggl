@@ -11,6 +11,11 @@ scene::scene( const size_t pWidth, const size_t pHeight ) {
 }
 
 
+scene::~scene() {
+    
+}
+
+
 void scene::input( GLFWwindow* pWindow ) {
     int qKeyAction = glfwGetKey( pWindow, GLFW_KEY_Q );
     int escKeyAction = glfwGetKey( pWindow, GLFW_KEY_ESCAPE );

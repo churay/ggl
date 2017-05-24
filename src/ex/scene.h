@@ -16,6 +16,7 @@ class scene {
     /// Constructors ///
 
     scene( const size_t pWidth, const size_t pHeight );
+    virtual ~scene();
 
     /// Class Functions ///
 

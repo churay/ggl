@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "ex/scene.h"
-#include "geom.hpp"
 #include "consts.hpp"
 
 namespace ggl {
@@ -19,6 +18,7 @@ class basic_scene : public scene {
     /// Constructors ///
 
     basic_scene();
+    virtual ~basic_scene();
 
     /// Class Functions ///
 
@@ -30,9 +30,11 @@ class basic_scene : public scene {
 
     /// Class Fields ///
 
+    /*
     std::vector<ggl::geom::surface*> mSurfaces;
     ggl::geom::sphere mSphere;
     ggl::geom::triangle mTriangle;
+    */
 };
 
 }
