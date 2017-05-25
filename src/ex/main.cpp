@@ -48,16 +48,12 @@ int main() {
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
     ggl::timer glfwTimer( 60 );
-    bool glfwDoRender = false;
 
     while( !glfwWindowShouldClose(window) ) {
         glfwTimer.split();
 
         scene->input( window );
-        glfwDoRender = scene->update( glfwTimer.dt() );
-
-        /// Bind Scene Rendering to a Texture ///
-        if( glfwDoRender ) {
+        if( scene->update(glfwTimer.dt()) ) {
             scene->render();
 
             GLuint sceneTID = 0;

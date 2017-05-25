@@ -21,7 +21,7 @@ class scene {
     /// Class Functions ///
 
     virtual void input( GLFWwindow* pWindow );
-    virtual bool update( ggl::real pDelta ) = 0;
+    virtual bool update( ggl::real pDelta );
     virtual void render() = 0;
 
     const std::vector<GLuint>& pixels();
@@ -34,6 +34,9 @@ class scene {
 
     std::vector<GLuint> mPixels;
     size_t mWidth, mHeight;
+
+    size_t mFrameCount;
+    ggl::real mFrameTime;
 };
 
 }

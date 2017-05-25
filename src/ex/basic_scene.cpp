@@ -29,7 +29,8 @@ void basic_scene::input( GLFWwindow* pWindow ) {
 
 
 bool basic_scene::update( ggl::real pDelta ) {
-    return false;
+    scene::update( pDelta );
+    return mFrameCount == 1;
 }
 
 

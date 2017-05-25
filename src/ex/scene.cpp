@@ -8,6 +8,9 @@ scene::scene( const size_t pWidth, const size_t pHeight ) {
     mWidth = pWidth;
     mHeight = pHeight;
     mPixels.resize( mWidth * mHeight );
+
+    mFrameCount = 0;
+    mFrameTime = ggl::zero();
 }
 
 
@@ -21,6 +24,13 @@ void scene::input( GLFWwindow* pWindow ) {
     int escKeyAction = glfwGetKey( pWindow, GLFW_KEY_ESCAPE );
     if( qKeyAction == GLFW_PRESS || escKeyAction == GLFW_PRESS )
         glfwSetWindowShouldClose( pWindow, GL_TRUE );
+}
+
+
+bool scene::update( ggl::real pDelta ) {
+    mFrameCount += 1;
+    mFrameTime += pDelta;
+    return true;
 }
 
 
