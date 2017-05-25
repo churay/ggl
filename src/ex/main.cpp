@@ -20,10 +20,11 @@
 #define GGL_SCENE_NAME GGL_SCENE
 #endif
 
-// TODO(JRC): Fix this line so that it properly concatenates the compiler-defined
-// scene variable.
-// #define GGL_SCENE_CLASS ggl::##GGL_SCENE_NAME
-#define GGL_SCENE_CLASS ggl::basic_scene
+// NOTE: This code is necessary due to how the preprocessor handles/expands
+// variables when they're used in other variables.
+// See this for more information: https://stackoverflow.com/a/1489985
+#define PREPASTE(V1,V2) V1/**/V2
+#define GGL_CLASS_NAME PREPASTE(ggl::,GGL_SCENE_NAME)
 
 int main() {
     /// Initialize GLFW Window ///
@@ -40,7 +41,7 @@ int main() {
 
     /// Initialize Scene Geometry ///
 
-    ggl::scene* scene = new GGL_SCENE_CLASS();
+    ggl::scene* scene = new GGL_CLASS_NAME();
     const std::vector<GLuint>& scenePixels = scene->pixels();
 
     /// Update and Render ///
