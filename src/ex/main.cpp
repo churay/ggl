@@ -6,8 +6,6 @@
 #include <GLFW/glfw3.h>
 
 #include "matrix.hpp"
-#include "geom.hpp"
-#include "xform.hpp"
 #include "util/timer.h"
 #include "consts.hpp"
 
