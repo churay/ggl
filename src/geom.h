@@ -12,20 +12,19 @@ namespace ggl {
 namespace geom {
     /// Namespace Types ///
 
-    template <size_t D>
     struct ray {
-        ggl::vectorf<D> at( const ggl::real& pParam ) const;
-        ggl::vectorf<D> mOrigin, mVector;
+        ggl::vectorf<3> at( const ggl::real& pParam ) const;
+        ggl::vectorf<3> mOrigin, mVector;
     };
 
     struct surface {
         bool contains( const ggl::vectorf<3>& pPos ) const;
-        ggl::interval intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval intersect( const ggl::geom::ray& pRay ) const;
         ggl::vectorf<3> normalAt( const ggl::vectorf<3>& pPos ) const;
 
         private:
         virtual ggl::vectorf<3> _center() const = 0;
-        virtual ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const = 0;
+        virtual ggl::interval _intersect( const ggl::geom::ray& pRay ) const = 0;
         virtual ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const = 0;
     };
 
@@ -35,7 +34,7 @@ namespace geom {
 
         private:
         ggl::vectorf<3> _center() const;
-        ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval _intersect( const ggl::geom::ray& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
 
@@ -45,7 +44,7 @@ namespace geom {
 
         private:
         ggl::vectorf<3> _center() const;
-        ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval _intersect( const ggl::geom::ray& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
 
@@ -55,7 +54,7 @@ namespace geom {
 
         private:
         ggl::vectorf<3> _center() const;
-        ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval _intersect( const ggl::geom::ray& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
 
@@ -65,19 +64,17 @@ namespace geom {
 
         private:
         ggl::vectorf<3> _center() const;
-        ggl::interval _intersect( const ggl::geom::ray<3>& pRay ) const;
+        ggl::interval _intersect( const ggl::geom::ray& pRay ) const;
         ggl::vectorf<3> _normalAt( const ggl::vectorf<3>& pPos ) const;
     };
 
     /// Namespace Functions ///
 
     std::array<ggl::vectorf<3>, 6> basis();
-    ggl::geom::surface* findClosest( const ggl::geom::ray<3>& pRay,
+    ggl::geom::surface* findClosest( const ggl::geom::ray& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces );
 }
 
 }
-
-#include "geom.cpp"
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "geom.hpp"
+#include "geom.h"
 #include "consts.hpp"
 
 #include "ex/scene.h"

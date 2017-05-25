@@ -5,8 +5,8 @@
 #include <GLFW/glfw3.h>
 
 #include "matrix.hpp"
-#include "geom.hpp"
 #include "xform.hpp"
+#include "geom.h"
 #include "util/timer.h"
 #include "consts.hpp"
 
@@ -47,7 +47,7 @@ int main() {
     for( size_t sy = 0; sy < sceneDim; ++sy ) {
         for( size_t sx = 0; sx < sceneDim; ++sx ) {
             const ggl::real syf = sy / sceneDimf, sxf = sx / sceneDimf;
-            const ggl::geom::ray<3> sxyRay = {
+            const ggl::geom::ray sxyRay = {
                 ggl::vectorf<3>{ sxf, syf, +1.0f },
                 ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
             };

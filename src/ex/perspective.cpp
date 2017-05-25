@@ -10,8 +10,8 @@
 #include <GLFW/glfw3.h>
 
 #include "matrix.hpp"
-#include "geom.hpp"
 #include "xform.hpp"
+#include "geom.h"
 #include "util/timer.h"
 #include "util/util.h"
 #include "consts.hpp"
@@ -74,7 +74,7 @@ int main() {
                     viewRectMin[0], viewRectMax[0] );
                 const ggl::real sv = ggl::util::lerp( ( sj + 0.5f ) / sceneDim,
                     viewRectMin[1], viewRectMax[1] );
-                const ggl::geom::ray<3> sijRay = { viewPos,
+                const ggl::geom::ray sijRay = { viewPos,
                     su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
                 ggl::geom::surface* sijClosest = ggl::geom::findClosest( sijRay, surfaces );

@@ -11,8 +11,8 @@
 #include <GLFW/glfw3.h>
 
 #include "matrix.hpp"
-#include "geom.hpp"
 #include "xform.hpp"
+#include "geom.h"
 #include "util/timer.h"
 #include "util/tutil.hpp"
 #include "util/util.h"
@@ -60,7 +60,7 @@ ggl::vectorf<3> refractLight(
 }
 
 ggl::vectorgl<3> calcRayLight(
-        const ggl::geom::ray<3>& pRay,
+        const ggl::geom::ray& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces,
         const std::vector<ggl::material>& pSurfMats,
         const ggl::geom::surface* pPrevSurface = nullptr,
@@ -131,7 +131,7 @@ ggl::vectorgl<3> calcRayLight(
 
         return std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
     } else if( surfmat == ggl::material::reflective ) {
-        ggl::geom::ray<3> reflRay = { surfPos, surfReflLight };
+        ggl::geom::ray reflRay = { surfPos, surfReflLight };
         ggl::real surfReflFactor = calcReflectionFactor( rayVec, surfNorm, sMatReflBase );
 
         return surfReflFactor * calcRayLight( reflRay, pSurfaces, pSurfMats, surface, surfPos, pCasts+1 );
@@ -226,7 +226,7 @@ int main() {
                     viewRectMin[0], viewRectMax[0] );
                 const ggl::real sv = ggl::util::lerp( ( sj + 0.5f ) / sceneDim,
                     viewRectMin[1], viewRectMax[1] );
-                const ggl::geom::ray<3> sijRay = { viewPos,
+                const ggl::geom::ray sijRay = { viewPos,
                     su*viewBasis[0] + sv*viewBasis[1] + viewRectW*viewBasis[2] };
 
                 GLfloat* sijPixel = &scenePixels[3 * (sj * sceneDim + si)];

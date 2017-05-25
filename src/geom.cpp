@@ -8,12 +8,13 @@
 #include "util/util.h"
 #include "consts.hpp"
 
+#include "geom.h"
+
 namespace ggl {
 
 /// Ray Functions ///
 
-template <size_t D>
-ggl::vectorf<D> geom::ray<D>::at( const ggl::real& pParam ) const {
+ggl::vectorf<3> geom::ray::at( const ggl::real& pParam ) const {
     return mOrigin + pParam * mVector;
 }
 
@@ -24,7 +25,7 @@ bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
 
     std::array<ggl::vectorf<3>, 2> testVectors{{ pPos - centerPos, centerPos - pPos }};
     for( const ggl::vectorf<3>& testVector : testVectors ) {
-        const ggl::geom::ray<3> testRay = { pPos, testVector };
+        const ggl::geom::ray testRay = { pPos, testVector };
         const ggl::interval rayIntx = (*this).intersect( testRay );
 
         if( rayIntx.valid() && ggl::util::feq(rayIntx.min(), ggl::zero()) )
@@ -34,7 +35,7 @@ bool geom::surface::contains( const ggl::vectorf<3>& pPos ) const {
     return false;
 }
 
-ggl::interval geom::surface::intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::surface::intersect( const ggl::geom::ray& pRay ) const {
     ggl::interval raySurfIntx = (*this)._intersect( pRay );
 
     // TODO(JRC): Add an option to this function that allows for volumetric
@@ -64,7 +65,7 @@ ggl::vectorf<3> geom::plane::_center() const {
     return mOrigin;
 }
 
-ggl::interval geom::plane::_intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::plane::_intersect( const ggl::geom::ray& pRay ) const {
     ggl::real rayIntx = mNormal.dot( mOrigin - pRay.mOrigin ) / mNormal.dot( pRay.mVector );
     return ggl::interval( rayIntx );
 }
@@ -83,7 +84,7 @@ ggl::vectorf<3> geom::sphere::_center() const {
     return mOrigin;
 }
 
-ggl::interval geom::sphere::_intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::sphere::_intersect( const ggl::geom::ray& pRay ) const {
     const ggl::vectorf<3> rayToDir = pRay.mVector, origToDir = pRay.mOrigin - mOrigin;
     std::pair<ggl::real, ggl::real> rayIntxs = ggl::util::solveQuadratic(
         rayToDir.dot( rayToDir ),
@@ -108,7 +109,7 @@ ggl::vectorf<3> geom::box::_center() const {
     return ( 1.0f / 2.0f ) * ( mMin + mMax );
 }
 
-ggl::interval geom::box::_intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::box::_intersect( const ggl::geom::ray& pRay ) const {
     std::array<ggl::interval, 3> rayAxisSpans;
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx )
         rayAxisSpans[axisIdx] = ggl::interval(
@@ -143,7 +144,7 @@ ggl::vectorf<3> geom::triangle::_center() const {
     return ( 1.0f / 3.0f ) * ( mV0 + mV1 + mV2 );
 }
 
-ggl::interval geom::triangle::_intersect( const ggl::geom::ray<3>& pRay ) const {
+ggl::interval geom::triangle::_intersect( const ggl::geom::ray& pRay ) const {
     ggl::matrixf<3, 4> rayIntxEqs;
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx ) {
         rayIntxEqs(axisIdx, 0) = mV0[axisIdx] - mV1[axisIdx];
@@ -184,7 +185,7 @@ std::array<ggl::vectorf<3>, 6> geom::basis() {
     return basisVectors;
 }
 
-ggl::geom::surface* geom::findClosest( const ggl::geom::ray<3>& pRay,
+ggl::geom::surface* geom::findClosest( const ggl::geom::ray& pRay,
         const std::vector<ggl::geom::surface*>& pSurfaces ) {
     ggl::geom::surface* closestSurf( nullptr );
     ggl::interval closestIntx( ggl::nan() );

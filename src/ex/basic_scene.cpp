@@ -1,5 +1,5 @@
 #include "matrix.hpp"
-#include "geom.hpp"
+#include "geom.h"
 #include "colors.hpp"
 #include "consts.hpp"
 
@@ -34,12 +34,12 @@ bool basic_scene::update( ggl::real pDelta ) {
 
 
 void basic_scene::render() {
-    const ggl::real sDimf = static_cast<ggl::real>( sDim - 1 );
+    const ggl::real dimf = static_cast<ggl::real>( sDim - 1 );
 
     for( size_t sy = 0; sy < sDim; ++sy ) {
         for( size_t sx = 0; sx < sDim; ++sx ) {
-            const ggl::real syf = sy / sDimf, sxf = sx / sDimf;
-             const ggl::geom::ray<3> sxyRay = {
+            const ggl::real syf = sy / dimf, sxf = sx / dimf;
+             const ggl::geom::ray sxyRay = {
                  ggl::vectorf<3>{ sxf, syf, +1.0f },
                  ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
              };

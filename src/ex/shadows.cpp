@@ -7,8 +7,8 @@
 #include <GLFW/glfw3.h>
 
 #include "matrix.hpp"
-#include "geom.hpp"
 #include "xform.hpp"
+#include "geom.h"
 #include "util/timer.h"
 #include "consts.hpp"
 
@@ -47,7 +47,7 @@ int main() {
     for( size_t sy = 0; sy < sceneDim; ++sy ) {
         for( size_t sx = 0; sx < sceneDim; ++sx ) {
             const ggl::real syf = 10.0f * (sy / sceneDimf), sxf = 10.0f * (sx / sceneDimf);
-            const ggl::geom::ray<3> sxyRay = {
+            const ggl::geom::ray sxyRay = {
                 ggl::vectorf<3>{ sxf, syf, +1.0f },
                 ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
             };
@@ -66,7 +66,7 @@ int main() {
                 ggl::vectorf<3> sxySurfLDir = ( lightPos - sxySurfPos ).normalize();
                 sxyLightScale = std::max( 0.05f, sxySurfNorm.dot(sxySurfLDir) );
 
-                const ggl::geom::ray<3> sxyShadowRay = { sxySurfPos, sxySurfLDir };
+                const ggl::geom::ray sxyShadowRay = { sxySurfPos, sxySurfLDir };
                 std::vector<ggl::geom::surface*> sxyShadowSurfaces;
                 for( ggl::geom::surface* surface : surfaces )
                     if( surface != sxyClosest )
