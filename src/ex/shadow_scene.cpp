@@ -69,8 +69,7 @@ void shadow_scene::render() {
                 sxyLightScale = ( sxyShadowClosest != nullptr ) ? 0.05f : sxyLightScale;
             }
 
-            ggl::vectorc<3>& sxyPixel = mPixels[sy * sDim + sx];
-            sxyPixel = sxyLightScale * sxyBaseColor;
+            mPixels[sy * sDim + sx] = sxyLightScale * sxyBaseColor;
         }
     }
 }

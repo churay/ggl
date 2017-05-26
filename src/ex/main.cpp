@@ -12,6 +12,7 @@
 #include "ex/scene.h"
 #include "ex/basic_scene.h"
 #include "ex/shadow_scene.h"
+#include "ex/perspective_scene.h"
 
 #ifndef GGL_SCENE
 #define GGL_SCENE_NAME basic_scene
