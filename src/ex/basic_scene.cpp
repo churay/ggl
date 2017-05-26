@@ -14,7 +14,8 @@ basic_scene::basic_scene() : scene( sDim, sDim ),
             ggl::vectorf<3>{ 1.0f, 0.0f, -0.10f },
             ggl::vectorf<3>{ 0.5f, 1.0f, -0.10f }
         } {
-    
+    mSurfaces.push_back( &mSphere );
+    mSurfaces.push_back( &mTriangle );
 }
 
 
