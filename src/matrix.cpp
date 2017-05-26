@@ -37,7 +37,8 @@ matrix<T, R, C, LT>::matrix( Ts&&... pEntries ) : mEntries{{ std::forward<Ts>(pE
     if( sizeof...(Ts) == 1 )
         for( size_t rIdx = 0; rIdx < sNumRows; ++rIdx )
             for( size_t cIdx = 0; cIdx < sNumCols; ++cIdx )
-                (*this)(rIdx, cIdx) = ( rIdx == cIdx ) ? (*this)(0, 0) : ggl::zero<T>();
+                (*this)(rIdx, cIdx) = ( rIdx == cIdx || R == 1 || C == 1 ) ?
+                    (*this)(0, 0) : ggl::zero<T>();
 }
 
 

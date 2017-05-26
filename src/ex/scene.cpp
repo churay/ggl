@@ -1,5 +1,7 @@
 #include <vector>
 
+#include "consts.hpp"
+
 #include "ex/scene.h"
 
 namespace ggl {
@@ -34,7 +36,7 @@ bool scene::update( ggl::real pDelta ) {
 }
 
 
-const std::vector<GLuint>& scene::pixels() {
+const std::vector<ggl::vectorc<3>>& scene::pixels() {
     return mPixels;
 }
 

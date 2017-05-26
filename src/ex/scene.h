@@ -6,6 +6,7 @@
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
 
+#include "colors.hpp"
 #include "consts.hpp"
 
 namespace ggl {
@@ -24,7 +25,7 @@ class scene {
     virtual bool update( ggl::real pDelta );
     virtual void render() = 0;
 
-    const std::vector<GLuint>& pixels();
+    const std::vector<ggl::vectorc<3>>& pixels();
     size_t width();
     size_t height();
 
@@ -32,7 +33,7 @@ class scene {
 
     /// Class Fields ///
 
-    std::vector<GLuint> mPixels;
+    std::vector<ggl::vectorc<3>> mPixels;
     size_t mWidth, mHeight;
 
     size_t mFrameCount;

@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "util/timer.h"
+#include "colors.hpp"
 #include "consts.hpp"
 
 #include "ex/scene.h"
@@ -39,7 +40,7 @@ int main() {
     /// Initialize Scene Geometry ///
 
     ggl::scene* scene = new GGL_CLASS_NAME();
-    const std::vector<GLuint>& scenePixels = scene->pixels();
+    const std::vector<ggl::vectorc<3>>& scenePixels = scene->pixels();
 
     /// Update and Render ///
 
@@ -60,8 +61,8 @@ int main() {
             glGenTextures( 1, &sceneTID );
             glBindTexture( GL_TEXTURE_2D, sceneTID );
 
-            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, scene->width(), scene->height(),
-                0, GL_RGBA, GL_UNSIGNED_BYTE, scenePixels.data() );
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB32F, scene->width(), scene->height(),
+                0, GL_RGB, GL_FLOAT, scenePixels.data() );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );

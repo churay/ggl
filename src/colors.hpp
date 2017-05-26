@@ -3,16 +3,21 @@
 
 #include <GL/gl.h>
 
+#include "matrix.hpp"
+#include "consts.hpp"
+
 namespace ggl {
 
-namespace color {
-    template <class T=GLuint> constexpr T black() { return static_cast<T>(0xff000000); };
-    template <class T=GLuint> constexpr T white() { return static_cast<T>(0xffffffff); };
-    template <class T=GLuint> constexpr T gray()  { return static_cast<T>(0xffaaaaaa); };
+template <size_t R> using vectorc = vector<GLfloat, R>;
 
-    template <class T=GLuint> constexpr T red()   { return static_cast<T>(0xff0000ff); };
-    template <class T=GLuint> constexpr T green() { return static_cast<T>(0xff00ff00); };
-    template <class T=GLuint> constexpr T blue()  { return static_cast<T>(0xffff0000); };
+namespace color {
+    template <size_t R> ggl::vectorc<R> black( ggl::real a = 0.0f ) { return ggl::vectorc<R>(0.0f); };
+    template <size_t R> ggl::vectorc<R> white( ggl::real a = 0.0f ) { return ggl::vectorc<R>(1.0f); };
+    template <size_t R> ggl::vectorc<R> gray( ggl::real a = 0.0f )  { return ggl::vectorc<R>(0.6f); };
+
+    template <size_t R> ggl::vectorc<R> red( GLfloat a = 0.0f )   { ggl::vectorc<R> c(0.0f); c[0] = 1.0f; return c; };
+    template <size_t R> ggl::vectorc<R> green( GLfloat a = 0.0f ) { ggl::vectorc<R> c(0.0f); c[1] = 1.0f; return c; };
+    template <size_t R> ggl::vectorc<R> blue( GLfloat a = 0.0f )  { ggl::vectorc<R> c(0.0f); c[2] = 1.0f; return c; };
 }
 
 }

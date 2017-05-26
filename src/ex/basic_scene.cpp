@@ -41,16 +41,16 @@ void basic_scene::render() {
     for( size_t sy = 0; sy < sDim; ++sy ) {
         for( size_t sx = 0; sx < sDim; ++sx ) {
             const ggl::real syf = sy / dimf, sxf = sx / dimf;
-             const ggl::geom::ray sxyRay = {
+            const ggl::geom::ray sxyRay = {
                  ggl::vectorf<3>{ sxf, syf, +1.0f },
                  ggl::vectorf<3>{ 0.0f, 0.0f, -1.0f }
              };
-
             ggl::geom::surface* sxyClosest = ggl::geom::findClosest( sxyRay, mSurfaces );
-            GLuint& sxyPixel = mPixels[sy * sDim + sx];
-            if( sxyClosest == &mTriangle ) { sxyPixel = ggl::color::gray(); }
-            else if( sxyClosest == &mSphere ) { sxyPixel = ggl::color::white(); }
-            else { sxyPixel = ggl::color::black(); }
+
+            ggl::vectorc<3>& sxyPixel = mPixels[sy * sDim + sx];
+            if( sxyClosest == &mTriangle ) { sxyPixel = ggl::color::gray<3>(); }
+            else if( sxyClosest == &mSphere ) { sxyPixel = ggl::color::white<3>(); }
+            else { sxyPixel = ggl::color::black<3>(); }
         }
     }
 }
