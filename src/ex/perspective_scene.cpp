@@ -75,9 +75,8 @@ bool perspective_scene::update( ggl::real pDelta ) {
 void perspective_scene::render() {
     const ggl::vectorf<3> lightPos{ 1.5f, 1.5f, 1.5f };
 
-    const ggl::vectorf<3> xDir{ 1.0f, 0.0f, 0.0f };
-    const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
-    const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
+    const std::array<ggl::vectorf<3>, 3> xyzBasis = ggl::geom::basis();
+    const ggl::vectorf<3>& xDir = xyzBasis[0], & yDir = xyzBasis[1], & zDir = xyzBasis[2];
 
     ggl::matrixf<3, 3> viewPosHXform =
         ggl::xform::rotate( mViewAngleH, yDir ).template submatrix<0, 0, 3, 3>();

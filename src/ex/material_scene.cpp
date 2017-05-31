@@ -82,9 +82,8 @@ bool material_scene::update( ggl::real pDelta ) {
 
 
 void material_scene::render() {
-    const ggl::vectorf<3> xDir{ 1.0f, 0.0f, 0.0f };
-    const ggl::vectorf<3> yDir{ 0.0f, 1.0f, 0.0f };
-    const ggl::vectorf<3> zDir{ 0.0f, 0.0f, 1.0f };
+    const std::array<ggl::vectorf<3>, 3> xyzBasis = ggl::geom::basis();
+    const ggl::vectorf<3>& xDir = xyzBasis[0], & yDir = xyzBasis[1], & zDir = xyzBasis[2];
 
     ggl::matrixf<3, 3> viewPosHXform =
         ggl::xform::rotate( mViewAngleH, yDir ).template submatrix<0, 0, 3, 3>();
@@ -192,18 +191,17 @@ ggl::vectorc<3> material_scene::_calcRayLight(
     ggl::vectorf<3> surfReflLight = sReflectRay( rayVec, surfNorm );
 
     if( surfMat == ggl::material::diffuse ) {
-        const std::array<ggl::vectorf<3>, 6> basis = ggl::geom::basis();
-        size_t faceIdx = std::find( basis.begin(), basis.end(), surfNorm ) - basis.begin();
+        const std::array<ggl::vectorf<3>, 3> xyz = ggl::geom::basis();
 
         // NOTE(JRC): This ugly little piece of code is responsible for giving
         // a color to each of the separate faces of the environment cube.
         ggl::vectorc<3> faceColor;
-        if( faceIdx == 0 ) { faceColor = ggl::color::red<3>(); }
-        else if( faceIdx == 1 ) { faceColor = ggl::color::green<3>(); }
-        else if( faceIdx == 2 ) { faceColor = ggl::color::blue<3>(); }
-        else if( faceIdx == 3 ) { faceColor = ggl::color::yellow<3>(); }
-        else if( faceIdx == 4 ) { faceColor = ggl::color::magenta<3>(); }
-        else if( faceIdx == 5 ) { faceColor = ggl::color::cyan<3>(); }
+        if( surfNorm == -xyz[0] ) { faceColor = ggl::color::red<3>(); }
+        else if( surfNorm == +xyz[0] ) { faceColor = ggl::color::green<3>(); }
+        else if( surfNorm == -xyz[1] ) { faceColor = ggl::color::blue<3>(); }
+        else if( surfNorm == +xyz[1] ) { faceColor = ggl::color::yellow<3>(); }
+        else if( surfNorm == -xyz[2] ) { faceColor = ggl::color::magenta<3>(); }
+        else if( surfNorm == +xyz[2] ) { faceColor = ggl::color::cyan<3>(); }
         else { faceColor = ggl::color::black<3>(); }
 
         return std::max( 0.05f, surfNorm.dot(surfToLight) ) * faceColor;
