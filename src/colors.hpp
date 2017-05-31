@@ -18,6 +18,10 @@ namespace color {
     template <size_t R> ggl::vectorc<R> red( GLfloat a = 0.0f )   { ggl::vectorc<R> c(0.0f); c[0] = 1.0f; return c; };
     template <size_t R> ggl::vectorc<R> green( GLfloat a = 0.0f ) { ggl::vectorc<R> c(0.0f); c[1] = 1.0f; return c; };
     template <size_t R> ggl::vectorc<R> blue( GLfloat a = 0.0f )  { ggl::vectorc<R> c(0.0f); c[2] = 1.0f; return c; };
+
+    template <size_t R> ggl::vectorc<R> cyan( GLfloat a = 0.0f )     { ggl::vectorc<R> c(1.0f); c[0] = 0.0f; return c; };
+    template <size_t R> ggl::vectorc<R> magenta( GLfloat a = 0.0f )  { ggl::vectorc<R> c(1.0f); c[1] = 0.0f; return c; };
+    template <size_t R> ggl::vectorc<R> yellow( GLfloat a = 0.0f )   { ggl::vectorc<R> c(1.0f); c[2] = 0.0f; return c; };
 }
 
 }
