@@ -24,6 +24,9 @@ namespace geom {
         static constexpr std::array<ggl::real, D> value{{ basis_value<N, Args>::value... }};
     };
 
+    template <size_t I, size_t N, size_t D, size_t... Args>
+    constexpr std::array<ggl::real, D> basis_impl<I, N, D, Args...>::value;
+
     template <size_t D, size_t N>
     struct basis {
         static_assert( N != 0, "'ggl::geom::basis' must have positive index." );

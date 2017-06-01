@@ -1,5 +1,7 @@
+#include <iostream>
+
 #include "geom.h"
-// #include "tgeom.hpp"
+#include "tgeom.hpp"
 #include "xform.hpp"
 #include "interval.h"
 #include "matrix.hpp"
@@ -83,13 +85,16 @@ bool material_scene::update( ggl::real pDelta ) {
 
 
 void material_scene::render() {
-    /*
     const ggl::vectorf<3>& xDir = ggl::geom::basis<3, 1>::value;
     const ggl::vectorf<3>& yDir = ggl::geom::basis<3, 2>::value;
     const ggl::vectorf<3>& zDir = ggl::geom::basis<3, 3>::value;
-    */
+    std::cout << xDir << std::endl;
+    std::cout << yDir << std::endl;
+    std::cout << zDir << std::endl;
+    /*
     const std::array<ggl::vectorf<3>, 3> xyzBasis = ggl::geom::xyzBasis();
     const ggl::vectorf<3>& xDir = xyzBasis[0], & yDir = xyzBasis[1], & zDir = xyzBasis[2];
+    */
 
     ggl::matrixf<3, 3> viewPosHXform =
         ggl::xform::rotate( mViewAngleH, yDir ).template submatrix<0, 0, 3, 3>();
