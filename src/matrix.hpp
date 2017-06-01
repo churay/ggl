@@ -27,6 +27,7 @@ class matrix {
     /// Constructors ///
 
     matrix();
+    explicit matrix( const std::array<T, R*C>& pEntries );
     template <class... Ts> explicit matrix( Ts&&... pEntries );
 
     /// Operator Overloads ///

@@ -123,7 +123,7 @@ ggl::interval geom::box::_intersect( const ggl::geom::ray& pRay ) const {
 ggl::vectorf<3> geom::box::_normalAt( const ggl::vectorf<3>& pPos ) const {
     ggl::vectorf<3> normal{ ggl::zero() };
 
-    const std::array<ggl::vectorf<3>, 3> basisVectors = geom::basis();
+    const std::array<ggl::vectorf<3>, 3> basisVectors = geom::xyzBasis();
     for( size_t axisIdx = 0; axisIdx < 3; ++axisIdx ) {
         if( ggl::util::feq(pPos[axisIdx], mMin[axisIdx]) )
             normal = normal - basisVectors[axisIdx];
@@ -170,7 +170,7 @@ ggl::vectorf<3> geom::triangle::_normalAt( const ggl::vectorf<3>& pPos ) const {
 
 /// Namespace Functions ///
 
-std::array<ggl::vectorf<3>, 3> geom::basis() {
+std::array<ggl::vectorf<3>, 3> geom::xyzBasis() {
     std::array<ggl::vectorf<3>, 3> basisVectors;
 
     for( size_t basisIdx = 0; basisIdx < 3; ++basisIdx ) {

@@ -5,6 +5,8 @@
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
 
+#include "tgeom.hpp"
+
 #include "util/timer.h"
 #include "colors.hpp"
 #include "consts.hpp"

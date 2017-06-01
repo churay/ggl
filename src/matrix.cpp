@@ -26,6 +26,12 @@ matrix<T, R, C, LT>::matrix() {
 }
 
 
+template <class T, size_t R, size_t C, class LT>
+matrix<T, R, C, LT>::matrix( const std::array<T, R*C>& pEntries ) {
+    mEntries = pEntries;
+}
+
+
 // TODO(JRC): Optimize this function by using template specialization.
 // NOTE(JRC): Recipe for argument constructor from the following location:
 // http://stackoverflow.com/a/7725611

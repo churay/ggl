@@ -1,4 +1,5 @@
 #include "geom.h"
+// #include "tgeom.hpp"
 #include "xform.hpp"
 #include "interval.h"
 #include "matrix.hpp"
@@ -82,7 +83,12 @@ bool material_scene::update( ggl::real pDelta ) {
 
 
 void material_scene::render() {
-    const std::array<ggl::vectorf<3>, 3> xyzBasis = ggl::geom::basis();
+    /*
+    const ggl::vectorf<3>& xDir = ggl::geom::basis<3, 1>::value;
+    const ggl::vectorf<3>& yDir = ggl::geom::basis<3, 2>::value;
+    const ggl::vectorf<3>& zDir = ggl::geom::basis<3, 3>::value;
+    */
+    const std::array<ggl::vectorf<3>, 3> xyzBasis = ggl::geom::xyzBasis();
     const ggl::vectorf<3>& xDir = xyzBasis[0], & yDir = xyzBasis[1], & zDir = xyzBasis[2];
 
     ggl::matrixf<3, 3> viewPosHXform =
@@ -191,7 +197,7 @@ ggl::vectorc<3> material_scene::_calcRayLight(
     ggl::vectorf<3> surfReflLight = sReflectRay( rayVec, surfNorm );
 
     if( surfMat == ggl::material::diffuse ) {
-        const std::array<ggl::vectorf<3>, 3> xyz = ggl::geom::basis();
+        const std::array<ggl::vectorf<3>, 3> xyz = ggl::geom::xyzBasis();
 
         // NOTE(JRC): This ugly little piece of code is responsible for giving
         // a color to each of the separate faces of the environment cube.
