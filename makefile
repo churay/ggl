@@ -35,7 +35,6 @@ EX_H_FILES = $(filter-out $(EX_GLOBAL_FILES),$(shell find $(EX_DIR) -name '*.h*'
 EX_ALL_FILES = $(shell find $(EX_DIR) -type f)
 EX_EXE_FILES = $(call outputs,$(EX_CPP_FILES),$(BIN_DIR),.ex)
 
-SRC_GLOBAL_FILES = $(SRC_DIR)/consts.hpp $(SRC_DIR)/colors.hpp
 SRC_CPP_FILES = $(filter-out $(EX_ALL_FILES),$(shell find $(SRC_DIR) -name '*.cpp'))
 SRC_H_FILES = $(filter-out $(EX_ALL_FILES),$(shell find $(SRC_DIR) -name '*.h'))
 SRC_HPP_FILES = $(shell find $(SRC_DIR) -name '*.hpp')
@@ -66,10 +65,10 @@ $(notdir $(EX_EXE_FILES)) : $(BIN_DIR)/$$@
 $(EX_EXE_FILES) : $(EX_DIR)/main.cpp $(OBJ_DIR)/scene.o $$(call outputs,$$(call inputs,$$@,$(SRC_DIR),.cpp),$(OBJ_DIR),.o) $(SRC_OBJ_FILES) | $(BIN_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_LIB_FLAGS) $(CXX_INCLS) -DGGL_SCENE=$(basename $(notdir $@)) $^ -o $@ $(CXX_LIB_INCLS)
 
-$(OBJ_DIR)/%.to : $$(call inputs,$$@,$(TEST_DIR),.cpp) $$(call inputs,$$@,$(SRC_DIR),.c*) $$(call inputs,$$@,$(SRC_DIR),.h*) $(SRC_GLOBAL_FILES) $(TEST_GLOBAL_FILES) | $(OBJ_DIR)
+$(OBJ_DIR)/%.to : $$(call inputs,$$@,$(TEST_DIR),.cpp) $$(call inputs,$$@,$(SRC_DIR),.c*) $$(call inputs,$$@,$(SRC_DIR),.h*) $(SRC_HPP_FILES) $(TEST_GLOBAL_FILES) | $(OBJ_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_TINCLS) $< -c -o $@
 
-$(OBJ_DIR)/%.o : $$(call inputs,$$@,$(SRC_DIR),.cpp) $$(call inputs,$$@,$(SRC_DIR),.h) $(SRC_GLOBAL_FILES) | $(OBJ_DIR)
+$(OBJ_DIR)/%.o : $$(call inputs,$$@,$(SRC_DIR),.cpp) $$(call inputs,$$@,$(SRC_DIR),.h) $(SRC_HPP_FILES) | $(OBJ_DIR)
 	$(CXX) $(CXX_FLAGS) $(CXX_INCLS) $< -c -o $@
 
 $(OPT_DIR)/catch.hpp : | $(OPT_DIR)
