@@ -1,4 +1,5 @@
 #include "geom.h"
+#include "camera.h"
 #include "tgeom.hpp"
 #include "xform.hpp"
 #include "matrix.hpp"
@@ -13,13 +14,6 @@ perspective_scene::perspective_scene() : scene( sDim, sDim ),
         mBox{ ggl::vectorf<3>(-1.0f), ggl::vectorf<3>(+1.0f) } {
     mSurfaces.push_back( &mBox );
 
-    mViewRectMin = ggl::vectorf<3>{ -2.0f, -2.0f, -2.0f };
-    mViewRectMax = ggl::vectorf<3>{ +2.0f, +2.0f, -2.0f };
-
-    mViewRadius = 5.0f;
-    mViewAngleH = -ggl::pi() / 4.0f;
-    mViewAngleV = +ggl::pi() / 4.0f;
-
     mDoRender = true;
 }
 
@@ -30,36 +24,22 @@ perspective_scene::~perspective_scene() {
 
 
 void perspective_scene::input( GLFWwindow* pWindow ) {
-    const ggl::real viewAngleIncr{ ggl::pi() / 32.0f };
-    const ggl::real viewRadiusIncr{ 0.05f };
-
-    auto angleWrap = [] ( const ggl::real& pAngle ) {
-        return ggl::util::wrap( pAngle, 0.0f, 2.0f * ggl::pi() ); };
-    auto radiusClamp = [] ( const ggl::real& pRadius ) {
-        return ggl::util::clamp( pRadius, 3.0f, 20.0f ); };
-
     scene::input( pWindow );
 
     int wKeyAction = glfwGetKey( pWindow, GLFW_KEY_W );
-    if( wKeyAction == GLFW_PRESS )
-        mViewAngleV = angleWrap( mViewAngleV + viewAngleIncr );
+    if( wKeyAction == GLFW_PRESS ) mCamera.tilt( false, true );
     int sKeyAction = glfwGetKey( pWindow, GLFW_KEY_S );
-    if( sKeyAction == GLFW_PRESS )
-        mViewAngleV = angleWrap( mViewAngleV - viewAngleIncr );
+    if( sKeyAction == GLFW_PRESS ) mCamera.tilt( false, false );
 
     int aKeyAction = glfwGetKey( pWindow, GLFW_KEY_A );
-    if( aKeyAction == GLFW_PRESS )
-        mViewAngleH = angleWrap( mViewAngleH - viewAngleIncr );
+    if( aKeyAction == GLFW_PRESS ) mCamera.tilt( true, false );
     int dKeyAction = glfwGetKey( pWindow, GLFW_KEY_D );
-    if( dKeyAction == GLFW_PRESS )
-        mViewAngleH = angleWrap( mViewAngleH + viewAngleIncr );
+    if( dKeyAction == GLFW_PRESS ) mCamera.tilt( true, true );
 
     int rKeyAction = glfwGetKey( pWindow, GLFW_KEY_R );
-    if( rKeyAction == GLFW_PRESS )
-        mViewRadius = radiusClamp( mViewRadius - viewRadiusIncr );
+    if( rKeyAction == GLFW_PRESS ) mCamera.zoom( true );
     int fKeyAction = glfwGetKey( pWindow, GLFW_KEY_F );
-    if( fKeyAction == GLFW_PRESS )
-        mViewRadius = radiusClamp( mViewRadius + viewRadiusIncr );
+    if( fKeyAction == GLFW_PRESS ) mCamera.zoom( false );
 
     mDoRender = wKeyAction == GLFW_PRESS || sKeyAction == GLFW_PRESS ||
         aKeyAction == GLFW_PRESS || dKeyAction == GLFW_PRESS ||
@@ -76,27 +56,11 @@ bool perspective_scene::update( ggl::real pDelta ) {
 void perspective_scene::render() {
     const ggl::vectorf<3> lightPos{ 1.5f, 1.5f, 1.5f };
 
-    const ggl::vectorf<3>& xDir = ggl::geom::axis<3, 1>::value;
-    const ggl::vectorf<3>& yDir = ggl::geom::axis<3, 2>::value;
-    const ggl::vectorf<3>& zDir = ggl::geom::axis<3, 3>::value;
-
-    ggl::matrixf<3, 3> viewPosHXform =
-        ggl::xform::rotate( mViewAngleH, yDir ).template submatrix<0, 0, 3, 3>();
-    ggl::matrixf<3, 3> viewPosVXform =
-        ggl::xform::rotate( mViewAngleV, viewPosHXform * zDir ).template submatrix<0, 0, 3, 3>();
-
-    ggl::vectorf<3> viewPos = mViewRadius * ( viewPosVXform * viewPosHXform * xDir );
-    ggl::vectorf<3> viewDir = -viewPos.normalize();
-    std::array<ggl::vectorf<3>, 3> viewBasis = ggl::xform::basis( -viewDir );
-
     for( size_t sj = 0; sj < sDim; ++sj ) {
         for( size_t si = 0; si < sDim; ++si ) {
-            const ggl::real su = ggl::util::lerp( (si + 0.5f) / sDim,
-                mViewRectMin[0], mViewRectMax[0] );
-            const ggl::real sv = ggl::util::lerp( (sj + 0.5f) / sDim,
-                mViewRectMin[1], mViewRectMax[1] );
-            const ggl::geom::ray sijRay = { viewPos,
-                su*viewBasis[0] + sv*viewBasis[1] + mViewRectMin[2]*viewBasis[2] };
+            const ggl::real su = ( si + (ggl::one() / 2) ) / sDim;
+            const ggl::real sv = ( sj + (ggl::one() / 2) ) / sDim;
+            const ggl::geom::ray sijRay = mCamera.calcViewRay( su, sv );
 
             ggl::geom::surface* sijClosest = ggl::geom::findClosest( sijRay, mSurfaces );
 

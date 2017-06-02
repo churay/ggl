@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "geom.h"
+#include "camera.h"
 #include "matrix.hpp"
 #include "consts.hpp"
 
@@ -36,9 +37,7 @@ class perspective_scene : public scene {
     std::vector<ggl::geom::surface*> mSurfaces;
     ggl::geom::box mBox;
 
-    ggl::vectorf<3> mViewRectMin, mViewRectMax;
-    ggl::real mViewRadius, mViewAngleH, mViewAngleV;
-
+    ggl::camera mCamera;
     bool mDoRender;
 };
 

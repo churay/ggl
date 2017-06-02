@@ -7,31 +7,36 @@
 
 namespace ggl {
 
-// TODO(JRC): update over a period of time; give pathing (future)
-// at start, just initialize the view and then return the view transform
+// TODO(JRC): Update the implementation here so that the camera isn't always
+// pointed toward the model space origin.
 
 class camera {
     public:
 
     /// Constructors ///
 
-    camera( const ggl::vectorf<3>& pOrigin, const ggl::vectorf<3>& pDirection,
-        const ggl::real& pViewWidth = 4 * ggl::one(),
-        const ggl::real& pViewHeight = 4 * ggl::one(),
-        const ggl::real& pViewDepth = -2 * ggl::one() );
+    camera();
 
-    ggl::geom::ray calcViewRay( const ggl::real& pI, const ggl::real& pJ ) const;
+    void tilt( const bool& pLR, const bool& pDir );
+    void zoom( const bool& pIn );
+
+    ggl::geom::ray calcViewRay( const ggl::real& pI, const ggl::real& pJ );
+    const std::array<ggl::vectorf<3>, 3>& calcViewBasis();
 
     private:
 
     /// Private Functions ///
 
-    // TODO
+    void _calcViewBasis();
 
     /// Class Fields ///
 
-    ggl::vectorf<3> mOrigin, mDirection;
+    ggl::real mViewAngleH, mViewAngleV, mViewRadius;
     ggl::real mViewWidth, mViewHeight, mViewDepth;
+
+    std::array<ggl::vectorf<3>, 3> mViewBasis;
+    ggl::vectorf<3> mViewPos;
+    bool mUpdateBasis;
 };
 
 }

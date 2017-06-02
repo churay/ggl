@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "geom.h"
+#include "camera.h"
+#include "colors.hpp"
 #include "consts.hpp"
 
 #include "ex/scene.h"
@@ -45,9 +47,7 @@ class material_scene : public scene {
     std::vector<ggl::material> mMaterials;
     ggl::geom::box mMatBox, mEnvBox;
 
-    ggl::vectorf<3> mViewRectMin, mViewRectMax;
-    ggl::real mViewRadius, mViewAngleH, mViewAngleV;
-
+    ggl::camera mCamera;
     bool mDoRender;
 };
 
